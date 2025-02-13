@@ -9,7 +9,7 @@
 
 # Paketschicht
 
-## Nachrichtentype
+### Nachrichtentype
 
 | Nachrichtentype | Bedeutung             | Englische Bezeichnung | Abkürzung  |
 | :-------------- | :-------------------- | :-------------------- | :--------- |
@@ -214,7 +214,7 @@
 
 # Datenschicht
 
-## Nachrichtentype
+### Nachrichtentype
 
 | Nachrichtentype | Bedeutung         | Englische Bezeichnung | Abkürzung    |
 | :-------------- | :---------------- | :-------------------- | :----------- |
@@ -222,11 +222,56 @@
 | 5002            | Licht ausschalten | Switch off light      | ShowOffLight |
 | 5003            | Buch zeigen       | Show book             | ShowBook     |
 | 5004            | Bücher zeigen     | Show books            | ShowBooks    |
-| 5010            | Licht Modus       | Light mode            | LightMode    |
+| 5020            | Licht Modus       | Light mode            | LightMode    |
+
+<br>
+<b>Lichteinschaltennachricht (Switch on light Message)</b>
+
+| Byte Nr. | Inhalt                |
+| :------: | :-------------------- |
+| 00 - 01  | Nachrichtenlänge =    |
+| 02 - 03  | Nachrichtentyp = 5001 |
+
+<br>
+<b>Lichtausschaltennachricht (Switch off light Message)</b>
+
+| Byte Nr. | Inhalt                |
+| :------: | :-------------------- |
+| 00 - 01  | Nachrichtenlänge =    |
+| 02 - 03  | Nachrichtentyp = 5002 |
+
+<br>
+<b>Buchzeigennachricht (Show book Message)</b>
+
+| Byte Nr. | Inhalt                |
+| :------: | :-------------------- |
+| 00 - 01  | Nachrichtenlänge =    |
+| 02 - 03  | Nachrichtentyp = 5003 |
+| 04 - 05  | Buch Postion          |
+
+<br>
+<b>Bücherzeigennachricht (Show books Message)</b>
+
+| Byte Nr.  | Inhalt                |
+| :-------: | :-------------------- |
+|  00 - 01  | Nachrichtenlänge =    |
+|  02 - 03  | Nachrichtentyp = 5004 |
+|  04 - 05  | Buch Postion          |
+|  06 - 07  | Buch Postion          |
+| n - n + 1 | Buch Postion          |
+
+<br>
+<b>Lichtmodusnachricht (Light mode Message)</b>
+
+| Byte Nr. | Inhalt                |
+| :------: | :-------------------- |
+| 00 - 01  | Nachrichtenlänge =    |
+| 02 - 03  | Nachrichtentyp = 5020 |
+|    04    | Modus                 |
 
 # Datenuploadschicht
 
-## Nachrichtentype
+### Nachrichtentype
 
 | Nachrichtentype | Bedeutung                     | Englische Bezeichnung | Abkürzung |
 | :-------------- | :---------------------------- | :-------------------- | :-------- |
