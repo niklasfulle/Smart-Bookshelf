@@ -1,9 +1,8 @@
 """
     -
 """
-# pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,C0116
+# pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,C0116,C0103,C0415
 import struct
-
 
 class MD4:
     """An implementation of the MD4 hash algorithm."""

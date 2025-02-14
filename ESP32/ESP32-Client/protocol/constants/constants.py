@@ -1,7 +1,7 @@
 """
     -
 """
-# pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,C0103
+# pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622
 from utils.enum import enum
 
 PACKAGE_MESSAGE_TYPE = enum(
@@ -16,7 +16,8 @@ PACKAGE_MESSAGE_TYPE = enum(
     SleepRequest=3080,
     RebootRequest=3090,
     Data=5000,
-    DataUpload=6000
+    DataUpload=6000,
+    UpdateConfig=7000
 )
 
 DATA_MESSAGE_TYPE = enum(
@@ -28,7 +29,9 @@ DATA_MESSAGE_TYPE = enum(
 )
 
 DATA_LIGHT_MODUS = enum(
-    
+    On=1,
+    Off=2,
+    Auto=3
 )
 
 DATA_UPLOAD_MESSAGE_TYPE = enum(
@@ -40,5 +43,20 @@ DATA_UPLOAD_MESSAGE_TYPE = enum(
 )
 
 DATA_UPLOAD_ERROR = enum(
-    
+    ParseError=1,
+    MD4Error=2,
+    Unknown=10
 )
+
+UPDATE_CONFIG_MESSAGE_TYPE = enum(
+    UpdateConfigSuccess=7001,
+    UpdateConfigError=6002,
+)
+
+UPDATE_CONFIG_ERROR = enum(
+    ParseError=1,
+    MD4Error=2,
+    Unknown=10
+)
+
+MD4_Type = enum(NONE=0, LOWER_HALF=1, FULL=2)
