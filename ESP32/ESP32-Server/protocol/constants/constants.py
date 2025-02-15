@@ -4,6 +4,8 @@
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622
 from utils.enum import enum
 
+MD4_Type = enum(NONE=0, LOWER_HALF=1, FULL=2)
+
 PACKAGE_MESSAGE_TYPE = enum(
     ConnRequest=3000,
     ConnResponse=3010,
@@ -13,11 +15,13 @@ PACKAGE_MESSAGE_TYPE = enum(
     StatusRequest=3050,
     StatusResponse=3060,
     DiscRequest=3070,
-    SleepRequest=3080,
-    RebootRequest=3090,
+    DiscResponse=3080,
+    SleepRequest=3090,
+    SleepResponse=3100,
+    RebootRequest=3110,
+    RebootResponse=3120,
     Data=5000,
-    DataUpload=6000,
-    UpdateConfig=7000
+    DataUpload=6000
 )
 
 DATA_MESSAGE_TYPE = enum(
@@ -58,5 +62,3 @@ UPDATE_CONFIG_ERROR = enum(
     MD4Error=2,
     Unknown=10
 )
-
-MD4_Type = enum(NONE=0, LOWER_HALF=1, FULL=2)

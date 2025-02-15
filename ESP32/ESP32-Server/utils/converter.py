@@ -52,6 +52,7 @@ def int_to_4byte_array(number: int, byteorder: str = "little") -> bytearray:
     array = bytearray(number.to_bytes(4, byteorder))
     return array
 
+
 def convert_string_bytes_to_bytearray(string_with_bytes: str, type: int) -> bytearray:
     """converts the passed string into a byte array with the given type of the string
 
@@ -77,4 +78,3 @@ def convert_string_bytes_to_bytearray(string_with_bytes: str, type: int) -> byte
         return bytearray(binascii.unhexlify(string.replace(' ', '')))
     elif type == 2:
         return bytearray(binascii.unhexlify(string_with_bytes.replace(' ', '')))
-      

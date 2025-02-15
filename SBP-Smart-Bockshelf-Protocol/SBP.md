@@ -11,20 +11,23 @@
 
 ### Nachrichtentype
 
-| Nachrichtentype | Bedeutung             | Englische Bezeichnung | Abkürzung  |
-| :-------------- | :-------------------- | :-------------------- | :--------- |
-| 3000            | Verbindungsanfrage    | Connection Request    | ConnReq    |
-| 3010            | Verbindungsantwort    | Connection Response   | ConnResp   |
-| 3020            | Verbindungszustimmung | Connection Approve    | ConnApp    |
-| 3030            | Versionsanfrage       | Version Request       | VerReq     |
-| 3040            | Versionsantwort       | Version Response      | VerResp    |
-| 3050            | Statusanfrage         | Status Request        | StatusReq  |
-| 3060            | Statusantwort         | Status Response       | StatusResp |
-| 3070            | Trennaufforderung     | Disconnection Request | DiscReq    |
-| 3080            | Schlafaufforderung    | Sleep Request         | SleepReq   |
-| 3090            | Neustartaufforderung  | Reboot Request        | RebootReq  |
-| 5000            | Daten                 | Data                  | Data       |
-| 6000            | Daten Hochladen       | Upload data           | DataUp     |
+| Nachrichtentype | Bedeutung             | Englische Bezeichnung  | Abkürzung      |
+| :-------------- | :-------------------- | :--------------------- | :------------- |
+| 3000            | Verbindungsanfrage    | Connection Request     | ConnRequest    |
+| 3010            | Verbindungsantwort    | Connection Response    | ConnResponse   |
+| 3020            | Verbindungszustimmung | Connection Approve     | ConnApprove    |
+| 3030            | Versionsanfrage       | Version Request        | VerRequest     |
+| 3040            | Versionsantwort       | Version Response       | VerResponse    |
+| 3050            | Statusanfrage         | Status Request         | StatusRequest  |
+| 3060            | Statusantwort         | Status Response        | StatusResponse |
+| 3070            | Trennaufforderung     | Disconnection Request  | DiscRequest    |
+| 3080            | Trennantwort          | Disconnection Response | DiscResponse   |
+| 3090            | Schlafaufforderung    | Sleep Request          | SleepRequest   |
+| 3100            | Schlafantwort         | Sleep Response         | SleepResponse  |
+| 3110            | Neustartaufforderung  | Reboot Request         | RebootRequest  |
+| 3120            | Neustartantwort       | Reboot Response        | RebootResponse |
+| 5000            | Daten                 | Data                   | Data           |
+| 6000            | Daten Hochladen       | Upload data            | DataUpload     |
 
 <br>
 <b>Verbindungsanfragenachricht (Connection Request Message)</b>
@@ -198,19 +201,18 @@
 <br>
 <b>Datenhochladennachricht (Upload data Message)</b>
 
-|    Byte Nr.     | Inhalt                    |
-| :-------------: | :------------------------ |
-|     00 - 01     | Nachrichtenlänge = 36 + n |
-|     02 - 03     | Nachrichtentyp = 6000     |
-|     04 - 07     | Empfängerkennung          |
-|     08 - 11     | Absenderkennung           |
-|     12 - 15     | Sequenznummer             |
-|     16 - 19     | Bestätigte Sequenznummer  |
-|     20 - 23     | Zeitstempel               |
-|     24 - 27     | Bestätigter Zeitstempel   |
-|     28 - 29     | Daten Paket Nummer        |
-| 30 - 30 + n – 1 | n Bytes Daten Paket       |
-|     28 - 35     | Sicherheitscode           |
+|         Byte Nr.         | Inhalt                    |
+| :----------------------: | :------------------------ |
+|         00 - 01          | Nachrichtenlänge = 36 + n |
+|         02 - 03          | Nachrichtentyp = 6000     |
+|         04 - 07          | Empfängerkennung          |
+|         08 - 11          | Absenderkennung           |
+|         12 - 15          | Sequenznummer             |
+|         16 - 19          | Bestätigte Sequenznummer  |
+|         20 - 23          | Zeitstempel               |
+|         24 - 27          | Bestätigter Zeitstempel   |
+|     28 - 28 + n – 1      | n Bytes Nutzdaten         |
+| 28 + n - 28 + <br> n + 7 | Sicherheitscode           |
 
 # Datenschicht
 
@@ -288,6 +290,7 @@
 | :------: | :-------------------- |
 | 00 - 01  | Nachrichtenlänge = 4  |
 | 02 - 03  | Nachrichtentyp = 6001 |
+| 04 - 05  | Datentyp              |
 
 <br>
 <b>Datenhochladennachricht (Upload data Message)</b>
