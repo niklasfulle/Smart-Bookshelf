@@ -52,11 +52,6 @@ DATA_UPLOAD_ERROR = enum(
     Unknown=10
 )
 
-UPDATE_CONFIG_MESSAGE_TYPE = enum(
-    UpdateConfigSuccess=7001,
-    UpdateConfigError=6002,
-)
-
 UPDATE_CONFIG_ERROR = enum(
     ParseError=1,
     MD4Error=2,

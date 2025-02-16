@@ -3,6 +3,7 @@
 """
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,C0103
 import socket
+from hardware.bookshelf import bookshelf
 
 class connection:
     """_summary_
@@ -15,6 +16,7 @@ class connection:
     server: tuple[str, int]
     receiver_id: bytearray
     sender_id: bytearray
+    bookshelf: bookshelf
     def __init__(
       self,
       receiver_id: int,

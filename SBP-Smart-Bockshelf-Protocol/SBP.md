@@ -277,7 +277,7 @@
 
 | Nachrichtentype | Bedeutung                     | Englische Bezeichnung | Abkürzung |
 | :-------------- | :---------------------------- | :-------------------- | :-------- |
-| 6001            | Daten hochladen Starten       | Start uploading data  | DataUpSta |
+| 6001            | Daten hochladen Starten       | Upload data Start     | DataUpSta |
 | 6002            | Daten hochladen               | Upload data           | DataUp    |
 | 6003            | Daten hochladen Abgeschlossen | Upload data Completed | DataUpCom |
 | 6004            | Daten hochladen Fehler        | Upload data Error     | DataUpErr |

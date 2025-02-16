@@ -121,7 +121,7 @@ def build_version_response (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None
+        (protocol_version + config_version + control_version)
     )
 
 
