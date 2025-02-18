@@ -60,7 +60,7 @@ def initialize_package(
 
 def initialize_data_package(
     message_type: DATA_MESSAGE_TYPE,
-    data: bytearray
+    data: bytearray | None
 ) -> data_package:
     """
         - 
@@ -69,8 +69,8 @@ def initialize_data_package(
 
 def initialize_data_upload_package(
     message_type: DATA_UPLOAD_MESSAGE_TYPE,
-    data: bytearray
-) -> data_upload_package | None:
+    data: bytearray | None
+) -> data_upload_package:
     """
         - 
     """

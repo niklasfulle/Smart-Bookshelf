@@ -26,4 +26,9 @@ class connection:
         self.sock = sock
         self.receiver_id_int = receiver_id
         self.sender_id_int = sender_id
-        
+
+
+    def reset(self):
+        """ 
+            resets the data of the connections object
+        """
