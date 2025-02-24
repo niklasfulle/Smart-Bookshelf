@@ -78,3 +78,51 @@ def convert_string_bytes_to_bytearray(string_with_bytes: str, type: int) -> byte
         return bytearray(binascii.unhexlify(string.replace(' ', '')))
     elif type == 2:
         return bytearray(binascii.unhexlify(string_with_bytes.replace(' ', '')))
+
+def get_hex_string(byte_string: bytearray) -> str:
+    """returns a byte array in string hex format
+
+    Args:
+        byte_string (bytearray):
+
+    Returns:
+        str: string in Hex form
+    """
+
+    hex_string = ", ".join(hex(b) for b in byte_string)
+    hex_string = hex_string.replace("0x0", "0x00")
+
+    split_string = hex_string.split(", ")
+
+    for i in enumerate(split_string):
+        if len(split_string[i[0]]) == 3:
+            split_string2 = split_string[i[0]].split("x")
+            element = split_string2[0] + "x0" + split_string2[1]
+            split_string[i[0]] = element
+
+    string = ", ".join(split_string)
+
+    return string
+
+def get_hex_string_arrs(byte_string: bytearray) -> list[str]:
+    """returns a byte array in string hex format
+
+    Args:
+        byte_string (bytearray):
+
+    Returns:
+        str: string in Hex form
+    """
+
+    hex_string = ", ".join(hex(b) for b in byte_string)
+    hex_string = hex_string.replace("0x0", "0x00")
+
+    split_string = hex_string.split(", ")
+
+    for i in enumerate(split_string):
+        if len(split_string[i[0]]) == 3:
+            split_string2 = split_string[i[0]].split("x")
+            element = split_string2[0] + "x0" + split_string2[1]
+            split_string[i[0]] = element
+
+    return split_string
