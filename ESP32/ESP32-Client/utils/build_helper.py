@@ -5,7 +5,7 @@
 import time
 import random
 
-from converter import int_to_4byte_array
+from utils.converter import int_to_4byte_array
 
 def get_timestamp() -> bytearray:
     """Returns the current system time in s since 1970 as 4 byte

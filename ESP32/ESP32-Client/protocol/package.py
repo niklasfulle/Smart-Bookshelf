@@ -3,9 +3,9 @@
 """
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,R0914,C0103,R0902
 
-from data_upload_package import data_upload_package
-from data_package import data_package
-from utils.converter import int_to_2byte_array
+from protocol.data_upload_package import data_upload_package
+from protocol.data_package import data_package
+from utils.converter import int_to_2byte_array, get_hex_string_arrs
 from utils.build_helper import get_bytearrays_size_sum
 from utils.checksumme import get_checksumme
 
@@ -97,3 +97,24 @@ class package:
         """
             -
         """
+        split_data = get_hex_string_arrs(self.complete_data)
+
+        lenList: int = len(split_data)
+
+        count: int = round(lenList / 8)
+
+        index1: int = 0
+        index2: int = 0
+
+        matrix = [[0 for x in range(8)] for y in range(count)]
+
+
+        for i in enumerate(split_data):
+            matrix[index1][index2] = split_data[i[0]]
+
+            index2 += 1
+            if (i[0] + 1) % 8 == 0:
+                index1 += 1
+                index2 = 0
+
+        print(matrix)
