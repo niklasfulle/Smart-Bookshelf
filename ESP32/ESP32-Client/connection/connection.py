@@ -32,3 +32,26 @@ class connection:
         """ 
             resets the data of the connections object
         """
+
+    def send_message(
+        self,
+        msg: bytearray,
+        addressPort: tuple[str, int]
+    ) -> None:
+        """
+            -
+        """
+
+        self.sock.sendto(msg, addressPort)
+
+    def send_message_to_client(self, msg: bytearray) -> None:
+        """
+            -
+        """
+        self.send_message(msg, self.client)
+
+    def send_message_to_server(self, msg: bytearray) -> None:
+        """
+            -
+        """
+        self.send_message(msg, self.server)

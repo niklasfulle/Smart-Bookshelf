@@ -1,10 +1,10 @@
 """
-  -
+    -
 """
-# pylint: disable-msg=w0622
-from md4 import MD4  # noqa: E402
-from constants import MD4_Type
-from converter import convert_string_bytes_to_bytearray
+# pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,W0719
+from utils.md4 import MD4  # noqa: E402
+from utils.constants import MD4_Type
+from utils.converter import convert_string_bytes_to_bytearray
 
 def get_checksumme(data: bytearray, type: MD4_Type) -> bytearray:
     """the function receives a byte array and the type of the desired checksum
@@ -33,4 +33,3 @@ def get_checksumme(data: bytearray, type: MD4_Type) -> bytearray:
         return checksum
 
     return b""
-  

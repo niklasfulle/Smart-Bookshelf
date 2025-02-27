@@ -2,11 +2,11 @@
     -
 """
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,C0103,W0719
-from package import package
-from init_package import initialize_package
-from data_package import data_package
-from data_upload_package import data_upload_package
-from constants.constants import PACKAGE_MESSAGE_TYPE
+from protocol.constants.constants import PACKAGE_MESSAGE_TYPE
+from protocol.init_package import initialize_package
+from protocol.data_package import data_package
+from protocol.data_upload_package import data_upload_package
+from protocol.package import package
 
 def build_connection_request (
     receiver_id: int,
