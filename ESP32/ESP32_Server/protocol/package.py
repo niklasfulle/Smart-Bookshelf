@@ -3,8 +3,6 @@
 """
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,R0914,C0103,R0902,C0301
 
-from protocol.data_upload_package import data_upload_package
-from protocol.data_package import data_package
 from utils.converter import int_to_2byte_array, get_hex_string_arrs
 from utils.build_helper import get_bytearrays_size_sum
 from utils.checksumme import get_checksumme
@@ -27,7 +25,7 @@ class package:
     timestamp: bytearray
     confirmed_timestamp: bytearray
 
-    data: data_upload_package | data_package
+    data: bytearray
 
     checksumme: bytearray
 
@@ -42,7 +40,7 @@ class package:
         confirmed_sequence_number: bytearray,
         timestamp: bytearray,
         confirmed_timestamp: bytearray,
-        data: data_upload_package | data_package | bytearray | None,
+        data: bytearray,
     ) -> None:
         self.message_type = message_type
         self.receiver_id = receiver_id
@@ -51,13 +49,7 @@ class package:
         self.confirmed_sequence_number = confirmed_sequence_number
         self.timestamp = timestamp
         self.confirmed_timestamp = confirmed_timestamp
-
-        if isinstance(data, data_upload_package):
-            self.data = data.complete_data
-        elif isinstance(data, data_package):
-            self.data = data.complete_data
-        elif isinstance(data, bytearray):
-            self.data = data
+        self.data = data
 
         if data is not None:
             self.lenght = int_to_2byte_array(
