@@ -23,15 +23,19 @@ jobs:
       - name: Test with pytest
         run: |
           cd ESP32/ESP32_Client/tests
-          pytest --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
+          pytest --doctest-modules --junitxml=junit/test-results-client-${{ matrix.python-version }}.xml
           cd 
           ls
           cd work/Smart-Bookshelf/Smart-Bookshelf/ESP32/ESP32_Server/tests
-          pytest --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
+          pytest --doctest-modules --junitxml=junit/test-results-server-${{ matrix.python-version }}.xml
       - name: Upload pytest test results
         uses: actions/upload-artifact@v4
         with:
-          name: pytest-results-${{ matrix.python-version }}
-          path: junit/test-results-${{ matrix.python-version }}.xml
+          name: |
+            pytest-results-client-${{ matrix.python-version }}
+            pytest-results-server-${{ matrix.python-version }}
+          path: |
+            junit/test-results-client-${{ matrix.python-version }}.xml
+            junit/test-results-server-${{ matrix.python-version }}.xml
         # Use always() to always run this step to publish test results when there are test failures
         if: ${{ always() }}
