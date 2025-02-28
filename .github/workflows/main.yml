@@ -26,7 +26,7 @@ jobs:
           pytest --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
           cd 
           ls
-          cd ESP32/ESP32_Server/tests
+          cd work/Smart-Bookshelf/Smart-Bookshelf/ESP32/ESP32_Server/tests
           pytest --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
       - name: Upload pytest test results
         uses: actions/upload-artifact@v4
