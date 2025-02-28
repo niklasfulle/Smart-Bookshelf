@@ -24,10 +24,12 @@ jobs:
         run: |
           cd ESP32/ESP32_Client/tests
           pytest --doctest-modules --junitxml=junit/test-results-client-${{ matrix.python-version }}.xml
+          ls
           cd 
           ls
           cd work/Smart-Bookshelf/Smart-Bookshelf/ESP32/ESP32_Server/tests
           pytest --doctest-modules --junitxml=junit/test-results-server-${{ matrix.python-version }}.xml
+          ls
       - name: Upload pytest test results
         uses: actions/upload-artifact@v4
         with:
