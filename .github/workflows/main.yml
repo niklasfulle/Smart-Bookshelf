@@ -33,9 +33,7 @@ jobs:
       - name: Upload pytest test results
         uses: actions/upload-artifact@v4
         with:
-          name: |
-            pytest-results-client-${{ matrix.python-version }}
-            pytest-results-server-${{ matrix.python-version }}
+          name: pytest-results-${{ matrix.python-version }}
           path: |
             /home/runner/work/Smart-Bookshelf/Smart-Bookshelf/ESP32/ESP32_Client/tests/junit/test-results-client-${{ matrix.python-version }}.xml
             /home/runner/work/Smart-Bookshelf/Smart-Bookshelf/ESP32/ESP32_Client/tests/junit/test-results-server-${{ matrix.python-version }}.xml
