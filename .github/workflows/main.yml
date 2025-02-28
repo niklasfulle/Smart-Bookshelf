@@ -5,17 +5,24 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.9"]
 
     steps:
       - uses: actions/checkout@v4
       - name: Setup Python # Set Python version
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      # Install pip and pytest
+        run: |
+          sudo apt-get install build-essential checkinstall
+          sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
+
+          cd /usr/src
+          wget https://www.python.org/ftp/python/3.5.9/Python-3.5.9.tgz
+
+          sudo tar xzf Python-3.5.9.tgz
+
+          cd Python-3.5.9
+          sudo ./configure --enable-optimizations
+          sudo make altinstall
+
+          python --version
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -23,10 +30,10 @@ jobs:
       - name: Test with pytest
         run: |
           cd ESP32/ESP32_Client/tests
-          pytest tests.py --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
+          pytest --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
           cd 
           cd ESP32/ESP32_Server/tests
-          pytest tests.py --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
+          pytest --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
       - name: Upload pytest test results
         uses: actions/upload-artifact@v4
         with:
