@@ -14,7 +14,7 @@ jobs:
           sudo apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget
 
           cd /usr/src
-          wget https://www.python.org/ftp/python/3.5.9/Python-3.5.9.tgz
+          sudo wget https://www.python.org/ftp/python/3.5.9/Python-3.5.9.tgz
 
           sudo tar xzf Python-3.5.9.tgz
 
