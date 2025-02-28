@@ -63,6 +63,6 @@ def get_bytearrays_size_sum(array: bytearray) -> int:
 
     length = 0
     for bytearrays in enumerate(array):
-        length += len(bytearrays)
+        length += len(bytearrays[1])
 
     return length

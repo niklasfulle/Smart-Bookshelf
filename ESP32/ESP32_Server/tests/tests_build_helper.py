@@ -5,8 +5,8 @@
 import unittest
 import sys
 sys.path.append('../')
-from utils.converter import int_to_4byte_array
-from utils.build_helper import increment_sequence_number
+from utils.converter import int_to_2byte_array, int_to_4byte_array
+from utils.build_helper import increment_sequence_number, get_bytearrays_size_sum
 
 
 class TestBuildHelper(unittest.TestCase):
@@ -36,6 +36,42 @@ class TestBuildHelper(unittest.TestCase):
         result = increment_sequence_number(number)
         result = int.from_bytes(result, "little")
         self.assertEqual(result, 0)
+
+    def test_get_bytearrays_size_sum1(self):
+        """Tests whether the lengths of the arrays are added together correctly"""
+
+        result = get_bytearrays_size_sum(b"")
+        self.assertEqual(result, 0)
+
+    def test_get_bytearrays_size_sum2(self):
+        """Tests whether the lengths of the arrays are added together correctly"""
+
+        a = int_to_2byte_array(1)
+
+        value = [a]
+        result = get_bytearrays_size_sum(value)
+        self.assertEqual(result, 2)
+
+    def test_get_bytearrays_size_sum3(self):
+        """Tests whether the lengths of the arrays are added together correctly"""
+
+        a = int_to_4byte_array(1)
+
+        value = [a]
+        result = get_bytearrays_size_sum(value)
+        self.assertEqual(result, 4)
+
+    def test_get_bytearrays_size_sum4(self):
+        """Tests whether the lengths of the arrays are added together correctly"""
+
+        a = int_to_2byte_array(1)
+        b = int_to_2byte_array(2)
+        c = int_to_4byte_array(3)
+        d = int_to_4byte_array(4)
+
+        value = [a, b, c, d]
+        result = get_bytearrays_size_sum(value)
+        self.assertEqual(result, 12)
 
 if __name__ == "__main__":
     unittest.main()
