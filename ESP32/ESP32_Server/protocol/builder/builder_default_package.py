@@ -11,12 +11,12 @@ from protocol.package import package
 
 
 def build_connection_request(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
 ) -> package:
     """
     -
@@ -34,12 +34,12 @@ def build_connection_request(
 
 
 def build_connection_response(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
 ) -> package:
     """
     -
@@ -57,12 +57,12 @@ def build_connection_response(
 
 
 def build_connection_approve(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
 ) -> package:
     """
     -
@@ -80,12 +80,12 @@ def build_connection_approve(
 
 
 def build_version_request(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
 ) -> package:
     """
     -
@@ -103,12 +103,12 @@ def build_version_request(
 
 
 def build_version_response(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
     protocol_version: bytearray,
     config_version: bytearray,
     control_version: bytearray,
@@ -129,12 +129,12 @@ def build_version_response(
 
 
 def build_status_request(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
 ) -> package:
     """
     -
@@ -152,12 +152,12 @@ def build_status_request(
 
 
 def build_status_response(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
 ) -> package:
     """
     -
@@ -175,12 +175,12 @@ def build_status_response(
 
 
 def build_disconnection_request(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
 ) -> package:
     """
     -
@@ -198,12 +198,12 @@ def build_disconnection_request(
 
 
 def build_disconnection_response(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
 ) -> package:
     """
     -
@@ -221,12 +221,12 @@ def build_disconnection_response(
 
 
 def build_sleep_request(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
 ) -> package:
     """
     -
@@ -244,12 +244,12 @@ def build_sleep_request(
 
 
 def build_sleep_response(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
 ) -> package:
     """
     -
@@ -267,12 +267,12 @@ def build_sleep_response(
 
 
 def build_reboot_request(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
 ) -> package:
     """
     -
@@ -290,12 +290,12 @@ def build_reboot_request(
 
 
 def build_reboot_response(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
 ) -> package:
     """
     -
@@ -313,13 +313,13 @@ def build_reboot_response(
 
 
 def build_data(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
-    data: data_package,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
+    data: bytearray,
 ) -> package:
     """
     -
@@ -337,13 +337,13 @@ def build_data(
 
 
 def build_upload_data(
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
-    data: data_upload_package,
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
+    data: bytearray,
 ) -> package:
     """
     -

@@ -21,14 +21,14 @@ from utils.converter import int_to_2byte_array, int_to_4byte_array
 
 def initialize_package(
     message_type: PACKAGE_MESSAGE_TYPE,
-    receiver_id: int,
-    sender_id: int,
-    sequence_number: int | bytearray,
-    confirmed_sequence_number: int | bytearray,
-    timestamp: int | bytearray,
-    confirmed_timestamp: int | bytearray,
-    data: data_upload_package | data_package | bytearray | None,
-) -> package | None:
+    receiver_id: bytearray,
+    sender_id: bytearray,
+    sequence_number: bytearray,
+    confirmed_sequence_number: bytearray,
+    timestamp: bytearray,
+    confirmed_timestamp: bytearray,
+    data: bytearray,
+) -> package:
     """
     -
     """
@@ -84,7 +84,7 @@ def initialize_package(
 
 
 def initialize_data_package(
-    message_type: DATA_MESSAGE_TYPE, data: bytearray | None
+    message_type: DATA_MESSAGE_TYPE, data: bytearray
 ) -> data_package:
     """
     -
@@ -96,7 +96,7 @@ def initialize_data_package(
 
 
 def initialize_data_upload_package(
-    message_type: DATA_UPLOAD_MESSAGE_TYPE, data: bytearray | None
+    message_type: DATA_UPLOAD_MESSAGE_TYPE, data: bytearray
 ) -> data_upload_package:
     """
     -

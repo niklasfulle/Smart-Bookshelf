@@ -12,7 +12,7 @@ from protocol.parser.parser_data_upload_package import parse_data_upload_package
 
 def parse_package (
     data: bytearray
-) -> package | None:
+) -> package:
     """
         - 
     """
