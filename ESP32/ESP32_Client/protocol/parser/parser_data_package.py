@@ -3,7 +3,7 @@
 """
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,C0103,W0719
 from data_package import data_package
-from utils.parse_helpers import parse_data_start_end
+from ESP32_Client.utils.parse_helper import parse_data_start_end
 
 def parse_data_package (
     data: bytearray
