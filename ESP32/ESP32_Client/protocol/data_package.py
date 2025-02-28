@@ -14,7 +14,7 @@ class data_package:
 
     length: bytearray
     message_type: bytearray
-    data: bytearray | None
+    data: bytearray
     complete_data: bytearray
 
     def __init__(self, message_type: bytearray, data: bytearray | None) -> None:
