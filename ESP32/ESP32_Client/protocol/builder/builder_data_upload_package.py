@@ -15,26 +15,29 @@ def build_data_upload_package_data(
     -
     """
 
-    return initialize_data_upload_package(DATA_UPLOAD_MESSAGE_TYPE.DataUp, (package_number + datapackage))
+    return initialize_data_upload_package(
+        DATA_UPLOAD_MESSAGE_TYPE.DataUp, (package_number + datapackage)
+    )
 
 
-def build_data_upload_package_data_start(
-    datatype: bytearray
-) -> data_upload_package:
+def build_data_upload_package_data_start(datatype: bytearray) -> data_upload_package:
     """
     -
     """
 
-    return initialize_data_upload_package(DATA_UPLOAD_MESSAGE_TYPE.DataUpStart, datatype)
+    return initialize_data_upload_package(
+        DATA_UPLOAD_MESSAGE_TYPE.DataUpStart, datatype
+    )
 
 
-def build_data_upload_package_data_end(
-) -> data_upload_package:
+def build_data_upload_package_data_end() -> data_upload_package:
     """
     -
     """
 
-    return initialize_data_upload_package(DATA_UPLOAD_MESSAGE_TYPE.DataUpCompleted, None)
+    return initialize_data_upload_package(
+        DATA_UPLOAD_MESSAGE_TYPE.DataUpCompleted, None
+    )
 
 
 def build_data_upload_package_data_error(
@@ -47,8 +50,7 @@ def build_data_upload_package_data_error(
     return initialize_data_upload_package(DATA_UPLOAD_MESSAGE_TYPE.DataUpError, error)
 
 
-def build_data_upload_package_data_cancel(
-) -> data_upload_package:
+def build_data_upload_package_data_cancel() -> data_upload_package:
     """
     -
     """

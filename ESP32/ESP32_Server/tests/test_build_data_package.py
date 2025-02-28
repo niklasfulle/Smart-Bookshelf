@@ -53,7 +53,9 @@ class TestBuildDataPackage:
         """
         -
         """
-        package = build_data_package_books((int_to_2byte_array(5) + int_to_2byte_array(7) + int_to_2byte_array(20)))
+        package = build_data_package_books(
+            (int_to_2byte_array(5) + int_to_2byte_array(7) + int_to_2byte_array(20))
+        )
 
         assert int.from_bytes(package.lenght, "little") == 10
         assert int.from_bytes(package.message_type, "little") == 5004

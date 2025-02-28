@@ -23,11 +23,9 @@ from protocol.builder.builder_default_package import (
     build_data,
     build_upload_data,
 )
-from protocol.builder.builder_data_package import (
-    build_data_package_mode
-)
+from protocol.builder.builder_data_package import build_data_package_mode
 from protocol.builder.builder_data_upload_package import (
-    build_data_upload_package_data_start
+    build_data_upload_package_data_start,
 )
 
 from utils.build_helper import (
@@ -338,7 +336,9 @@ class TestBuildDefaultPackage:
         """
         -
         """
-        data_upload_package = build_data_upload_package_data_start(bytearray(b"\x00\x00"))
+        data_upload_package = build_data_upload_package_data_start(
+            bytearray(b"\x00\x00")
+        )
 
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
