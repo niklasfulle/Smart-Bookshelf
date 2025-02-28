@@ -17,7 +17,7 @@ class data_package:
     data: bytearray
     complete_data: bytearray
 
-    def __init__(self, message_type: bytearray, data: bytearray | None) -> None:
+    def __init__(self, message_type: bytearray, data: bytearray) -> None:
         self.message_type = message_type
         self.data = data
 
