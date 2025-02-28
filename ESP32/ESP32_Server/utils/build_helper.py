@@ -1,11 +1,13 @@
 """
-    -
+-
 """
+
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,W0719
 import time
 import random
 
 from utils.converter import int_to_4byte_array
+
 
 def get_timestamp() -> bytearray:
     """Returns the current system time in s since 1970 as 4 byte
@@ -31,7 +33,7 @@ def get_random_sequence_number() -> bytearray:
 
 
 def increment_sequence_number(number: bytearray) -> bytearray:
-    """Increases the passed sequence number by one and if the value is greater than 4294967295, 
+    """Increases the passed sequence number by one and if the value is greater than 4294967295,
         counting starts again at 0
 
     Args:

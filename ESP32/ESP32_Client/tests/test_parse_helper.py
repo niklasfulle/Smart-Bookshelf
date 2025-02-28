@@ -1,17 +1,20 @@
 """
-    -
+-
 """
+
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,R0914,C0103,R0902,C0413,C0301
 import sys
-sys.path.append('../')
+
+sys.path.append("../")
 from utils.converter import get_hex_string
 from utils.parse_helper import get_data_string_array, parse_data_start_end
 
 
 class TestParseHelper:
     """
-        -
+    -
     """
+
     def test_parse_data_start_end1(self):
         """Tests whether the data is read in correctly"""
 
@@ -64,4 +67,7 @@ class TestParseHelper:
 
         result2 = get_hex_string(result)
 
-        assert result2 == "0x74, 0x65, 0x63, 0x44, 0x53, 0x54, 0x57, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f"
+        assert (
+            result2
+            == "0x74, 0x65, 0x63, 0x44, 0x53, 0x54, 0x57, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f, 0x5f"
+        )

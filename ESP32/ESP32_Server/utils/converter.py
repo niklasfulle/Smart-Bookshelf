@@ -1,8 +1,10 @@
 """
 -
 """
+
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,W0719
 import binascii
+
 
 def string_to_byte_array(string: str) -> bytearray:
     """Convert string to bytes
@@ -75,9 +77,10 @@ def convert_string_bytes_to_bytearray(string_with_bytes: str, type: int) -> byte
 
         string = " ".join(test)
 
-        return bytearray(binascii.unhexlify(string.replace(' ', '')))
+        return bytearray(binascii.unhexlify(string.replace(" ", "")))
     elif type == 2:
-        return bytearray(binascii.unhexlify(string_with_bytes.replace(' ', '')))
+        return bytearray(binascii.unhexlify(string_with_bytes.replace(" ", "")))
+
 
 def get_hex_string(byte_string: bytearray) -> str:
     """returns a byte array in string hex format
@@ -103,6 +106,7 @@ def get_hex_string(byte_string: bytearray) -> str:
     string = ", ".join(split_string)
 
     return string
+
 
 def get_hex_string_arrs(byte_string: bytearray) -> list[str]:
     """returns a byte array in string hex format

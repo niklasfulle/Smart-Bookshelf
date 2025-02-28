@@ -1,8 +1,10 @@
 """
-    -
+-
 """
+
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,C0116,C0103,C0415
 import struct
+
 
 class MD4:
     """An implementation of the MD4 hash algorithm."""
@@ -51,6 +53,7 @@ class MD4:
     def hexdigest(self):
         """:return: The final hash value as a hexstring."""
         return "".join("{:02x}".format(value) for value in self.bytes())
+
     def _process(self, chunks):
         for chunk in chunks:
             X, h = list(struct.unpack("<16I", chunk)), self.h.copy()

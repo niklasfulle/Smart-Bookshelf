@@ -1,6 +1,7 @@
 """
-    -
+-
 """
+
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,C0103,W0719
 from protocol.constants.constants import PACKAGE_MESSAGE_TYPE
 from protocol.init_package import initialize_package
@@ -8,16 +9,17 @@ from protocol.data_package import data_package
 from protocol.data_upload_package import data_upload_package
 from protocol.package import package
 
-def build_connection_request (
+
+def build_connection_request(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.ConnRequest,
@@ -27,19 +29,20 @@ def build_connection_request (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None
+        None,
     )
 
 
-def build_connection_response (
+def build_connection_response(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,) -> package:
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
+) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.ConnResponse,
@@ -49,20 +52,20 @@ def build_connection_response (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None
+        None,
     )
 
 
-def build_connection_approve (
+def build_connection_approve(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.ConnApprove,
@@ -72,20 +75,20 @@ def build_connection_approve (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None
+        None,
     )
 
 
-def build_version_request (
+def build_version_request(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.VerRequest,
@@ -95,23 +98,23 @@ def build_version_request (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None
+        None,
     )
 
 
-def build_version_response (
+def build_version_response(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
     protocol_version: bytearray,
     config_version: bytearray,
-    control_version: bytearray
+    control_version: bytearray,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.VerResponse,
@@ -121,20 +124,20 @@ def build_version_response (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        (protocol_version + config_version + control_version)
+        (protocol_version + config_version + control_version),
     )
 
 
-def build_status_request (
+def build_status_request(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.StatusRequest,
@@ -144,20 +147,20 @@ def build_status_request (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None
+        None,
     )
 
 
-def build_status_response (
+def build_status_response(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.StatusResponse,
@@ -167,20 +170,20 @@ def build_status_response (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None
+        None,
     )
 
 
-def build_disconnection_request (
+def build_disconnection_request(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.DiscRequest,
@@ -190,20 +193,20 @@ def build_disconnection_request (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None
+        None,
     )
 
 
-def build_disconnection_response (
+def build_disconnection_response(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.DiscResponse,
@@ -213,20 +216,20 @@ def build_disconnection_response (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None
+        None,
     )
 
 
-def build_sleep_request (
+def build_sleep_request(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.SleepRequest,
@@ -236,20 +239,20 @@ def build_sleep_request (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None
+        None,
     )
 
 
-def build_sleep_response (
+def build_sleep_response(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.SleepResponse,
@@ -259,20 +262,20 @@ def build_sleep_response (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None
+        None,
     )
 
 
-def build_reboot_request (
+def build_reboot_request(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.RebootRequest,
@@ -282,20 +285,20 @@ def build_reboot_request (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None
+        None,
     )
 
 
-def build_reboot_response (
+def build_reboot_response(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.RebootResponse,
@@ -305,21 +308,21 @@ def build_reboot_response (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None
+        None,
     )
 
 
-def build_data (
+def build_data(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
-    data: data_package
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
+    data: data_package,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.Data,
@@ -329,21 +332,21 @@ def build_data (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        data
+        data,
     )
 
 
-def build_upload_data  (
+def build_upload_data(
     receiver_id: int,
     sender_id: int,
-    sequence_number: int,
-    confirmed_sequence_number: int,
-    timestamp: int,
-    confirmed_timestamp: int,
-    data: data_upload_package
+    sequence_number: int | bytearray,
+    confirmed_sequence_number: int | bytearray,
+    timestamp: int | bytearray,
+    confirmed_timestamp: int | bytearray,
+    data: data_upload_package,
 ) -> package:
     """
-        - 
+    -
     """
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.DataUpload,
@@ -353,5 +356,5 @@ def build_upload_data  (
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        data
+        data,
     )

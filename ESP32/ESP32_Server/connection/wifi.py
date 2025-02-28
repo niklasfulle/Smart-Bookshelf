@@ -1,6 +1,7 @@
 """
-    -
+-
 """
+
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,R1705
 import time
 
@@ -8,9 +9,10 @@ import network  # noqa: F401 # type: ignore
 from machine import Pin  # noqa: F401 # type: ignore
 from network import WLAN  # noqa: F401 # type: ignore
 
+
 # Function to connect to a specific wifi network
 def wifi(essid, password, timeout):
-    """ der esp32 verbindet sich mit dem WLAN
+    """der esp32 verbindet sich mit dem WLAN
 
     Args:
         essid: die SSID vom WLAN
@@ -45,7 +47,7 @@ def wifi(essid, password, timeout):
                 return False
 
         print("Successfully connected to " + essid)
-        #print(wlan.ifconfig())
+        # print(wlan.ifconfig())
         return True
     else:
         print("Already connected")
