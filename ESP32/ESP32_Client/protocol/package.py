@@ -86,28 +86,58 @@ class package:
                 + 8
             )
 
+        complete_data: bytearray
         if data is not None:
-            self.complete_data = (
+            complete_data = (
                 self.lenght
-                + message_type
-                + receiver_id
-                + sender_id
-                + sequence_number
-                + confirmed_sequence_number
-                + data
+                + self.message_type
+                + self.receiver_id
+                + self.sender_id
+                + self.sequence_number
+                + self.confirmed_sequence_number
+                + self.timestamp
+                + self.confirmed_timestamp
+                + self.data
             )
         else:
-            self.complete_data = (
+            complete_data = (
                 self.lenght
-                + message_type
-                + receiver_id
-                + sender_id
-                + sequence_number
-                + confirmed_sequence_number
+                + self.message_type
+                + self.receiver_id
+                + self.sender_id
+                + self.sequence_number
+                + self.confirmed_sequence_number
+                + self.timestamp
+                + self.confirmed_timestamp
             )
 
-        self.checksumme = get_checksumme(self.complete_data, 1)
-        self.complete_data = self.complete_data + self.checksumme
+        checksumme: bytearray
+        if data is not None:
+            checksumme = get_checksumme((
+                    self.lenght
+                    + self.message_type
+                    + self.receiver_id
+                    + self.sender_id
+                    + self.sequence_number
+                    + self.confirmed_sequence_number
+                    + self.timestamp
+                    + self.confirmed_timestamp
+                    + self.data
+                ), 1)
+        else:
+            checksumme = get_checksumme((
+                    self.lenght
+                    + self.message_type
+                    + self.receiver_id
+                    + self.sender_id
+                    + self.sequence_number
+                    + self.confirmed_sequence_number
+                    + self.timestamp
+                    + self.confirmed_timestamp
+                ), 1)
+
+        self.complete_data = complete_data + checksumme
+
 
     def print_data(self) -> None:
         """
