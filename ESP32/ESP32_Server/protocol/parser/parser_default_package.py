@@ -36,15 +36,15 @@ def parse_package (
 
         if len(data) > 36:
             data: bytearray = parse_data_start_end(data_str, length - 8, 28)
-
+            data_str: str = get_data_string_array(data)
             message_type_int = int.from_bytes(message_type, "little")
 
             if message_type_int == 5000:
                 data_package_data: data_package = parse_data_package(data_str)
-                data = data_package_data
+                data = data_package_data.complete_data
             elif message_type_int == 6000:
                 data_upload_package_data: data_upload_package = parse_data_upload_package(data_str)
-                data = data_upload_package_data
+                data = data_upload_package_data.complete_data
         else:
             data = None
 
