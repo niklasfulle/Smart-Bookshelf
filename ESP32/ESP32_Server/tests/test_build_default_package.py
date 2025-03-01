@@ -337,7 +337,7 @@ class TestBuildDefaultPackage:
         -
         """
         data_upload_package = build_data_upload_package_data_start(
-            bytearray(b"\x00\x00")
+            int_to_2byte_array(1)
         )
 
         sequence_number = get_random_sequence_number()
