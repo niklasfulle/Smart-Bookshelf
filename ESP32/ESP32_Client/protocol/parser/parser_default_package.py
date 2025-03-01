@@ -37,7 +37,7 @@ def parse_package (
         if len(data) > 36:
             data: bytearray = parse_data_start_end(data_str, length - 8, 28)
 
-            message_type_int = int.from_bytes(message_type)
+            message_type_int = int.from_bytes(message_type, "little")
 
             if message_type_int == 5000:
                 data_package_data: data_package = parse_data_package(data_str)
