@@ -18,7 +18,7 @@ def parse_package (
     """
     data_str: str = get_data_string_array(data)
 
-    length = int.from_bytes(parse_data_start_end(data_str, 1, 0))
+    length = int.from_bytes(parse_data_start_end(data_str, 1, 0), "little")
 
     checksum = parse_data_start_end(data_str, length, length - 8)
 
