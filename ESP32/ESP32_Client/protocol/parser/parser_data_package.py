@@ -3,15 +3,17 @@
 """
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,C0103,W0719
 from protocol.data_package import data_package
-from utils.parse_helper import parse_data_start_end
+from utils.parse_helper import parse_data_start_end, get_data_string_array
 
 def parse_data_package (
-    data: str
+    data: bytearray
 ) -> data_package:
     """
         - 
     """
-    message_type: bytearray = parse_data_start_end(data, 4, 2)
-    package_data: bytearray = parse_data_start_end(data, len(data), 4)
+    data_str: str = get_data_string_array(data)
 
-    return data_package(message_type, package_data)
+    message_type: bytearray = parse_data_start_end(data_str, 4, 2)
+    upload_package_data: bytearray = parse_data_start_end(data_str, len(data), 4)
+
+    return data_package(message_type, upload_package_data)

@@ -14,6 +14,9 @@ data_upload_package = build_data_upload_package_data_start(
 
 sequence_number = get_random_sequence_number()
 timestamp = get_timestamp()
+
+print(data_upload_package.complete_data)
+
 package = build_upload_data(
             10,
             20,
@@ -24,6 +27,8 @@ package = build_upload_data(
             data_upload_package.complete_data,
         )
 
+print(len(package.complete_data))
+
 parsed_package = parse_package(package.complete_data)
 
-print(len(parsed_package.complete_data))
+print(len(parsed_package.data))
