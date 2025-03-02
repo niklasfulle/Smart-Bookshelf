@@ -10,6 +10,8 @@ class ledstripe:
     Returns:
         _type_: _description_
     """
-
-    def __init__(self) -> None:
-        return None
+    order: int
+    length: int
+    def __init__(self, order, length) -> None:
+        self.order = order
+        self.length = length

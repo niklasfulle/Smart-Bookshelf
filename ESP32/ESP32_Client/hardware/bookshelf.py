@@ -14,10 +14,9 @@ class bookshelf:
     """
 
     name: str
-    ip: str
     ledstripes: list[ledstripe]
 
-    def __init__(self, name, ip, ledstrip_info) -> None:
+    def __init__(self, name, ip) -> None:
         self.name = name
         self.ip = ip
         self.ledstripes = []
