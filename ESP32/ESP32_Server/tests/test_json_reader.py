@@ -15,31 +15,24 @@ class TestJsonReader:
     """
     -
     """
-    path1: str = "/Users/niklasfulle/Code/Smarts-Bookshelf/ESP32/ESP32_Client/tests/test_configs/test_config1.json"
-    path2: str = "/Users/niklasfulle/Code/Smart-Bookshelf/ESP32/ESP32_Client/tests/test_configs/test_config2.json"
-    path3: str = "/Users/niklasfulle/Code/Smart-Bookshelf/ESP32/ESP32_Client/tests/test_configs/test_config3.json"
-    path4: str = "/Users/niklasfulle/Code/Smart-Bookshelf/ESP32/ESP32_Client/tests/test_configs/test_config4.json"
+    file1: str = ""
+    file2: str = "{"
+    file3: str = '{"id": 10,"name": "Client_0","connection": { "ip": "127.0.0.1", "port": 40000 },"server": {"id": 20,"name": "Server","ip": "127.0.0.1","port": 50000}}'
 
     def test_json_data_reader1(self):
         """Tests whether the checksum is correct"""
-        print(self.path1)
-        with pytest.raises(FileNotFoundError):
-            json_data_reader(self.path1, [])
+        with pytest.raises(json.decoder.JSONDecodeError):
+            json_data_reader(self.file1, [], 2)
 
     def test_json_data_reader2(self):
         """Tests whether the checksum is correct"""
         with pytest.raises(json.decoder.JSONDecodeError):
-            json_data_reader(self.path2, [])
+            json_data_reader(self.file2, [], 2)
 
     def test_json_data_reader3(self):
         """Tests whether the checksum is correct"""
-        with pytest.raises(json.decoder.JSONDecodeError):
-            json_data_reader(self.path3, [])
 
-    def test_json_data_reader4(self):
-        """Tests whether the checksum is correct"""
-
-        data = json_data_reader(self.path4, [])
+        data = json_data_reader(self.file3, [], 2)
         assert data == {
                             "id": 10,
                             "name": "Client_0",
@@ -52,14 +45,14 @@ class TestJsonReader:
                             }
                         }
 
+    def test_json_data_reader4(self):
+        """Tests whether the checksum is correct"""
+
+        data = json_data_reader(self.file3, ["name"], 2)
+        assert data == "Client_0"
+
     def test_json_data_reader5(self):
         """Tests whether the checksum is correct"""
 
-        data = json_data_reader(self.path4, ["name"])
-        assert data == "Client_0"
-
-    def test_json_data_reader6(self):
-        """Tests whether the checksum is correct"""
-
-        data = json_data_reader(self.path4, ["connection", "ip"])
+        data = json_data_reader(self.file3, ["connection", "ip"], 2)
         assert data == "127.0.0.1"
