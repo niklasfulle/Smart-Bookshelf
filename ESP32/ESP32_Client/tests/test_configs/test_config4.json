@@ -1,0 +1,11 @@
+{
+  "id": 10,
+  "name": "Client_0",
+  "connection": { "ip": "127.0.0.1", "port": 40000 },
+  "server": {
+    "id": 20,
+    "name": "Server",
+    "ip": "127.0.0.1",
+    "port": 50000
+  }
+}

@@ -9,4 +9,5 @@ client_file: str = "/Users/niklasfulle/Code/Smart-Bookshelf/ESP32/ESP32_Client/c
 bookshelf_file: str = "/Users/niklasfulle/Code/Smart-Bookshelf/ESP32/ESP32_Client/configs/bookshelf.json"
 config_file: str = "/Users/niklasfulle/Code/Smart-Bookshelf/ESP32/ESP32_Client/configs/config.json"
 
-data = json_data_reader(bookshelf_file, [""])
+data = json_data_reader(client_file, ["connection", "ip"])
+print(data)
