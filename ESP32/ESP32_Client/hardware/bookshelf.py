@@ -3,7 +3,7 @@
 """
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,C0103,W0719
 
-from ledstripe import ledstripe
+from hardware.ledstripe import ledstripe
 
 
 class bookshelf:
@@ -14,9 +14,13 @@ class bookshelf:
     """
 
     name: str
-    ledstripes: list[ledstripe]
+    ip: str
+    ledstripes: ledstripe
 
-    def __init__(self, name, ip) -> None:
+    def __init__(self, name: str, ip: str, ledstripe_data) -> None:
         self.name = name
         self.ip = ip
         self.ledstripes = []
+
+        for idx, ele in enumerate(ledstripe_data):
+            self.ledstripes.insert(idx, ledstripe(ele["order"], ele["length"]))
