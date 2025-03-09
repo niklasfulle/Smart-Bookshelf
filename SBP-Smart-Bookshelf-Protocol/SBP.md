@@ -104,7 +104,7 @@
 | 24 - 27  | Bestätigter Zeitstempel  |
 | 28 - 29  | Protokollversion         |
 | 30 - 31  | Configversion            |
-| 32 - 33  | Steuerungsversion        |
+| 32 - 33  | Bookshelfsversion        |
 | 34 - 42  | Sicherheitscode          |
 
 <br>
@@ -153,7 +153,7 @@
 | 28 - 35  | Sicherheitscode          |
 
 <br>
-<b>Schlafaufforderungsnachricht (Sleep Request Message)</b>
+<b>Trennaufforderungsnachricht (Disconnect Response Message)</b>
 
 | Byte Nr. | Inhalt                   |
 | :------: | :----------------------- |
@@ -168,12 +168,57 @@
 | 28 - 35  | Sicherheitscode          |
 
 <br>
-<b>Neustartaufforderungsnachricht (Reboot Request Message)</b>
+<b>Schlafaufforderungsnachricht (Sleep Request Message)</b>
 
 | Byte Nr. | Inhalt                   |
 | :------: | :----------------------- |
 | 00 - 01  | Nachrichtenlänge = 36    |
 | 02 - 03  | Nachrichtentyp = 3090    |
+| 04 - 07  | Empfängerkennung         |
+| 08 - 11  | Absenderkennung          |
+| 12 - 15  | Sequenznummer            |
+| 16 - 19  | Bestätigte Sequenznummer |
+| 20 - 23  | Zeitstempel              |
+| 24 - 27  | Bestätigter Zeitstempel  |
+| 28 - 35  | Sicherheitscode          |
+
+<br>
+<b>Schlafaufforderungsnachricht (Sleep Response Message)</b>
+
+| Byte Nr. | Inhalt                   |
+| :------: | :----------------------- |
+| 00 - 01  | Nachrichtenlänge = 36    |
+| 02 - 03  | Nachrichtentyp = 3100    |
+| 04 - 07  | Empfängerkennung         |
+| 08 - 11  | Absenderkennung          |
+| 12 - 15  | Sequenznummer            |
+| 16 - 19  | Bestätigte Sequenznummer |
+| 20 - 23  | Zeitstempel              |
+| 24 - 27  | Bestätigter Zeitstempel  |
+| 28 - 35  | Sicherheitscode          |
+
+<br>
+<b>Neustartaufforderungsnachricht (Reboot Request Message)</b>
+
+| Byte Nr. | Inhalt                   |
+| :------: | :----------------------- |
+| 00 - 01  | Nachrichtenlänge = 36    |
+| 02 - 03  | Nachrichtentyp = 3110    |
+| 04 - 07  | Empfängerkennung         |
+| 08 - 11  | Absenderkennung          |
+| 12 - 15  | Sequenznummer            |
+| 16 - 19  | Bestätigte Sequenznummer |
+| 20 - 23  | Zeitstempel              |
+| 24 - 27  | Bestätigter Zeitstempel  |
+| 28 - 35  | Sicherheitscode          |
+
+<br>
+<b>Neustartaufforderungsnachricht (Reboot Response Message)</b>
+
+| Byte Nr. | Inhalt                   |
+| :------: | :----------------------- |
+| 00 - 01  | Nachrichtenlänge = 36    |
+| 02 - 03  | Nachrichtentyp = 3120    |
 | 04 - 07  | Empfängerkennung         |
 | 08 - 11  | Absenderkennung          |
 | 12 - 15  | Sequenznummer            |
