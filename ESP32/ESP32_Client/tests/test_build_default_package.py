@@ -33,13 +33,16 @@ from utils.build_helper import (
     get_timestamp,
     increment_sequence_number,
 )
-from utils.converter import int_to_2byte_array
+from utils.converter import int_to_1byte_array, int_to_2byte_array
+from utils.json_data_reader import json_data_reader
 
 
 class TestBuildDefaultPackage:
     """
     -
     """
+
+    file1: str = '{"protocol_version_major": 1,"protocol_version_minor": 0,"client_version_major": 1,"client_version_minor": 0,"bookshelf_version_major": 1,"bookshelf_version_minor": 0}'
 
     def test_build_connection_request(self) -> None:
         """
@@ -119,7 +122,6 @@ class TestBuildDefaultPackage:
         """
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
-        placeholder = int_to_2byte_array(0)
         package = build_version_response(
             10,
             20,
@@ -127,9 +129,9 @@ class TestBuildDefaultPackage:
             sequence_number,
             timestamp,
             timestamp,
-            placeholder,
-            placeholder,
-            placeholder,
+            (int_to_1byte_array(json_data_reader(self.file1, ["protocol_version_major"], 2)) + int_to_1byte_array(json_data_reader(self.file1, ["protocol_version_minor"], 2))),
+            (int_to_1byte_array(json_data_reader(self.file1, ["client_version_major"], 2)) + int_to_1byte_array(json_data_reader(self.file1, ["client_version_minor"], 2))),
+            (int_to_1byte_array(json_data_reader(self.file1, ["bookshelf_version_major"], 2)) + int_to_1byte_array(json_data_reader(self.file1, ["bookshelf_version_minor"], 2))),
         )
 
         assert int.from_bytes(package.lenght, "little") == 42
@@ -141,10 +143,14 @@ class TestBuildDefaultPackage:
         assert package.confirmed_sequence_number == sequence_number
         assert package.timestamp == timestamp
         assert package.confirmed_timestamp == timestamp
-        assert package.data == bytearray(b"\x00\x00\x00\x00\x00\x00")
-        assert int.from_bytes(package.data[0:2], "little") == 0
-        assert int.from_bytes(package.data[2:4], "little") == 0
-        assert int.from_bytes(package.data[4:6], "little") == 0
+        assert package.data == bytearray(b"\x01\x00\x01\x00\x01\x00")
+        assert package.data[0:2] == bytearray(b'\x01\x00')
+        assert int.from_bytes(package.data[0:1], "little") == 1
+        assert int.from_bytes(package.data[1:2], "little") == 0
+        assert int.from_bytes(package.data[2:3], "little") == 1
+        assert int.from_bytes(package.data[3:4], "little") == 0
+        assert int.from_bytes(package.data[4:5], "little") == 1
+        assert int.from_bytes(package.data[5:6], "little") == 0
 
     def test_build_status_request(self) -> None:
         """

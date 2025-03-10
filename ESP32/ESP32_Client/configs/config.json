@@ -1,1 +1,8 @@
-{}
+{
+  "protocol_version_major": 1,
+  "protocol_version_minor": 0,
+  "client_version_major": 1,
+  "client_version_minor": 0,
+  "bookshelf_version_major": 1,
+  "bookshelf_version_minor": 0
+}
