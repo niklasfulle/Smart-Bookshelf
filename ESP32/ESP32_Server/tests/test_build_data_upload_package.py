@@ -35,6 +35,7 @@ class TestBuildDataUploadPackage:
 
         assert int.from_bytes(package.lenght, "little") == 22
         assert int.from_bytes(package.message_type, "little") == 6002
+        assert int.from_bytes(package.data[0:2], "little") == 1
 
     def test_build_data_upload_package_data_start(self) -> None:
         """
@@ -62,6 +63,7 @@ class TestBuildDataUploadPackage:
 
         assert int.from_bytes(package.lenght, "little") == 6
         assert int.from_bytes(package.message_type, "little") == 6004
+        assert int.from_bytes(package.data[0:2], "little") == 0
 
     def test_build_data_upload_package_data_cancel(self) -> None:
         """

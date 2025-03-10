@@ -25,12 +25,12 @@ class TestBookshelf:
         bookshelf_name = json_data_reader(self.bookshelf_config, ["name"], 2)
         shelving_units = json_data_reader(self.bookshelf_config, ["shelving_units"], 2)
 
-        bookshelf_objet: bookshelf = bookshelf(bookshelf_name, ip, shelving_units)
+        bookshelf_object: bookshelf = bookshelf(bookshelf_name, ip, shelving_units)
 
-        assert bookshelf_objet.name == "Bookshelf_Name1"
-        assert bookshelf_objet.ip == "127.0.0.1"
-        assert len(bookshelf_objet.ledstripes) == 8
-        assert bookshelf_objet.ledstripes[0].order == 1
-        assert bookshelf_objet.ledstripes[0].length == 50
-        assert bookshelf_objet.ledstripes[7].order == 8
-        assert bookshelf_objet.ledstripes[7].length == 50
+        assert bookshelf_object.name == "Bookshelf_Name1"
+        assert bookshelf_object.ip == "127.0.0.1"
+        assert len(bookshelf_object.ledstripes) == 8
+        assert bookshelf_object.ledstripes[0].order == 1
+        assert bookshelf_object.ledstripes[0].length == 50
+        assert bookshelf_object.ledstripes[7].order == 8
+        assert bookshelf_object.ledstripes[7].length == 50
