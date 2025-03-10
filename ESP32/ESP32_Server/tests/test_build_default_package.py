@@ -142,6 +142,9 @@ class TestBuildDefaultPackage:
         assert package.timestamp == timestamp
         assert package.confirmed_timestamp == timestamp
         assert package.data == bytearray(b"\x00\x00\x00\x00\x00\x00")
+        assert int.from_bytes(package.data[0:2], "little") == 0
+        assert int.from_bytes(package.data[2:4], "little") == 0
+        assert int.from_bytes(package.data[4:6], "little") == 0
 
     def test_build_status_request(self) -> None:
         """
@@ -331,6 +334,9 @@ class TestBuildDefaultPackage:
         assert package.timestamp == timestamp
         assert package.confirmed_timestamp == timestamp
         assert package.data == data_package.complete_data
+        assert int.from_bytes(package.data[0:2], "little") == 6
+        assert int.from_bytes(package.data[2:4], "little") == 5020
+        assert int.from_bytes(package.data[4:6], "little") == 1
 
     def test_build_upload_data(self) -> None:
         """
@@ -362,3 +368,6 @@ class TestBuildDefaultPackage:
         assert package.timestamp == timestamp
         assert package.confirmed_timestamp == timestamp
         assert package.data == data_upload_package.complete_data
+        assert int.from_bytes(package.data[0:2], "little") == 6
+        assert int.from_bytes(package.data[2:4], "little") == 6001
+        assert int.from_bytes(package.data[4:6], "little") == 1
