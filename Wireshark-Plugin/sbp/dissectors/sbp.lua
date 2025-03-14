@@ -14,7 +14,7 @@ local CRC_OPTION = nil
 
 -- print("#######################")
 
-local p_sbp = Proto("sbp", "RaSTA Smart Bookshelf Protokoll")
+local p_sbp = Proto("sbp", "Smart Bookshelf Protokoll")
 
 -- Register preferences --
 

@@ -1,10 +1,10 @@
 local my_info ={
-    version = "1.1.0",
+    version = "1.3.0",
     description = "Dissector to parse the (SBP-D) Smart Bookshelf Data Protocol.",
     repository = ""
 }
 
-set_plugin_info(info)
+set_plugin_info(my_info)
 
 local p_sbp_d = Proto("sbp-d", "Smart Bookshelf Data Protocol")
 
@@ -31,11 +31,11 @@ p_sbp_d.fields = {
     sbp_d_data
 }
 
-function p_sbp_p.dissector(buf, pktinfo, root)
+function p_sbp_d.dissector(buf, pktinfo, root)
     pktinfo.cols.protocol:set("SBP-D")
 
     local pktlen = buf:reported_length_remaining()
-    local tree = root:add(p_sbp, buf:range(0, pktlen))
+    local tree = root:add(p_sbp_d, buf:range(0, pktlen))
     local data_length = buf:range(0,2):le_uint() - 2
     -- print(pktlen)
 
@@ -43,7 +43,7 @@ function p_sbp_p.dissector(buf, pktinfo, root)
     local msg_type = buf:range(2,2)
     pktinfo.cols.info:append(" " .. get_sbp_type_short(msg_type:le_uint()))
 
-    local spb = tree:add(p_sbp,  buf:range(0, 4 + data_length), "SBP-D Daten")
+    local spb = tree:add(p_sbp_d,  buf:range(0, 4 + data_length), "SBP-D Daten")
 
     sbp:add_le(sbp_d_packet_length,      buf:range(0, 2))
     sbp:add_le(sbp_d_message_type,        buf:range(2, 2))
