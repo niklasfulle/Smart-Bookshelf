@@ -15,7 +15,7 @@ from protocol.builder.builder_data_package import (
     build_data_package_mode,
 )
 from utils.converter import int_to_2byte_array
-
+from datatype.book import book
 
 class TestBuildDataPackage:
     """
@@ -44,21 +44,27 @@ class TestBuildDataPackage:
         """
         -
         """
-        package = build_data_package_book(int_to_2byte_array(5))
+        package = build_data_package_book(book(1,12).data)
 
-        assert int.from_bytes(package.lenght, "little") == 6
+        assert int.from_bytes(package.lenght, "little") == 8
         assert int.from_bytes(package.message_type, "little") == 5003
+        assert int.from_bytes(package.data[0:2], "little") == 1
+        assert int.from_bytes(package.data[2:4], "little") == 12
 
     def test_build_data_package_books(self) -> None:
         """
         -
         """
         package = build_data_package_books(
-            (int_to_2byte_array(5) + int_to_2byte_array(7) + int_to_2byte_array(20))
+            data = (book(1,12).data + book(3,2).data)
         )
 
-        assert int.from_bytes(package.lenght, "little") == 10
+        assert int.from_bytes(package.lenght, "little") == 12
         assert int.from_bytes(package.message_type, "little") == 5004
+        assert int.from_bytes(package.data[0:2], "little") == 1
+        assert int.from_bytes(package.data[2:4], "little") == 12
+        assert int.from_bytes(package.data[4:6], "little") == 3
+        assert int.from_bytes(package.data[6:8], "little") == 2
 
     def test_build_data_package_mode(self) -> None:
         """
@@ -68,3 +74,4 @@ class TestBuildDataPackage:
 
         assert int.from_bytes(package.lenght, "little") == 6
         assert int.from_bytes(package.message_type, "little") == 5020
+        assert int.from_bytes(package.data[0:2], "little") == 1

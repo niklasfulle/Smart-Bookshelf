@@ -294,7 +294,7 @@
 | :------: | :-------------------- |
 | 00 - 01  | Nachrichtenlänge =    |
 | 02 - 03  | Nachrichtentyp = 5003 |
-| 04 - 05  | Buch Postion          |
+| 04 - 07  | Buch Postion          |
 
 <br>
 <b>Bücherzeigennachricht (Show books Message)</b>
@@ -303,8 +303,8 @@
 | :-------: | :-------------------- |
 |  00 - 01  | Nachrichtenlänge =    |
 |  02 - 03  | Nachrichtentyp = 5004 |
-|  04 - 05  | Buch Postion          |
-|  06 - 07  | Buch Postion          |
+|  04 - 07  | Buch Postion          |
+|  08 - 11  | Buch Postion          |
 | n - n + 1 | Buch Postion          |
 
 <br>
