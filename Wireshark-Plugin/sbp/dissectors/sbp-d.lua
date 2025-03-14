@@ -23,6 +23,7 @@ local sbp_d_message_type     = ProtoField.uint8("sbp_d.message_type", "Protokoll
     [6004] = "DataUpErr",
     [6005] = "DataUpCan",
 })
+local sbp_d_data                = ProtoField.new("Nutzdaten", "sbp.data", ftypes.BYTES)
 
 p_sbp_d.fields = {
 -- sbp packet
@@ -36,30 +37,27 @@ function p_sbp_d.dissector(buf, pktinfo, root)
 
     local pktlen = buf:reported_length_remaining()
     local tree = root:add(p_sbp_d, buf:range(0, pktlen))
-    local data_length = buf:range(0,2):le_uint() - 2
-    -- print(pktlen)
+    local data_length = buf:range(0,2):le_uint() - 4
 
     -- sbp layer
     local msg_type = buf:range(2,2)
-    pktinfo.cols.info:append(" " .. get_sbp_type_short(msg_type:le_uint()))
+    local sbp_d = tree:add(p_sbp_d,  buf:range(0, 4 + data_length), "SBP-D Daten")
 
-    local spb = tree:add(p_sbp_d,  buf:range(0, 4 + data_length), "SBP-D Daten")
-
-    sbp:add_le(sbp_d_packet_length,      buf:range(0, 2))
-    sbp:add_le(sbp_d_message_type,        buf:range(2, 2))
+    sbp_d:add_le(sbp_d_packet_length,      buf:range(0, 2))
+    sbp_d:add_le(sbp_d_message_type,        buf:range(2, 2))
 
     if (msg_type:le_uint() == 5003) then
-        sbp:add_le(sbp_data, buf:range(4, data_length))
+        sbp_d:add_le(sbp_d_data, buf:range(4, data_length))
     elseif (msg_type:le_uint() == 5004) then
-        sbp:add_le(sbp_data, buf:range(4, data_length))
+        sbp_d:add_le(sbp_d_data, buf:range(4, data_length))
     elseif (msg_type:le_uint() == 5020) then
-        sbp:add_le(sbp_data, buf:range(4, data_length))
+        sbp_d:add_le(sbp_d_data, buf:range(4, data_length))
     elseif (msg_type:le_uint() == 6001) then
-        sbp:add_le(sbp_data, buf:range(4, data_length))
+        sbp_d:add_le(sbp_d_data, buf:range(4, data_length))
     elseif (msg_type:le_uint() == 6002) then
-        sbp:add_le(sbp_data, buf:range(4, data_length))
+        sbp_d:add_le(sbp_d_data, buf:range(4, data_length))
     elseif (msg_type:le_uint() == 6004) then
-        sbp:add_le(sbp_data, buf:range(4, data_length))
+        sbp_d:add_le(sbp_d_data, buf:range(4, data_length))
     end
 
     return pktlen

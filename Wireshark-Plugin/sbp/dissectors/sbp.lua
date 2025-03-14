@@ -136,7 +136,7 @@ function p_sbp.dissector(buf, pktinfo, root)
     local msg_type = buf:range(2,2)
     pktinfo.cols.info:append(" " .. get_sbp_type_short(msg_type:le_uint()))
 
-    local spb = tree:add(p_sbp,  buf:range(0, 36 + data_length), "SBP Daten")
+    local sbp = tree:add(p_sbp,  buf:range(0, 36 + data_length), "SBP Daten")
 
     sbp:add_le(sbp_message_length,      buf:range(0, 2))
     sbp:add_le(sbp_message_type,        buf:range(2, 2))
@@ -155,9 +155,9 @@ function p_sbp.dissector(buf, pktinfo, root)
 
     elseif (msg_type:le_uint() == 5000 or msg_type:le_uint() == 6000) then
         -- data and retransmitted data
-        local payload = sbp:add_le(sbp_data, buf:range(28, data_length - p_sbp.prefs.safety_code_len))
-        local pos = 36
-        local max_pos = 36 + data_length - p_sbp.prefs.safety_code_len
+        local payload = sbp:add_le(sbp_data, buf:range(28, data_length))
+        local pos = 28
+        local max_pos = 28 + data_length
         while  pos < max_pos do
             local msg_length = buf:range(pos,2):le_uint()
             payload:add_le(buf:range(pos+2, msg_length):string())
@@ -166,7 +166,7 @@ function p_sbp.dissector(buf, pktinfo, root)
 
         -- call sbp-d-dissector if possible
         if pcall(function () Dissector.get("sbp-d") end) then
-            Dissector.get("sbp-d"):call(buf:range(28, data_length - p_sbp.prefs.safety_code_len):tvb(), pktinfo, root)
+            Dissector.get("sbp-d"):call(buf:range(28, data_length):tvb(), pktinfo, root)
         end
     end
 
@@ -185,20 +185,6 @@ function p_sbp.dissector(buf, pktinfo, root)
 
         local expected_md4 = packet_md4:sub(0, p_sbp.prefs.safety_code_len * 2):lower()
         local actual_md4 = Stream.toHex(Stream.fromString(buf:raw(36 + data_length - 8, 8))):lower()
-
-        local treeItm = sbp:add(safety_safety_code, buf:range(36 + data_length - 8, 8))
-
-        if ( expected_md4 == actual_md4 ) then
-          -- valid MD4
-          valid_item = sbp:add(safety_safety_code_valid, buf:range(36 + data_length - 8, 8), true)
-          valid_item:set_generated()
-        else
-          -- invalid MD4
-          treeItm:add_expert_info(PI_CHECKSUM, PI_WARN, "Invalid Checksum, expected " .. expected_md4)
-
-          valid_item = sbp:add(safety_safety_code_valid, buf:range(36 + data_length - 8, 8), false)
-          valid_item:set_generated()
-        end
     else
         -- blake2b and siphash-2-4 not supported
         sbp:add_expert_info(PI_CHECKSUM, PI_WARN, "Checksum algorithm not supported")
@@ -215,7 +201,7 @@ local function heuristic_checker(buffer, pinfo, tree)
     -- sbp message type
     local potential_msg_type = buffer(2,2):le_uint()
 
-    if get_rasta_type_short(potential_msg_type) ~= "unknown type"
+    if get_sbp_type_short(potential_msg_type) ~= "unknown type"
     then
         p_sbp.dissector(buffer, pinfo, tree)
         return true
