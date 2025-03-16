@@ -30,7 +30,7 @@ class connection:
         server: tuple[str, int],
         receiver_id: int,
         sender_id: int,
-        bookshelf_object: bookshelf,
+        Bookshelf_object: bookshelf,
     ):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.client = client
@@ -39,7 +39,7 @@ class connection:
         self.sender_id_int = sender_id
         self.receiver_id = int_to_4byte_array(receiver_id)
         self.sender_id = int_to_4byte_array(sender_id)
-        self.bookshelf_object = bookshelf_object
+        self.bookshelf_object = Bookshelf_object
 
         self.sock.bind((client[0], client[1]))
 
