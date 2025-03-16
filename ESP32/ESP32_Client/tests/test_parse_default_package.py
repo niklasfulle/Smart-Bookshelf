@@ -24,10 +24,17 @@ from protocol.builder.builder_default_package import (
     build_upload_data,
 )
 from protocol.builder.builder_data_package import build_data_package_mode
-from protocol.builder.builder_data_upload_package import build_data_upload_package_data_start
+from protocol.builder.builder_data_upload_package import (
+    build_data_upload_package_data_start,
+)
 from protocol.parser.parser_default_package import parse_package
-from utils.build_helper import get_timestamp, get_random_sequence_number, increment_sequence_number
+from utils.build_helper import (
+    get_timestamp,
+    get_random_sequence_number,
+    increment_sequence_number,
+)
 from utils.converter import int_to_2byte_array
+
 
 class TestParseDefaultPackage:
     """
@@ -50,7 +57,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 3000
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -71,7 +80,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 3010
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -92,7 +103,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 3020
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -113,7 +126,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 3030
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -126,7 +141,15 @@ class TestParseDefaultPackage:
         timestamp = get_timestamp()
         placeholder = int_to_2byte_array(0)
         package = build_version_response(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp, placeholder, placeholder, placeholder
+            10,
+            20,
+            sequence_number,
+            sequence_number,
+            timestamp,
+            timestamp,
+            placeholder,
+            placeholder,
+            placeholder,
         )
 
         parsed_package = parse_package(package.complete_data)
@@ -135,7 +158,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 3040
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -156,7 +181,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 3050
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -177,7 +204,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 3060
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -198,7 +227,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 3070
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -219,7 +250,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 3080
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -240,7 +273,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 3090
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -261,7 +296,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 3100
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -282,7 +319,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 3110
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -303,7 +342,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 3120
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -332,7 +373,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 5000
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp
@@ -364,7 +407,9 @@ class TestParseDefaultPackage:
         assert int.from_bytes(parsed_package.message_type, "little") == 6000
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
-        assert parsed_package.sequence_number == increment_sequence_number(sequence_number)
+        assert parsed_package.sequence_number == increment_sequence_number(
+            sequence_number
+        )
         assert parsed_package.confirmed_sequence_number == sequence_number
         assert parsed_package.timestamp == timestamp
         assert parsed_package.confirmed_timestamp == timestamp

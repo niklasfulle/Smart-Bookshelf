@@ -129,9 +129,30 @@ class TestBuildDefaultPackage:
             sequence_number,
             timestamp,
             timestamp,
-            (int_to_1byte_array(json_data_reader(self.file1, ["protocol_version_major"], 2)) + int_to_1byte_array(json_data_reader(self.file1, ["protocol_version_minor"], 2))),
-            (int_to_1byte_array(json_data_reader(self.file1, ["client_version_major"], 2)) + int_to_1byte_array(json_data_reader(self.file1, ["client_version_minor"], 2))),
-            (int_to_1byte_array(json_data_reader(self.file1, ["bookshelf_version_major"], 2)) + int_to_1byte_array(json_data_reader(self.file1, ["bookshelf_version_minor"], 2))),
+            (
+                int_to_1byte_array(
+                    json_data_reader(self.file1, ["protocol_version_major"], 2)
+                )
+                + int_to_1byte_array(
+                    json_data_reader(self.file1, ["protocol_version_minor"], 2)
+                )
+            ),
+            (
+                int_to_1byte_array(
+                    json_data_reader(self.file1, ["client_version_major"], 2)
+                )
+                + int_to_1byte_array(
+                    json_data_reader(self.file1, ["client_version_minor"], 2)
+                )
+            ),
+            (
+                int_to_1byte_array(
+                    json_data_reader(self.file1, ["bookshelf_version_major"], 2)
+                )
+                + int_to_1byte_array(
+                    json_data_reader(self.file1, ["bookshelf_version_minor"], 2)
+                )
+            ),
         )
 
         assert int.from_bytes(package.lenght, "little") == 42
@@ -144,7 +165,7 @@ class TestBuildDefaultPackage:
         assert package.timestamp == timestamp
         assert package.confirmed_timestamp == timestamp
         assert package.data == bytearray(b"\x01\x00\x01\x00\x01\x00")
-        assert package.data[0:2] == bytearray(b'\x01\x00')
+        assert package.data[0:2] == bytearray(b"\x01\x00")
         assert int.from_bytes(package.data[0:1], "little") == 1
         assert int.from_bytes(package.data[1:2], "little") == 0
         assert int.from_bytes(package.data[2:3], "little") == 1

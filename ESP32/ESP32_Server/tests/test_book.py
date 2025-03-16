@@ -8,6 +8,7 @@ import sys
 sys.path.append("../")
 from datatype.book import book
 
+
 class TestBookshelf:
     """
     -
@@ -17,10 +18,10 @@ class TestBookshelf:
         """
         -
         """
-        book1 = book(1,2)
+        book1 = book(1, 2)
 
         assert book1.shelving_unit == 1
         assert book1.position == 2
-        assert book1.data == bytearray(b'\x01\x00\x02\x00')
+        assert book1.data == bytearray(b"\x01\x00\x02\x00")
         assert int.from_bytes(book1.data[0:2], "little") == 1
         assert int.from_bytes(book1.data[2:4], "little") == 2

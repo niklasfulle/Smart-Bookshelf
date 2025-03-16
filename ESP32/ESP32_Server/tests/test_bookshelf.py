@@ -9,6 +9,7 @@ sys.path.append("../")
 from utils.json_data_reader import json_data_reader
 from hardware.bookshelf import bookshelf
 
+
 class TestBookshelf:
     """
     -

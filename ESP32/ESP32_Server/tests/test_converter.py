@@ -20,6 +20,7 @@ class TestConverter:
     """
     -
     """
+
     def test_int_to_1byte_array1(self):
         """Tests whether the correct 2 byte value is returned"""
 
@@ -30,7 +31,7 @@ class TestConverter:
         """Tests whether the correct 2 byte value is returned"""
 
         result = int_to_1byte_array(255)
-        assert result == bytearray(b"\xFF")
+        assert result == bytearray(b"\xff")
 
     def test_int_to_1byte_array3(self):
         """Tests whether the correct 2 byte value is returned"""
@@ -48,7 +49,7 @@ class TestConverter:
 
         result = int_to_2byte_array(1234)
         assert result == bytearray(b"\xd2\x04")
-        
+
     def test_int_to_2byte_array3(self):
         """Tests whether the correct 2 byte value is returned"""
         with pytest.raises(ValueError):
