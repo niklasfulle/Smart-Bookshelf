@@ -15,6 +15,7 @@ class TestJsonReader:
     """
     -
     """
+
     file1: str = ""
     file2: str = "{"
     file3: str = '{"id": 10,"name": "Client_0","connection": { "ip": "127.0.0.1", "port": 40000 },"server": {"id": 20,"name": "Server","ip": "127.0.0.1","port": 50000}}'
@@ -34,16 +35,11 @@ class TestJsonReader:
 
         data = json_data_reader(self.file3, [], 2)
         assert data == {
-                            "id": 10,
-                            "name": "Client_0",
-                            "connection": { "ip": "127.0.0.1", "port": 40000 },
-                            "server": {
-                                "id": 20,
-                                "name": "Server",
-                                "ip": "127.0.0.1",
-                                "port": 50000
-                            }
-                        }
+            "id": 10,
+            "name": "Client_0",
+            "connection": {"ip": "127.0.0.1", "port": 40000},
+            "server": {"id": 20, "name": "Server", "ip": "127.0.0.1", "port": 50000},
+        }
 
     def test_json_data_reader4(self):
         """Tests whether the checksum is correct"""

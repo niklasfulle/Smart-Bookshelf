@@ -55,7 +55,7 @@ class TestParseDataPackage:
 
         assert int.from_bytes(parsed_package.lenght, "little") == 6
         assert int.from_bytes(parsed_package.message_type, "little") == 5003
-        assert parsed_package.data == bytearray(b'\x05\x00')
+        assert parsed_package.data == bytearray(b"\x05\x00")
 
     def test_build_data_package_books(self) -> None:
         """
@@ -69,7 +69,7 @@ class TestParseDataPackage:
 
         assert int.from_bytes(parsed_package.lenght, "little") == 10
         assert int.from_bytes(parsed_package.message_type, "little") == 5004
-        assert parsed_package.data == bytearray(b'\x05\x00\x07\x00\x14\x00')
+        assert parsed_package.data == bytearray(b"\x05\x00\x07\x00\x14\x00")
 
     def test_build_data_package_mode(self) -> None:
         """
@@ -81,4 +81,4 @@ class TestParseDataPackage:
 
         assert int.from_bytes(parsed_package.lenght, "little") == 6
         assert int.from_bytes(parsed_package.message_type, "little") == 5020
-        assert parsed_package.data == bytearray(b'\x01\x00')
+        assert parsed_package.data == bytearray(b"\x01\x00")

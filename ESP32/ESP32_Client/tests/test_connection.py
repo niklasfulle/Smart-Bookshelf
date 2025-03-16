@@ -16,7 +16,7 @@ class TestConnection:
     -
     """
 
-    client_config: str = '{"id": 10,"name": "Client_0","connection": { "ip": "127.0.0.1", "port": 40000 },"server": {"id": 20,"name": "Server","ip": "127.0.0.1","port": 50000}}'
+    client_config: str = '{"id": 10,"name": "Client_0","connection": { "ip": "127.0.0.1", "port": 40001 },"server": {"id": 20,"name": "Server","ip": "127.0.0.1","port": 50001}}'
     bookshelf_config: str = '{"name": "Bookshelf_Name1", "shelving_units": [{ "order": 1, "length": 50 },{ "order": 2, "length": 50 },{ "order": 3, "length": 50 },{ "order": 4, "length": 50 },{ "order": 5, "length": 50 },{ "order": 6, "length": 50 },{ "order": 7, "length": 50 },{ "order": 8, "length": 50 }]}'
 
     def test_connection1(self):
@@ -39,12 +39,14 @@ class TestConnection:
         connection_object: connection = connection((client_ip, client_port), (server_ip, server_port), receiver_id, sender_id, bookshelf_object)
 
         assert isinstance(connection_object.sock, socket.socket)
-        assert connection_object.client == ("127.0.0.1", 40000)
-        assert connection_object.server == ("127.0.0.1", 50000)
+        assert connection_object.client == ("127.0.0.1", 40001)
+        assert connection_object.server == ("127.0.0.1", 50001)
         assert connection_object.receiver_id_int == 20
         assert connection_object.receiver_id == bytearray(b'\x14\x00\x00\x00')
         assert connection_object.sender_id_int == 10
         assert connection_object.sender_id == bytearray(b'\n\x00\x00\x00')
+
+        connection_object = None
 
     def test_connection2(self):
         """
@@ -72,3 +74,5 @@ class TestConnection:
         assert connection_object.bookshelf_object.ledstripes[0].length == 50
         assert connection_object.bookshelf_object.ledstripes[7].order == 8
         assert connection_object.bookshelf_object.ledstripes[7].length == 50
+
+        connection_object = None

@@ -17,6 +17,7 @@ from protocol.builder.builder_data_package import (
 from utils.converter import int_to_2byte_array
 from datatype.book import book
 
+
 class TestBuildDataPackage:
     """
     -
@@ -44,7 +45,7 @@ class TestBuildDataPackage:
         """
         -
         """
-        package = build_data_package_book(book(1,12).data)
+        package = build_data_package_book(book(1, 12).data)
 
         assert int.from_bytes(package.lenght, "little") == 8
         assert int.from_bytes(package.message_type, "little") == 5003
@@ -55,9 +56,7 @@ class TestBuildDataPackage:
         """
         -
         """
-        package = build_data_package_books(
-            data = (book(1,12).data + book(3,2).data)
-        )
+        package = build_data_package_books(data=(book(1, 12).data + book(3, 2).data))
 
         assert int.from_bytes(package.lenght, "little") == 12
         assert int.from_bytes(package.message_type, "little") == 5004
