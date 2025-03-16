@@ -48,7 +48,7 @@ class data_upload_package:
         index1: int = 0
         index2: int = 0
 
-        matrix = [[0 for x in range(8)] for y in range(count)]
+        matrix = [[0 for _ in range(8)] for _ in range(count)]
 
         for i in enumerate(split_data):
             matrix[index1][index2] = split_data[i[0]]

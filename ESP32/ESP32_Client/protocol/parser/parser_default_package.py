@@ -1,6 +1,7 @@
 """
-    -
+-
 """
+
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,C0103,W0719
 from protocol.package import package
 from protocol.data_package import data_package
@@ -10,11 +11,10 @@ from protocol.parser.parser_data_upload_package import parse_data_upload_package
 from utils.parse_helper import parse_data_start_end, get_data_string_array
 from utils.checksumme import get_checksumme
 
-def parse_package (
-    data: bytearray
-) -> package:
+
+def parse_package(data: bytearray) -> package:
     """
-        - 
+    -
     """
     data_str: str = get_data_string_array(data)
 
@@ -43,7 +43,9 @@ def parse_package (
                 data_package_data: data_package = parse_data_package(data)
                 data = data_package_data.complete_data
             elif message_type_int == 6000:
-                data_upload_package_data: data_upload_package = parse_data_upload_package(data)
+                data_upload_package_data: data_upload_package = (
+                    parse_data_upload_package(data)
+                )
                 data = data_upload_package_data.complete_data
         else:
             data = None
@@ -56,7 +58,7 @@ def parse_package (
             confirmed_sequence_number,
             timestamp,
             confirmed_timestamp,
-            data
+            data,
         )
 
     return None

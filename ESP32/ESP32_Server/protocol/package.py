@@ -113,7 +113,8 @@ class package:
 
         checksumme: bytearray
         if data is not None:
-            checksumme = get_checksumme((
+            checksumme = get_checksumme(
+                (
                     self.lenght
                     + self.message_type
                     + self.receiver_id
@@ -123,9 +124,12 @@ class package:
                     + self.timestamp
                     + self.confirmed_timestamp
                     + self.data
-                ), 1)
+                ),
+                1,
+            )
         else:
-            checksumme = get_checksumme((
+            checksumme = get_checksumme(
+                (
                     self.lenght
                     + self.message_type
                     + self.receiver_id
@@ -134,10 +138,11 @@ class package:
                     + self.confirmed_sequence_number
                     + self.timestamp
                     + self.confirmed_timestamp
-                ), 1)
+                ),
+                1,
+            )
 
         self.complete_data = complete_data + checksumme
-
 
     def print_data(self) -> None:
         """
@@ -152,7 +157,7 @@ class package:
         index1: int = 0
         index2: int = 0
 
-        matrix = [[0 for x in range(8)] for y in range(count)]
+        matrix = [[0 for _ in range(8)] for _ in range(count)]
 
         for i in enumerate(split_data):
             matrix[index1][index2] = split_data[i[0]]

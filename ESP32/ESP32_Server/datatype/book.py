@@ -5,6 +5,7 @@
 
 from utils.converter import int_to_2byte_array
 
+
 class book:
     """_summary_
 

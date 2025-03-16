@@ -20,6 +20,7 @@ def string_to_byte_array(string: str) -> bytearray:
 
     return bytes_string
 
+
 def int_to_1byte_array(number: int, byteorder: str = "little") -> bytearray:
     """converts an int to a 1 byte value, throws an Exception when the number is to big
 
