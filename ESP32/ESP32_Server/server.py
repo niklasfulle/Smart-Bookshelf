@@ -49,9 +49,9 @@ for i, client_json in enumerate(clients_json):
     _connection: connection = connection(
         (client_json["ip"], client_json["port"]),
         (server_ip, server_port),
-        client_json["id"],
-        sender_id,
-        bookshelfs[i],
+        receiver_id=client_json["id"],
+        sender_id=sender_id,
+        bookshelf_object=bookshelfs[i],
     )
 
     connections.append(_connection)
