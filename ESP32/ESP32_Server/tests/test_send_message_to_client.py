@@ -80,7 +80,7 @@ class TestSendMessageClient:
         -
         """
         package = build_connection_request(self.sender_id, self.receiver_id, 0, 0, 0, 0)
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_connection_response(self):
         """
@@ -90,7 +90,7 @@ class TestSendMessageClient:
         package = build_connection_response(
             self.sender_id, self.receiver_id, 0, sequence_number, 0, 0
         )
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_connection_approve(self):
         """
@@ -106,7 +106,7 @@ class TestSendMessageClient:
             timestamp,
             timestamp,
         )
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_version_request(self):
         """
@@ -122,7 +122,7 @@ class TestSendMessageClient:
             timestamp,
             timestamp,
         )
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_version_response(self):
         """
@@ -162,7 +162,7 @@ class TestSendMessageClient:
                 )
             ),
         )
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_status_request(self):
         """
@@ -178,7 +178,7 @@ class TestSendMessageClient:
             timestamp,
             timestamp,
         )
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_status_response(self):
         """
@@ -194,7 +194,7 @@ class TestSendMessageClient:
             timestamp,
             timestamp,
         )
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_disconnection_request(self):
         """
@@ -210,7 +210,7 @@ class TestSendMessageClient:
             timestamp,
             timestamp,
         )
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_disconnection_response(self):
         """
@@ -226,7 +226,7 @@ class TestSendMessageClient:
             timestamp,
             timestamp,
         )
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_sleep_request(self):
         """
@@ -242,7 +242,7 @@ class TestSendMessageClient:
             timestamp,
             timestamp,
         )
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_sleep_response(self):
         """
@@ -258,7 +258,7 @@ class TestSendMessageClient:
             timestamp,
             timestamp,
         )
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_reboot_request(self):
         """
@@ -274,7 +274,7 @@ class TestSendMessageClient:
             timestamp,
             timestamp,
         )
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_reboot_response(self):
         """
@@ -290,7 +290,7 @@ class TestSendMessageClient:
             timestamp,
             timestamp,
         )
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_data_package_light_on(self):
         """
@@ -310,7 +310,7 @@ class TestSendMessageClient:
             data_package.complete_data,
         )
 
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_data_package_light_off(self):
         """
@@ -330,7 +330,7 @@ class TestSendMessageClient:
             data_package.complete_data,
         )
 
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_data_package_book(self):
         """
@@ -350,7 +350,7 @@ class TestSendMessageClient:
             data_package.complete_data,
         )
 
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_data_package_books(self):
         """
@@ -372,7 +372,7 @@ class TestSendMessageClient:
             data_package.complete_data,
         )
 
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_data_package_mode(self):
         """
@@ -392,7 +392,7 @@ class TestSendMessageClient:
             data_package.complete_data,
         )
 
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_data_upload_package_data(self):
         """
@@ -417,7 +417,7 @@ class TestSendMessageClient:
             data_upload_package.complete_data,
         )
 
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_data_upload_package_data_start(self):
         """
@@ -439,7 +439,7 @@ class TestSendMessageClient:
             data_upload_package.complete_data,
         )
 
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_data_upload_package_data_end(self):
         """
@@ -459,7 +459,7 @@ class TestSendMessageClient:
             data_upload_package.complete_data,
         )
 
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_data_upload_package_data_error(self):
         """
@@ -481,7 +481,7 @@ class TestSendMessageClient:
             data_upload_package.complete_data,
         )
 
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
 
     def test_send_data_upload_package_data_cancel(self):
         """
@@ -501,4 +501,4 @@ class TestSendMessageClient:
             data_upload_package.complete_data,
         )
 
-        self.connection_object.send_message_to_client(package.complete_data)
+        self.connection_object.send_message_to_client(package)
