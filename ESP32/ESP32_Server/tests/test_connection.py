@@ -18,7 +18,7 @@ class TestConnection:
     """
 
     client_config: str = '{"id": 10,"name": "Client_0","connection": { "ip": "127.0.0.1", "port": 40001 },"server": {"id": 20,"name": "Server","ip": "127.0.0.1","port": 50001}}'
-    bookshelf_config: str = '{"name": "bookshelf_Name1", "shelving_units": [{ "order": 1, "length": 50 },{ "order": 2, "length": 50 },{ "order": 3, "length": 50 },{ "order": 4, "length": 50 },{ "order": 5, "length": 50 },{ "order": 6, "length": 50 },{ "order": 7, "length": 50 },{ "order": 8, "length": 50 }]}'
+    bookshelf_config: str = '{"name": "bookshelf_name1", "shelving_units": [{ "order": 1, "length": 50 },{ "order": 2, "length": 50 },{ "order": 3, "length": 50 },{ "order": 4, "length": 50 },{ "order": 5, "length": 50 },{ "order": 6, "length": 50 },{ "order": 7, "length": 50 },{ "order": 8, "length": 50 }]}'
 
     def test_connection1(self):
         """
@@ -52,6 +52,8 @@ class TestConnection:
         assert connection_object.receiver_id == bytearray(b"\x14\x00\x00\x00")
         assert connection_object.sender_id_int == 10
         assert connection_object.sender_id == bytearray(b"\n\x00\x00\x00")
+        assert connection_object.handshake is False
+        assert connection_object.task is False
 
         connection_object = None
 
@@ -80,7 +82,7 @@ class TestConnection:
             bookshelf_object,
         )
 
-        assert connection_object.bookshelf_object.name == "bookshelf_Name1"
+        assert connection_object.bookshelf_object.name == "bookshelf_name1"
         assert connection_object.bookshelf_object.ip == "127.0.0.1"
         assert len(connection_object.bookshelf_object.ledstripes) == 8
         assert connection_object.bookshelf_object.ledstripes[0].order == 1

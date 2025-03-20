@@ -10,9 +10,11 @@ import sys
 
 from connection.connection import connection
 from utils.json_data_reader import json_data_reader
+from utils.checks import handle_checks
 from utils.constants import FILES, BUFFER_SIZE
 from utils.connection_helper import get_last_databuffer_element
 from hardware.bookshelf import bookshelf
+from protocol.parser.parser_default_package import parse_package
 
 gc.enable()
 
@@ -81,7 +83,21 @@ def threaded(connection: connection, threads: int):
             data = databuffer[index][1]
             databuffer.pop(index)
 
-        print(data, threads, connection.client[1])
+        try:
+            if data != bytearray(b""):
+                _package = parse_package(data)
+
+                print(_package.complete_data)
+
+                if not handle_checks(_connection, _package):
+                    print("Check Error")
+                    data = bytearray(b"")
+
+            gc.collect()
+        except KeyboardInterrupt:
+            print("ESP terminated")
+            data = bytearray(b"")
+            sys.exit(0)
 
         time.sleep(2)
 
@@ -103,6 +119,7 @@ def main(threads: int):
                     except Exception as error:
                         print(error)
 
+                    print("Server runs with {} Clients".format(len(connections)))
                     _thread.start_new_thread(threaded, (_connection, threads))
 
                     threads += 1

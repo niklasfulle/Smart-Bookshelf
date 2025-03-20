@@ -5,6 +5,7 @@
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,C0103
 import socket
 from hardware.bookshelf import bookshelf
+from protocol.builder.builder_default_package import package
 from utils.converter import int_to_4byte_array
 
 
@@ -23,6 +24,11 @@ class connection:
     receiver_id: bytearray
     sender_id: bytearray
     bookshelf_object: bookshelf
+    last_send_package: package
+    last_received_package: package
+
+    handshake: bool
+    task: bool
 
     def __init__(
         self,
@@ -40,6 +46,8 @@ class connection:
         self.receiver_id = int_to_4byte_array(receiver_id)
         self.sender_id = int_to_4byte_array(sender_id)
         self.bookshelf_object = bookshelf_object
+        self.handshake = False
+        self.task = False
 
         self.sock.bind((client[0], client[1]))
 

@@ -12,7 +12,16 @@ from connection.connection import connection
 
 from utils.json_data_reader import json_data_reader
 from utils.constants import FILES, BUFFER_SIZE
-from hardware.Bookshelf import Bookshelf
+from utils.checks import handle_checks, check_versions
+from hardware.bookshelf import bookshelf
+from protocol.constants.constants import PACKAGE_MESSAGE_TYPE
+from protocol.parser.parser_default_package import parse_package
+from protocol.builder.builder_default_package import (
+    build_connection_request,
+    build_disconnection_request,
+    build_connection_approve,
+    build_version_request,
+)
 
 
 # _thread.stack_size(2048)
@@ -30,7 +39,7 @@ ip = json_data_reader(FILES.CLIENT, ["connection", "ip"], 1)
 Bookshelf_name = json_data_reader(FILES.Bookshelf, ["name"], 1)
 shelving_units = json_data_reader(FILES.Bookshelf, ["shelving_units"], 1)
 
-_Bookshelf: Bookshelf = Bookshelf(
+_Bookshelf: bookshelf = bookshelf(
     Bookshelf_name,
     ip,
     shelving_units,
@@ -77,6 +86,85 @@ gc.collect()
 
 while True:
     try:
+        if data == bytearray(b""):
+            if (
+                not _connection.connection_request_send
+                and not _connection.handshake
+                and not _connection.version_check
+            ):
+                _connection.send_message_to_server(
+                    build_connection_request(
+                        _connection.receiver_id_int,
+                        _connection.sender_id_int,
+                        *[0] * 4,
+                    )
+                )
+                _connection.connection_request_send = True
+
+            elif (
+                _connection.connection_request_send
+                and not _connection.handshake
+                and not _connection.version_check
+            ):
+                _connection.send_message_to_server(
+                    build_disconnection_request(
+                        _connection.receiver_id_int,
+                        _connection.sender_id_int,
+                        *[0] * 4,
+                    )
+                )
+                _connection.connection_request_send = False
+
+            elif (
+                _connection.connection_request_send
+                and _connection.handshake
+                and not _connection.version_check
+            ):
+                build_version_request(
+                    _connection.receiver_id_int,
+                    _connection.sender_id_int,
+                    _connection.last_send_package.sequence_number,
+                    _connection.last_received_package.sequence_number,
+                    0,
+                    _connection.last_received_package.timestamp,
+                )
+            elif (
+                _connection.connection_request_send
+                and _connection.handshake
+                and _connection.version_check
+            ):
+                time.sleep(0.1)
+
+        elif data != bytearray(b""):
+            _package = parse_package(data)
+
+            if not handle_checks(_connection, _package):
+                print("Check Error")
+                data = bytearray(b"")
+
+            _connection.last_received_package = _package
+
+            if PACKAGE_MESSAGE_TYPE.ConnResponse == int.from_bytes(
+                _package.message_type, "little"
+            ):
+                _connection.send_message_to_server(
+                    build_connection_approve(
+                        _connection.receiver_id_int,
+                        _connection.sender_id_int,
+                        _connection.last_send_package.sequence_number,
+                        _connection.last_received_package.sequence_number,
+                        0,
+                        _connection.last_received_package.timestamp,
+                    )
+                )
+                _connection.handshake = True
+
+            elif PACKAGE_MESSAGE_TYPE.VerResponse == int.from_bytes(
+                _package.message_type, "little"
+            ):
+                if check_versions(_package):
+                    _connection.version_check = True
+
         gc.collect()
     except KeyboardInterrupt:
         print("ESP terminated")

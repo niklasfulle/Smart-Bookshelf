@@ -52,6 +52,8 @@ class TestConnection:
         assert connection_object.receiver_id == bytearray(b"\x14\x00\x00\x00")
         assert connection_object.sender_id_int == 10
         assert connection_object.sender_id == bytearray(b"\n\x00\x00\x00")
+        assert connection_object.handshake is False
+        assert connection_object.task is False
 
         connection_object = None
 

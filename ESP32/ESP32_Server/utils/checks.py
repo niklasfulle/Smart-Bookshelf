@@ -8,6 +8,22 @@ from protocol.package import package
 from connection.connection import connection
 
 
+def handle_checks(_connection: connection, _package: package) -> bool:
+    """
+    -
+    """
+    if not check_for_valid_id(_connection, _package):
+        return False
+
+    if not check_for_valid_message_type(_package):
+        return False
+
+    if not check_for_valid_sequence_number(_connection, _package):
+        return False
+
+    return True
+
+
 def check_for_valid_id(_connection: connection, _package: package) -> bool:
     """
     -
@@ -29,10 +45,12 @@ def check_for_valid_id(_connection: connection, _package: package) -> bool:
     return False
 
 
-def check_for_valid_message_type(message_type: PACKAGE_MESSAGE_TYPE) -> bool:
+def check_for_valid_message_type(_package: package) -> bool:
     """
     -
     """
+
+    message_type = _package.message_type
 
     valid_types = [
         PACKAGE_MESSAGE_TYPE.ConnRequest,
@@ -61,8 +79,57 @@ def check_for_valid_message_type(message_type: PACKAGE_MESSAGE_TYPE) -> bool:
     return False
 
 
-def check_for_valid_sequence_number() -> bool:
+def check_for_valid_sequence_number(_connection: connection, _package: package) -> bool:
     """
     -
     """
+    message_type = _package.message_type
+    sequence_number = _package.sequence_number
+    confirmed_sequence_number = _package.confirmed_sequence_number
+    last_send_package_sequence_number = None
+    last_received_package_sequence_number = None
+
+    if _connection.last_send_package is not None:
+        last_send_package_sequence_number = int.from_bytes(
+            _connection.last_send_package.sequence_number, "little"
+        )
+
+    if _connection.last_received_package is not None:
+        last_received_package_sequence_number = int.from_bytes(
+            _connection.last_received_package.sequence_number, "little"
+        )
+
+    if isinstance(message_type, bytearray):
+        message_type = int.from_bytes(message_type, "little")
+
+    if isinstance(sequence_number, bytearray):
+        sequence_number = int.from_bytes(sequence_number, "little")
+
+    if isinstance(confirmed_sequence_number, bytearray):
+        confirmed_sequence_number = int.from_bytes(confirmed_sequence_number, "little")
+
+    if message_type == PACKAGE_MESSAGE_TYPE.ConnRequest:
+        if sequence_number != 0 and confirmed_sequence_number == 0:
+            return True
+
+    elif message_type == PACKAGE_MESSAGE_TYPE.ConnResponse:
+        if (
+            sequence_number != 0
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
+
+    elif message_type == PACKAGE_MESSAGE_TYPE.Data:
+        return True
+
+    elif message_type == PACKAGE_MESSAGE_TYPE.DataUpload:
+        return True
+
+    else:
+        if (
+            sequence_number == last_received_package_sequence_number + 1
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
+
     return False
