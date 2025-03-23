@@ -13,12 +13,15 @@ def handle_checks(_connection: connection, _package: package) -> bool:
     -
     """
     if not check_for_valid_id(_connection, _package):
+        print("check_for_valid_id")
         return False
 
     if not check_for_valid_message_type(_package):
+        print("check_for_valid_message_type")
         return False
 
     if not check_for_valid_sequence_number(_connection, _package):
+        print("check_for_valid_sequence_number")
         return False
 
     return True
@@ -127,7 +130,7 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
 
     else:
         if (
-            sequence_number == last_received_package_sequence_number + 1
+            sequence_number == last_received_package_sequence_number
             and confirmed_sequence_number == last_send_package_sequence_number
         ):
             return True
@@ -139,5 +142,5 @@ def check_versions(_package: package) -> bool:
     """
     -
     """
-    
+
     return True

@@ -20,8 +20,6 @@ def parse_package(data: bytearray) -> package:
 
     length = int.from_bytes(parse_data_start_end(data_str, 1, 0), "little")
 
-    print(length)
-
     checksum = parse_data_start_end(data_str, length, length - 8)
 
     check = get_checksumme(parse_data_start_end(data_str, length - 8, 0), 1)

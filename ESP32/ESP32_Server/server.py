@@ -7,14 +7,39 @@ import _thread
 import gc
 import time
 import sys
+import psycopg2
+
+from dotenv import load_dotenv
 
 from connection.connection import connection
 from utils.json_data_reader import json_data_reader
 from utils.checks import handle_checks
 from utils.constants import FILES, BUFFER_SIZE
 from utils.connection_helper import get_last_databuffer_element
+from utils.build_helper import (
+    get_protocol_version,
+    get_server_version,
+    get_bookshelf_version,
+)
 from hardware.bookshelf import bookshelf
 from protocol.parser.parser_default_package import parse_package
+from protocol.constants.constants import PACKAGE_MESSAGE_TYPE
+from protocol.builder.builder_default_package import (
+    build_connection_response,
+    build_version_response,
+)
+
+load_dotenv()
+
+postgres = psycopg2.connect(
+    database="bookshelf",
+    host="localhost",
+    user="postgres",
+    password="Salkin263",
+    port="5432",
+)
+
+cursor = postgres.cursor()
 
 gc.enable()
 
@@ -23,43 +48,51 @@ databuffer: list = []
 bookshelfs: bookshelf = []
 connections: connection = []
 
-threads: int = 1
-
-bookshelfs_json = json_data_reader(FILES.BOOKSHELFS, [], 1)
-clients_json = json_data_reader(FILES.SERVER, ["clients"], 1)
-
-if len(bookshelfs_json) != len(clients_json):
-    print("bookshelfes and customers do not match")
-    sys.exit(0)
+threads: int = 0
 
 
-for i, bookshelf_json in enumerate(bookshelfs_json):
-    _bookshelf: bookshelf = bookshelf(
-        bookshelf_json["name"],
-        clients_json[i]["ip"],
-        bookshelf_json["shelving_units"],
-    )
+def fetch_configs() -> int:
+    """
+    -
+    """
+    bookshelfs_json = json_data_reader(FILES.BOOKSHELFS, [], 1)
 
-    bookshelfs.append(_bookshelf)
+    cursor.execute('SELECT * FROM "connection"')
 
-server_ip = json_data_reader(FILES.SERVER, ["connection", "ip"], 1)
-server_port = json_data_reader(FILES.SERVER, ["connection", "port"], 1)
-sender_id = json_data_reader(FILES.SERVER, ["connection", "port"], 1)
+    clients = cursor.fetchall()
+
+    if len(bookshelfs_json) != len(clients):
+        print("bookshelfes and customers do not match")
+        sys.exit(0)
+
+    for i, bookshelf_json in enumerate(bookshelfs_json):
+        _bookshelf: bookshelf = bookshelf(
+            bookshelf_json["name"],
+            clients[i][2],
+            bookshelf_json["shelving_units"],
+        )
+
+        bookshelfs.append(_bookshelf)
+
+    server_ip = json_data_reader(FILES.SERVER, ["connection", "ip"], 1)
+    server_port = json_data_reader(FILES.SERVER, ["connection", "port"], 1)
+    sender_id = json_data_reader(FILES.SERVER, ["id"], 1)
+
+    for i, _ in enumerate(clients):
+        _connection: connection = connection(
+            (clients[i][2], clients[i][3]),
+            (server_ip, server_port),
+            receiver_id=clients[i][0],
+            sender_id=sender_id,
+            Bookshelf_object=bookshelfs[i],
+        )
+
+        connections.append(_connection)
+
+    return len(clients)
 
 
-for i, client_json in enumerate(clients_json):
-    _connection: connection = connection(
-        (client_json["ip"], client_json["port"]),
-        (server_ip, server_port),
-        receiver_id=client_json["id"],
-        sender_id=sender_id,
-        bookshelf_object=bookshelfs[i],
-    )
-
-    connections.append(_connection)
-
-
-def listening_thread(sock):
+def listening_thread(sock) -> None:
     """
     -
     """
@@ -67,17 +100,17 @@ def listening_thread(sock):
 
     while True:
         data_received = sock.recvfrom(BUFFER_SIZE)
-        databuffer.insert(0, (data_received[1], data_received[0]))
+        databuffer.insert(0, (data_received[1], bytearray(data_received[0])))
 
 
-def threaded(connection: connection, threads: int):
+def threaded(_connection: connection) -> None:
     """
     -
     """
     data = bytearray(b"")
 
     while True:
-        index = get_last_databuffer_element(databuffer, connection.client)
+        index = get_last_databuffer_element(databuffer, _connection.client)
 
         if index is not None:
             data = databuffer[index][1]
@@ -87,10 +120,52 @@ def threaded(connection: connection, threads: int):
             if data != bytearray(b""):
                 _package = parse_package(data)
 
-                print(_package.complete_data)
+                _connection.last_received_package = _package
 
                 if not handle_checks(_connection, _package):
                     print("Check Error")
+                    data = bytearray(b"")
+
+                if PACKAGE_MESSAGE_TYPE.ConnRequest == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    _connection.send_message_to_client(
+                        build_connection_response(
+                            _connection.receiver_id_int,
+                            _connection.sender_id_int,
+                            0,
+                            _connection.last_received_package.sequence_number,
+                            0,
+                            _connection.last_received_package.timestamp,
+                        )
+                    )
+                    _connection.connection_request_send = True
+
+                    data = bytearray(b"")
+                    time.sleep(0.5)
+
+                if PACKAGE_MESSAGE_TYPE.VerRequest == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    _connection.send_message_to_client(
+                        build_version_response(
+                            _connection.receiver_id_int,
+                            _connection.sender_id_int,
+                            _connection.last_send_package.sequence_number,
+                            _connection.last_received_package.sequence_number,
+                            0,
+                            _connection.last_received_package.timestamp,
+                            get_protocol_version(),
+                            get_server_version(),
+                            get_bookshelf_version(),
+                        )
+                    )
+                    data = bytearray(b"")
+
+                elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    _connection.reset()
                     data = bytearray(b"")
 
             gc.collect()
@@ -102,10 +177,11 @@ def threaded(connection: connection, threads: int):
         time.sleep(2)
 
 
-def main(threads: int):
+def main():
     """
     -
     """
+    threads = fetch_configs()
     while True:
         try:
             if len(connections) == 0:
@@ -120,7 +196,7 @@ def main(threads: int):
                         print(error)
 
                     print("Server runs with {} Clients".format(len(connections)))
-                    _thread.start_new_thread(threaded, (_connection, threads))
+                    _thread.start_new_thread(threaded, (_connection,))
 
                     threads += 1
 
@@ -133,4 +209,4 @@ def main(threads: int):
 
 
 if __name__ == "__main__":
-    main(threads)
+    main()

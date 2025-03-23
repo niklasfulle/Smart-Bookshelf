@@ -48,12 +48,18 @@ class connection:
         self.receiver_id = int_to_4byte_array(receiver_id)
         self.sender_id = int_to_4byte_array(sender_id)
         self.bookshelf_object = Bookshelf_object
+
+        self.last_send_package = None
+        self.last_received_package = None
+
         self.handshake = False
         self.connection_request_send = False
         self.version_check = False
         self.task = False
 
-        self.sock.bind((client[0], client[1]))
+        print(self.server[1])
+
+        self.sock.bind((self.server[0], self.server[1]))
 
     def reset(self):
         """

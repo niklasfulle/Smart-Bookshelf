@@ -13,12 +13,15 @@ def handle_checks(_connection: connection, _package: package) -> bool:
     -
     """
     if not check_for_valid_id(_connection, _package):
+        print("check_for_valid_id")
         return False
 
     if not check_for_valid_message_type(_package):
+        print("check_for_valid_message_type")
         return False
 
     if not check_for_valid_sequence_number(_connection, _package):
+        print("check_for_valid_sequence_number")
         return False
 
     return True
@@ -83,7 +86,7 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
     """
     -
     """
-    message_type = _package.message_type
+    message_type = int.from_bytes(_package.message_type, "little")
     sequence_number = _package.sequence_number
     confirmed_sequence_number = _package.confirmed_sequence_number
     last_send_package_sequence_number = None
@@ -119,6 +122,9 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
         ):
             return True
 
+    elif message_type == PACKAGE_MESSAGE_TYPE.DiscRequest:
+        return True
+
     elif message_type == PACKAGE_MESSAGE_TYPE.Data:
         return True
 
@@ -127,7 +133,7 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
 
     else:
         if (
-            sequence_number == last_received_package_sequence_number + 1
+            sequence_number == last_received_package_sequence_number
             and confirmed_sequence_number == last_send_package_sequence_number
         ):
             return True

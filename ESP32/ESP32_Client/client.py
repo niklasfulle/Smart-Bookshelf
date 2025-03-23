@@ -69,7 +69,7 @@ def listening_thread():
 
     while True:
         data_received = _connection.sock.recvfrom(BUFFER_SIZE)
-        data = data_received[0]
+        data = bytearray(data_received[0])
 
 
 try:
@@ -100,6 +100,8 @@ while True:
                     )
                 )
                 _connection.connection_request_send = True
+                data = bytearray(b"")
+                time.sleep(3.5)
 
             elif (
                 _connection.connection_request_send
@@ -114,6 +116,7 @@ while True:
                     )
                 )
                 _connection.connection_request_send = False
+                time.sleep(1.0)
 
             elif (
                 _connection.connection_request_send
@@ -128,6 +131,8 @@ while True:
                     0,
                     _connection.last_received_package.timestamp,
                 )
+                time.sleep(1.0)
+
             elif (
                 _connection.connection_request_send
                 and _connection.handshake
@@ -138,11 +143,11 @@ while True:
         elif data != bytearray(b""):
             _package = parse_package(data)
 
+            _connection.last_received_package = _package
+
             if not handle_checks(_connection, _package):
                 print("Check Error")
                 data = bytearray(b"")
-
-            _connection.last_received_package = _package
 
             if PACKAGE_MESSAGE_TYPE.ConnResponse == int.from_bytes(
                 _package.message_type, "little"
@@ -158,6 +163,8 @@ while True:
                     )
                 )
                 _connection.handshake = True
+                data = bytearray(b"")
+                time.sleep(0.2)
 
             elif PACKAGE_MESSAGE_TYPE.VerResponse == int.from_bytes(
                 _package.message_type, "little"
