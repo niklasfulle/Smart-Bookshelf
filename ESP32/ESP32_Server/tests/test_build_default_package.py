@@ -42,7 +42,7 @@ class TestBuildDefaultPackage:
     -
     """
 
-    file1: str = '{"protocol_version_major": 1,"protocol_version_minor": 0,"client_version_major": 1,"client_version_minor": 0,"bookshelf_version_major": 1,"bookshelf_version_minor": 0}'
+    file1: str = '{"protocol_version_major": 1,"protocol_version_minor": 0,"server_version_major": 1,"server_version_minor": 0,"Bookshelf_version_major": 1,"Bookshelf_version_minor": 0}'
 
     def test_build_connection_request(self) -> None:
         """
@@ -139,18 +139,18 @@ class TestBuildDefaultPackage:
             ),
             (
                 int_to_1byte_array(
-                    json_data_reader(self.file1, ["client_version_major"], 2)
+                    json_data_reader(self.file1, ["server_version_major"], 2)
                 )
                 + int_to_1byte_array(
-                    json_data_reader(self.file1, ["client_version_minor"], 2)
+                    json_data_reader(self.file1, ["server_version_minor"], 2)
                 )
             ),
             (
                 int_to_1byte_array(
-                    json_data_reader(self.file1, ["bookshelf_version_major"], 2)
+                    json_data_reader(self.file1, ["Bookshelf_version_major"], 2)
                 )
                 + int_to_1byte_array(
-                    json_data_reader(self.file1, ["bookshelf_version_minor"], 2)
+                    json_data_reader(self.file1, ["Bookshelf_version_minor"], 2)
                 )
             ),
         )

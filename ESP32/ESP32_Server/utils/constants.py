@@ -6,3 +6,11 @@
 from utils.enum import enum
 
 MD4_Type = enum(NONE=0, LOWER_HALF=1, FULL=2)
+
+FILES = enum(
+    SERVER="/Users/niklasfulle/Code/Smart-Bookshelf/ESP32/ESP32_Server/configs/server.json",
+    BOOKSHELFS="/Users/niklasfulle/Code/Smart-Bookshelf/ESP32/ESP32_Server/configs/bookshelfs.json",
+    CONFIG="/Users/niklasfulle/Code/Smart-Bookshelf/ESP32/ESP32_Server/configs/config.json",
+)
+
+BUFFER_SIZE: int = 1024

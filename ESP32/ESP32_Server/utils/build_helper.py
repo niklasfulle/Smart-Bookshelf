@@ -6,7 +6,9 @@
 import time
 import random
 
-from utils.converter import int_to_4byte_array
+from utils.converter import int_to_4byte_array, int_to_1byte_array
+from utils.json_data_reader import json_data_reader
+from utils.constants import FILES
 
 
 def get_timestamp() -> bytearray:
@@ -68,3 +70,34 @@ def get_bytearrays_size_sum(array: bytearray) -> int:
         length += len(bytearrays[1])
 
     return length
+
+
+def get_protocol_version() -> bytearray:
+    """
+    -
+    """
+    return int_to_1byte_array(
+        json_data_reader(FILES.CONFIG, ["protocol_version_major"], 2)
+    ) + int_to_1byte_array(
+        json_data_reader(FILES.CONFIG, ["protocol_version_minor"], 2)
+    )
+
+
+def get_server_version() -> bytearray:
+    """
+    -
+    """
+    return int_to_1byte_array(
+        json_data_reader(FILES.CONFIG, ["server_version_major"], 2)
+    ) + int_to_1byte_array(json_data_reader(FILES.CONFIG, ["server_version_minor"], 2))
+
+
+def get_bookshelf_version() -> bytearray:
+    """
+    -
+    """
+    return int_to_1byte_array(
+        json_data_reader(FILES.CONFIG, ["Bookshelf_version_major"], 2)
+    ) + int_to_1byte_array(
+        json_data_reader(FILES.CONFIG, ["Bookshelf_version_minor"], 2)
+    )
