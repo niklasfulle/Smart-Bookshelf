@@ -32,6 +32,8 @@ class connection:
     version_check: bool
     task: bool
 
+    waiting_count: int
+
     def __init__(
         self,
         client: tuple[str, int],
@@ -52,13 +54,19 @@ class connection:
         self.connection_request_send = False
         self.version_check = False
         self.task = False
+        self.waiting_count = 0
 
         self.sock.bind((client[0], client[1]))
 
-    def reset(self):
+    def reset(self) -> None:
         """
         resets the data of the connections object
         """
+        self.handshake = False
+        self.connection_request_send = False
+        self.version_check = False
+        self.task = False
+        self.waiting_count = 0
 
     def send_message(self, msg: bytearray, addressPort: tuple[str, int]) -> None:
         """

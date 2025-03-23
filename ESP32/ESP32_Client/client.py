@@ -123,15 +123,17 @@ while True:
                 and _connection.handshake
                 and not _connection.version_check
             ):
-                build_version_request(
-                    _connection.receiver_id_int,
-                    _connection.sender_id_int,
-                    _connection.last_send_package.sequence_number,
-                    _connection.last_received_package.sequence_number,
-                    0,
-                    _connection.last_received_package.timestamp,
+                _connection.send_message_to_server(
+                    build_version_request(
+                        _connection.receiver_id_int,
+                        _connection.sender_id_int,
+                        _connection.last_send_package.sequence_number,
+                        _connection.last_received_package.sequence_number,
+                        0,
+                        _connection.last_received_package.timestamp,
+                    )
                 )
-                time.sleep(1.0)
+                time.sleep(2.0)
 
             elif (
                 _connection.connection_request_send
@@ -171,6 +173,15 @@ while True:
             ):
                 if check_versions(_package):
                     _connection.version_check = True
+
+                data = bytearray(b"")
+                time.sleep(0.2)
+
+            elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
+                _package.message_type, "little"
+            ):
+                _connection.reset()
+                data = bytearray(b"")
 
         gc.collect()
     except KeyboardInterrupt:

@@ -77,9 +77,9 @@ def get_protocol_version() -> bytearray:
     -
     """
     return int_to_1byte_array(
-        json_data_reader(FILES.CONFIG, ["protocol_version_major"], 2)
+        json_data_reader(FILES.CONFIG, ["protocol_version_major"], 1)
     ) + int_to_1byte_array(
-        json_data_reader(FILES.CONFIG, ["protocol_version_minor"], 2)
+        json_data_reader(FILES.CONFIG, ["protocol_version_minor"], 1)
     )
 
 
@@ -88,8 +88,8 @@ def get_server_version() -> bytearray:
     -
     """
     return int_to_1byte_array(
-        json_data_reader(FILES.CONFIG, ["server_version_major"], 2)
-    ) + int_to_1byte_array(json_data_reader(FILES.CONFIG, ["server_version_minor"], 2))
+        json_data_reader(FILES.CONFIG, ["server_version_major"], 1)
+    ) + int_to_1byte_array(json_data_reader(FILES.CONFIG, ["server_version_minor"], 1))
 
 
 def get_bookshelf_version() -> bytearray:
@@ -97,7 +97,7 @@ def get_bookshelf_version() -> bytearray:
     -
     """
     return int_to_1byte_array(
-        json_data_reader(FILES.CONFIG, ["Bookshelf_version_major"], 2)
+        json_data_reader(FILES.CONFIG, ["Bookshelf_version_major"], 1)
     ) + int_to_1byte_array(
-        json_data_reader(FILES.CONFIG, ["Bookshelf_version_minor"], 2)
+        json_data_reader(FILES.CONFIG, ["Bookshelf_version_minor"], 1)
     )
