@@ -28,6 +28,7 @@ from protocol.constants.constants import PACKAGE_MESSAGE_TYPE
 from protocol.builder.builder_default_package import (
     build_connection_response,
     build_version_response,
+    build_status_request,
 )
 
 load_dotenv()
@@ -118,7 +119,31 @@ def threaded(_connection: connection) -> None:
             databuffer.pop(index)
 
         try:
-            if data != bytearray(b""):
+            if data == bytearray(b""):
+                if (
+                    _connection.connection_request_send
+                    and _connection.handshake
+                    and _connection.version_check
+                ):
+                    if _connection.waiting_count < 50:
+                        _connection.waiting_count += 1
+                        time.sleep(0.1)
+                    else:
+                        _connection.send_message_to_client(
+                            build_status_request(
+                                _connection.receiver_id_int,
+                                _connection.sender_id_int,
+                                _connection.last_send_package.sequence_number,
+                                _connection.last_received_package.sequence_number,
+                                0,
+                                _connection.last_received_package.timestamp,
+                            )
+                        )
+
+                        _connection.waiting_count = 0
+                        time.sleep(0)
+
+            elif data != bytearray(b""):
                 _package = parse_package(data)
 
                 _connection.last_received_package = _package
@@ -141,13 +166,14 @@ def threaded(_connection: connection) -> None:
                         )
                     )
                     _connection.connection_request_send = True
-
+                    _connection.waiting_count = 0
                     data = bytearray(b"")
                     time.sleep(0.5)
 
                 if PACKAGE_MESSAGE_TYPE.VerRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):
+                    _connection.handshake = True
                     _connection.send_message_to_client(
                         build_version_response(
                             _connection.receiver_id_int,
@@ -161,7 +187,10 @@ def threaded(_connection: connection) -> None:
                             get_bookshelf_version(),
                         )
                     )
+                    _connection.version_check = True
+                    _connection.waiting_count = 0
                     data = bytearray(b"")
+                    time.sleep(0.1)
 
                 elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
                     _package.message_type, "little"
@@ -203,6 +232,8 @@ def main():
 
             else:
                 pass
+
+            time.sleep(5)
 
         except KeyboardInterrupt:
             print("Server terminated")

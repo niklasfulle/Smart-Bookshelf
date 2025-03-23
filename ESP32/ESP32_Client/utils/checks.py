@@ -6,6 +6,11 @@
 from protocol.constants.constants import PACKAGE_MESSAGE_TYPE
 from protocol.package import package
 from connection.connection import connection
+from utils.build_helper import (
+    get_protocol_version,
+    get_client_version,
+    get_bookshelf_version,
+)
 
 
 def handle_checks(_connection: connection, _package: package) -> bool:
@@ -116,8 +121,37 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
             return True
 
     elif message_type == PACKAGE_MESSAGE_TYPE.ConnResponse:
+        print(sequence_number)
+        print(last_received_package_sequence_number)
+        print(confirmed_sequence_number)
+        print(last_send_package_sequence_number)
+        print("#################")
         if (
             sequence_number != 0
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
+
+    elif message_type == PACKAGE_MESSAGE_TYPE.ConnApprove:
+        print(sequence_number)
+        print(last_received_package_sequence_number)
+        print(confirmed_sequence_number)
+        print(last_send_package_sequence_number)
+        print("#################")
+        if (
+            sequence_number == last_received_package_sequence_number
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
+
+    elif message_type == PACKAGE_MESSAGE_TYPE.VerRequest:
+        print(sequence_number)
+        print(last_received_package_sequence_number)
+        print(confirmed_sequence_number)
+        print(last_send_package_sequence_number)
+        print("#################")
+        if (
+            sequence_number == last_received_package_sequence_number
             and confirmed_sequence_number == last_send_package_sequence_number
         ):
             return True
@@ -142,5 +176,15 @@ def check_versions(_package: package) -> bool:
     """
     -
     """
+    package_data: bytearray = _package.data
+
+    if package_data[0:2] != get_protocol_version():
+        return False
+
+    if package_data[2:4] != get_client_version():
+        return False
+
+    if package_data[4:6] != get_bookshelf_version():
+        return False
 
     return True
