@@ -5,6 +5,7 @@
 
 import _thread
 import gc
+import os
 import time
 import sys
 import psycopg2
@@ -32,11 +33,11 @@ from protocol.builder.builder_default_package import (
 load_dotenv()
 
 postgres = psycopg2.connect(
-    database="bookshelf",
-    host="localhost",
-    user="postgres",
-    password="Salkin263",
-    port="5432",
+    database=os.getenv("DATABASE"),
+    host=os.getenv("DB_HOST"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    port=os.getenv("DB_PORT"),
 )
 
 cursor = postgres.cursor()

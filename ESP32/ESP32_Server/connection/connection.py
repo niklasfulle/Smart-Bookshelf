@@ -57,8 +57,6 @@ class connection:
         self.version_check = False
         self.task = False
 
-        print(self.server[1])
-
         self.sock.bind((self.server[0], self.server[1]))
 
     def reset(self):
