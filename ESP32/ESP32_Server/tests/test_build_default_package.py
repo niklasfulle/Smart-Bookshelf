@@ -27,6 +27,7 @@ from protocol.builder.builder_data_package import build_data_package_mode
 from protocol.builder.builder_data_upload_package import (
     build_data_upload_package_data_start,
 )
+from protocol.constants.constants import DISC_REASON, STATUS
 
 from utils.build_helper import (
     get_random_sequence_number,
@@ -200,10 +201,10 @@ class TestBuildDefaultPackage:
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_status_response(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp
+            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(STATUS.RUNNING)
         )
 
-        assert int.from_bytes(package.lenght, "little") == 36
+        assert int.from_bytes(package.lenght, "little") == 38
         assert package.message_type == bytearray(b"\xf4\x0b")
         assert int.from_bytes(package.message_type, "little") == 3060
         assert int.from_bytes(package.receiver_id, "little") == 10
@@ -212,6 +213,7 @@ class TestBuildDefaultPackage:
         assert package.confirmed_sequence_number == sequence_number
         assert package.timestamp == timestamp
         assert package.confirmed_timestamp == timestamp
+        assert package.data == bytearray(B"\x00\x00")
 
     def test_build_disconnection_request(self) -> None:
         """
@@ -220,10 +222,10 @@ class TestBuildDefaultPackage:
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_request(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp
+            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.USERREQUEST)
         )
 
-        assert int.from_bytes(package.lenght, "little") == 36
+        assert int.from_bytes(package.lenght, "little") == 38
         assert package.message_type == bytearray(b"\xfe\x0b")
         assert int.from_bytes(package.message_type, "little") == 3070
         assert int.from_bytes(package.receiver_id, "little") == 10
@@ -232,6 +234,7 @@ class TestBuildDefaultPackage:
         assert package.confirmed_sequence_number == sequence_number
         assert package.timestamp == timestamp
         assert package.confirmed_timestamp == timestamp
+        assert package.data == bytearray(B"\x00\x00")
 
     def test_build_disconnection_response(self) -> None:
         """
@@ -240,10 +243,10 @@ class TestBuildDefaultPackage:
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_response(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp
+            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.USERREQUEST)
         )
 
-        assert int.from_bytes(package.lenght, "little") == 36
+        assert int.from_bytes(package.lenght, "little") == 38
         assert package.message_type == bytearray(b"\x08\x0c")
         assert int.from_bytes(package.message_type, "little") == 3080
         assert int.from_bytes(package.receiver_id, "little") == 10
@@ -252,6 +255,7 @@ class TestBuildDefaultPackage:
         assert package.confirmed_sequence_number == sequence_number
         assert package.timestamp == timestamp
         assert package.confirmed_timestamp == timestamp
+        assert package.data == bytearray(B"\x00\x00")
 
     def test_build_sleep_request(self) -> None:
         """

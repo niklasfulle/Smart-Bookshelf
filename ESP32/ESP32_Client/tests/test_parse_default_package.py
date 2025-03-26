@@ -28,6 +28,7 @@ from protocol.builder.builder_data_upload_package import (
     build_data_upload_package_data_start,
 )
 from protocol.parser.parser_default_package import parse_package
+from protocol.constants.constants import DISC_REASON, STATUS
 from utils.build_helper import (
     get_timestamp,
     get_random_sequence_number,
@@ -195,12 +196,12 @@ class TestParseDefaultPackage:
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_status_response(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp
+            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(STATUS.RUNNING)
         )
 
         parsed_package = parse_package(package.complete_data)
 
-        assert int.from_bytes(parsed_package.lenght, "little") == 36
+        assert int.from_bytes(parsed_package.lenght, "little") == 38
         assert int.from_bytes(parsed_package.message_type, "little") == 3060
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
@@ -218,12 +219,12 @@ class TestParseDefaultPackage:
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_request(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp
+            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.TIMEOUT)
         )
 
         parsed_package = parse_package(package.complete_data)
 
-        assert int.from_bytes(parsed_package.lenght, "little") == 36
+        assert int.from_bytes(parsed_package.lenght, "little") == 38
         assert int.from_bytes(parsed_package.message_type, "little") == 3070
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20
@@ -241,12 +242,12 @@ class TestParseDefaultPackage:
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_response(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp
+            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.TIMEOUT)
         )
 
         parsed_package = parse_package(package.complete_data)
 
-        assert int.from_bytes(parsed_package.lenght, "little") == 36
+        assert int.from_bytes(parsed_package.lenght, "little") == 38
         assert int.from_bytes(parsed_package.message_type, "little") == 3080
         assert int.from_bytes(parsed_package.receiver_id, "little") == 10
         assert int.from_bytes(parsed_package.sender_id, "little") == 20

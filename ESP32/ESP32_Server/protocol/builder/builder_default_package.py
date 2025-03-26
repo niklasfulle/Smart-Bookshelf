@@ -156,6 +156,7 @@ def build_status_response(
     confirmed_sequence_number: bytearray,
     timestamp: bytearray,
     confirmed_timestamp: bytearray,
+    status: bytearray
 ) -> package:
     """
     -
@@ -168,7 +169,7 @@ def build_status_response(
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None,
+        status,
     )
 
 
@@ -179,6 +180,7 @@ def build_disconnection_request(
     confirmed_sequence_number: bytearray,
     timestamp: bytearray,
     confirmed_timestamp: bytearray,
+    reason: bytearray
 ) -> package:
     """
     -
@@ -191,7 +193,7 @@ def build_disconnection_request(
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None,
+        reason,
     )
 
 
@@ -202,6 +204,7 @@ def build_disconnection_response(
     confirmed_sequence_number: bytearray,
     timestamp: bytearray,
     confirmed_timestamp: bytearray,
+    reason: bytearray
 ) -> package:
     """
     -
@@ -214,7 +217,7 @@ def build_disconnection_response(
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None,
+        reason,
     )
 
 
