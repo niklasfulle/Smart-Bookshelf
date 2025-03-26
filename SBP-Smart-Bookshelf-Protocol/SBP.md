@@ -127,7 +127,7 @@
 
 | Byte Nr. | Inhalt                   |
 | :------: | :----------------------- |
-| 00 - 01  | Nachrichtenlänge = 36    |
+| 00 - 01  | Nachrichtenlänge = 38    |
 | 02 - 03  | Nachrichtentyp = 3060    |
 | 04 - 07  | Empfängerkennung         |
 | 08 - 11  | Absenderkennung          |
@@ -135,14 +135,15 @@
 | 16 - 19  | Bestätigte Sequenznummer |
 | 20 - 23  | Zeitstempel              |
 | 24 - 27  | Bestätigter Zeitstempel  |
-| 28 - 35  | Sicherheitscode          |
+| 28 - 29  | Status                   |
+| 30 - 37  | Sicherheitscode          |
 
 <br>
 <b>Trennaufforderungsnachricht (Disconnect Request Message)</b>
 
 | Byte Nr. | Inhalt                   |
 | :------: | :----------------------- |
-| 00 - 01  | Nachrichtenlänge = 36    |
+| 00 - 01  | Nachrichtenlänge = 38    |
 | 02 - 03  | Nachrichtentyp = 3070    |
 | 04 - 07  | Empfängerkennung         |
 | 08 - 11  | Absenderkennung          |
@@ -150,14 +151,15 @@
 | 16 - 19  | Bestätigte Sequenznummer |
 | 20 - 23  | Zeitstempel              |
 | 24 - 27  | Bestätigter Zeitstempel  |
-| 28 - 35  | Sicherheitscode          |
+| 28 - 29  | Grund                    |
+| 30 - 37  | Sicherheitscode          |
 
 <br>
 <b>Trennaufforderungsnachricht (Disconnect Response Message)</b>
 
 | Byte Nr. | Inhalt                   |
 | :------: | :----------------------- |
-| 00 - 01  | Nachrichtenlänge = 36    |
+| 00 - 01  | Nachrichtenlänge = 38    |
 | 02 - 03  | Nachrichtentyp = 3080    |
 | 04 - 07  | Empfängerkennung         |
 | 08 - 11  | Absenderkennung          |
@@ -165,6 +167,7 @@
 | 16 - 19  | Bestätigte Sequenznummer |
 | 20 - 23  | Zeitstempel              |
 | 24 - 27  | Bestätigter Zeitstempel  |
+| 28 - 29  | Grund                    |
 | 28 - 35  | Sicherheitscode          |
 
 <br>

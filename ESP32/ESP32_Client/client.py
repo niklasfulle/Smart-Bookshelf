@@ -13,8 +13,9 @@ from connection.connection import connection
 from utils.json_data_reader import json_data_reader
 from utils.constants import FILES, BUFFER_SIZE
 from utils.checks import handle_checks, check_versions
+from utils.converter import int_to_2byte_array
 from hardware.bookshelf import bookshelf
-from protocol.constants.constants import PACKAGE_MESSAGE_TYPE
+from protocol.constants.constants import PACKAGE_MESSAGE_TYPE, DISC_REASON
 from protocol.parser.parser_default_package import parse_package
 from protocol.builder.builder_default_package import (
     build_connection_request,
@@ -113,6 +114,7 @@ while True:
                         _connection.receiver_id_int,
                         _connection.sender_id_int,
                         *[0] * 4,
+                        int_to_2byte_array(DISC_REASON.TIMEOUT)
                     )
                 )
                 _connection.connection_request_send = False

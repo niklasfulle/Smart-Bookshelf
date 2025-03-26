@@ -50,7 +50,7 @@ class package:
         self.timestamp = timestamp
         self.confirmed_timestamp = confirmed_timestamp
         self.data = data
-
+        
         if data is not None:
             self.lenght = int_to_2byte_array(
                 get_bytearrays_size_sum(
