@@ -87,6 +87,70 @@ def check_for_valid_message_type(_package: package) -> bool:
     return False
 
 
+def check_for_valid_message_type_moment(_connection: connection, _package: package) -> bool:
+    """
+    -
+    """
+
+    message_type = _package.message_type
+    
+    valid_types = []
+    
+    if isinstance(message_type, bytearray):
+        message_type = int.from_bytes(message_type, "little")
+        
+    if (
+        not _connection.connection_request_send
+        and not _connection.handshake
+        and not _connection.version_check
+    ):
+        valid_types = [
+            PACKAGE_MESSAGE_TYPE.DiscRequest
+        ]
+        
+    elif (
+        _connection.connection_request_send
+        and not _connection.handshake
+        and not _connection.version_check
+    ):
+        valid_types = [
+            PACKAGE_MESSAGE_TYPE.ConnResponse, 
+            PACKAGE_MESSAGE_TYPE.DiscRequest,
+            PACKAGE_MESSAGE_TYPE.DiscResponse
+        ]
+        
+    elif (
+        _connection.connection_request_send
+        and _connection.handshake
+        and not _connection.version_check
+    ):
+        valid_types = [
+            PACKAGE_MESSAGE_TYPE.VerResponse, 
+            PACKAGE_MESSAGE_TYPE.DiscRequest,
+            PACKAGE_MESSAGE_TYPE.DiscResponse
+        ]
+        
+    elif (
+        _connection.connection_request_send
+        and _connection.handshake
+        and _connection.version_check
+    ):
+        valid_types = [
+            PACKAGE_MESSAGE_TYPE.StatusRequest,
+            PACKAGE_MESSAGE_TYPE.SleepRequest,
+            PACKAGE_MESSAGE_TYPE.RebootRequest,
+            PACKAGE_MESSAGE_TYPE.DiscRequest,
+            PACKAGE_MESSAGE_TYPE.DiscResponse,
+            PACKAGE_MESSAGE_TYPE.Data,
+            PACKAGE_MESSAGE_TYPE.DataUpload
+        ]
+        
+    if message_type in valid_types:
+        return True
+
+    return False
+
+
 def check_for_valid_sequence_number(_connection: connection, _package: package) -> bool:
     """
     -
