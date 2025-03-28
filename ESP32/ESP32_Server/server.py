@@ -24,7 +24,7 @@ from utils.build_helper import (
 )
 from hardware.bookshelf import bookshelf
 from protocol.parser.parser_default_package import parse_package
-from protocol.constants.constants import PACKAGE_MESSAGE_TYPE
+from protocol.constants.constants import PACKAGE_MESSAGE_TYPE, DISC_REASON
 from protocol.builder.builder_default_package import (
     build_connection_response,
     build_version_response,
@@ -116,7 +116,7 @@ def threaded(_connection: connection) -> None:
 
         if index is not None:
             data = databuffer[index][1]
-            databuffer.pop(index)
+            databuffer.remove(databuffer[index])
 
         try:
             if data == bytearray(b""):
@@ -141,10 +141,14 @@ def threaded(_connection: connection) -> None:
                         )
 
                         _connection.waiting_count = 0
-                        time.sleep(0)
+                        time.sleep(0.2)
+                else:
+                    print("nothing")
+                    time.sleep(0.05)
 
             elif data != bytearray(b""):
                 _package = parse_package(data)
+                print(int.from_bytes(_package.message_type, "little"))
 
                 _connection.last_received_package = _package
 
@@ -155,6 +159,7 @@ def threaded(_connection: connection) -> None:
                 if PACKAGE_MESSAGE_TYPE.ConnRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):
+                    print("ConnRequest")
                     _connection.send_message_to_client(
                         build_connection_response(
                             _connection.receiver_id_int,
@@ -168,12 +173,22 @@ def threaded(_connection: connection) -> None:
                     _connection.connection_request_send = True
                     _connection.waiting_count = 0
                     data = bytearray(b"")
-                    time.sleep(0.5)
-
-                if PACKAGE_MESSAGE_TYPE.VerRequest == int.from_bytes(
+                    time.sleep(0.1)
+                    
+                elif PACKAGE_MESSAGE_TYPE.ConnApprove == int.from_bytes(
                     _package.message_type, "little"
                 ):
+                    print("ConnApprove")
                     _connection.handshake = True
+                    _connection.waiting_count = 0
+                    data = bytearray(b"")
+                    time.sleep(0.1)
+                    
+                elif PACKAGE_MESSAGE_TYPE.VerRequest == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    print("VerRequest")
+                    
                     _connection.send_message_to_client(
                         build_version_response(
                             _connection.receiver_id_int,
@@ -190,13 +205,17 @@ def threaded(_connection: connection) -> None:
                     _connection.version_check = True
                     _connection.waiting_count = 0
                     data = bytearray(b"")
-                    time.sleep(0.1)
+                    time.sleep(0.3) 
 
                 elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):
-                    _connection.reset()
+                    print("DiscRequest")
+                    if int.from_bytes(_package.data, "little") != DISC_REASON.TIMEOUT:
+                        _connection.reset()
+                    print("timeout")
                     data = bytearray(b"")
+                    time.sleep(0)
 
             gc.collect()
         except KeyboardInterrupt:

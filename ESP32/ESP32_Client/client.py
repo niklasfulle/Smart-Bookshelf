@@ -102,7 +102,7 @@ while True:
                 )
                 _connection.connection_request_send = True
                 data = bytearray(b"")
-                time.sleep(3.5)
+                time.sleep(2)
 
             elif (
                 _connection.connection_request_send
@@ -118,30 +118,24 @@ while True:
                     )
                 )
                 _connection.connection_request_send = False
-                time.sleep(1.0)
+                time.sleep(0.2)
 
             elif (
                 _connection.connection_request_send
                 and _connection.handshake
                 and not _connection.version_check
             ):
-                _connection.send_message_to_server(
-                    build_version_request(
-                        _connection.receiver_id_int,
-                        _connection.sender_id_int,
-                        _connection.last_send_package.sequence_number,
-                        _connection.last_received_package.sequence_number,
-                        0,
-                        _connection.last_received_package.timestamp,
-                    )
-                )
-                time.sleep(2.0)
+                time.sleep(0.1)
 
             elif (
                 _connection.connection_request_send
                 and _connection.handshake
                 and _connection.version_check
             ):
+                time.sleep(0.1)
+            
+            else: 
+                print("nothing")
                 time.sleep(0.1)
 
         elif data != bytearray(b""):
@@ -167,8 +161,21 @@ while True:
                     )
                 )
                 _connection.handshake = True
+                time.sleep(2)
+                
+                _connection.send_message_to_server(
+                    build_version_request(
+                        _connection.receiver_id_int,
+                        _connection.sender_id_int,
+                        _connection.last_send_package.sequence_number,
+                        _connection.last_received_package.sequence_number,
+                        0,
+                        _connection.last_received_package.timestamp,
+                    )
+                )
+                
+                time.sleep(1)
                 data = bytearray(b"")
-                time.sleep(0.2)
 
             elif PACKAGE_MESSAGE_TYPE.VerResponse == int.from_bytes(
                 _package.message_type, "little"
