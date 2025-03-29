@@ -213,7 +213,7 @@ class TestBuildDefaultPackage:
         assert package.confirmed_sequence_number == sequence_number
         assert package.timestamp == timestamp
         assert package.confirmed_timestamp == timestamp
-        assert package.data == bytearray(B"\x00\x00")
+        assert package.data == bytearray(B"\x01\x00")
 
     def test_build_disconnection_request(self) -> None:
         """

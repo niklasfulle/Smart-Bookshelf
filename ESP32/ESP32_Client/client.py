@@ -15,13 +15,14 @@ from utils.constants import FILES, BUFFER_SIZE
 from utils.checks import handle_checks, check_versions
 from utils.converter import int_to_2byte_array
 from hardware.bookshelf import bookshelf
-from protocol.constants.constants import PACKAGE_MESSAGE_TYPE, DISC_REASON
+from protocol.constants.constants import PACKAGE_MESSAGE_TYPE, DISC_REASON, STATUS
 from protocol.parser.parser_default_package import parse_package
 from protocol.builder.builder_default_package import (
     build_connection_request,
     build_disconnection_request,
     build_connection_approve,
     build_version_request,
+    build_status_response
 )
 
 
@@ -85,6 +86,8 @@ print("ESP runs on IP:{}, PORt:{}".format(client_ip, client_port))
 gc.collect()
 # gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
 
+_connection.status = STATUS.RUNNING
+
 while True:
     try:
         if data == bytearray(b""):
@@ -135,7 +138,6 @@ while True:
                 time.sleep(0.1)
             
             else: 
-                print("nothing")
                 time.sleep(0.1)
 
         elif data != bytearray(b""):
@@ -146,51 +148,84 @@ while True:
             if not handle_checks(_connection, _package):
                 print("Check Error")
                 data = bytearray(b"")
-
-            if PACKAGE_MESSAGE_TYPE.ConnResponse == int.from_bytes(
-                _package.message_type, "little"
-            ):
-                _connection.send_message_to_server(
-                    build_connection_approve(
-                        _connection.receiver_id_int,
-                        _connection.sender_id_int,
-                        _connection.last_send_package.sequence_number,
-                        _connection.last_received_package.sequence_number,
-                        0,
-                        _connection.last_received_package.timestamp,
+            
+            else:
+                if PACKAGE_MESSAGE_TYPE.ConnResponse == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    _connection.send_message_to_server(
+                        build_connection_approve(
+                            _connection.receiver_id_int,
+                            _connection.sender_id_int,
+                            _connection.last_send_package.sequence_number,
+                            _connection.last_received_package.sequence_number,
+                            0,
+                            _connection.last_received_package.timestamp,
+                        )
                     )
-                )
-                _connection.handshake = True
-                time.sleep(2)
-                
-                _connection.send_message_to_server(
-                    build_version_request(
-                        _connection.receiver_id_int,
-                        _connection.sender_id_int,
-                        _connection.last_send_package.sequence_number,
-                        _connection.last_received_package.sequence_number,
-                        0,
-                        _connection.last_received_package.timestamp,
+                    _connection.handshake = True
+                    time.sleep(2)
+                    
+                    _connection.send_message_to_server(
+                        build_version_request(
+                            _connection.receiver_id_int,
+                            _connection.sender_id_int,
+                            _connection.last_send_package.sequence_number,
+                            _connection.last_received_package.sequence_number,
+                            0,
+                            _connection.last_received_package.timestamp,
+                        )
                     )
-                )
-                
-                time.sleep(1)
-                data = bytearray(b"")
+                    
+                    time.sleep(1)
+                    data = bytearray(b"")
 
-            elif PACKAGE_MESSAGE_TYPE.VerResponse == int.from_bytes(
-                _package.message_type, "little"
-            ):
-                if check_versions(_package):
-                    _connection.version_check = True
+                elif PACKAGE_MESSAGE_TYPE.VerResponse == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    if check_versions(_package):
+                        _connection.version_check = True
+                    
+                    else: 
+                        _connection.version_check = False
+                        _connection.send_message_to_server(
+                            build_disconnection_request(
+                                _connection.receiver_id_int,
+                                _connection.sender_id_int,
+                                _connection.last_send_package.sequence_number,
+                                _connection.last_received_package.sequence_number,
+                                0,
+                                _connection.last_received_package.timestamp,
+                                int_to_2byte_array(DISC_REASON.INCOMPATIBLEVERSION)
+                            )
+                        )
+                    
+                    data = bytearray(b"")
+                    time.sleep(0.2)
+                    
+                elif PACKAGE_MESSAGE_TYPE.StatusRequest == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    _connection.send_message_to_server(
+                        build_status_response(
+                            _connection.receiver_id_int,
+                            _connection.sender_id_int,
+                            _connection.last_send_package.sequence_number,
+                            _connection.last_received_package.sequence_number,
+                            0,
+                            _connection.last_received_package.timestamp,
+                            int_to_2byte_array(_connection.status)
+                        )
+                    )
+                    
+                    data = bytearray(b"")
+                    time.sleep(0.2)
 
-                data = bytearray(b"")
-                time.sleep(0.2)
-
-            elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
-                _package.message_type, "little"
-            ):
-                _connection.reset()
-                data = bytearray(b"")
+                elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    _connection.reset()
+                    data = bytearray(b"")
 
         gc.collect()
     except KeyboardInterrupt:

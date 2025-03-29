@@ -6,6 +6,7 @@
 import socket
 from hardware.bookshelf import bookshelf
 from protocol.package import package
+from protocol.constants.constants import STATUS
 from utils.converter import int_to_4byte_array
 
 
@@ -26,13 +27,15 @@ class connection:
     bookshelf_object: bookshelf
     last_send_package: package
     last_received_package: package
-
+    status: STATUS
     handshake: bool
     connection_request_send: bool
     version_check: bool
+    status_request_send: bool
     task: bool
 
     waiting_count: int
+    status_request_waiting_count: int
 
     def __init__(
         self,
@@ -53,13 +56,17 @@ class connection:
 
         self.last_send_package = None
         self.last_received_package = None
+        
+        self.status = STATUS.OFFLINE
 
         self.handshake = False
         self.connection_request_send = False
         self.version_check = False
+        self.status_request_send = False
         self.task = False
 
         self.waiting_count = 0
+        self.status_request_waiting_count = 0
 
         self.sock.bind((self.server[0], self.server[1]))
 
@@ -70,8 +77,10 @@ class connection:
         self.handshake = False
         self.connection_request_send = False
         self.version_check = False
+        self.status_request_send = False
         self.task = False
         self.waiting_count = 0
+        self.status_request_waiting_count = 0
 
     def send_message(self, msg: bytearray, addressPort: tuple[str, int]) -> None:
         """

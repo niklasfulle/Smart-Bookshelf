@@ -214,6 +214,27 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
             and confirmed_sequence_number == last_send_package_sequence_number
         ):
             return True
+        
+    elif message_type == PACKAGE_MESSAGE_TYPE.VerResponse:
+        if (
+            sequence_number == last_received_package_sequence_number
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
+        
+    elif message_type == PACKAGE_MESSAGE_TYPE.StatusRequest:
+        if (
+            sequence_number == last_received_package_sequence_number
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
+
+    elif message_type == PACKAGE_MESSAGE_TYPE.StatusResponse:
+        if (
+            sequence_number == last_received_package_sequence_number
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
 
     elif message_type == PACKAGE_MESSAGE_TYPE.Data:
         return True
