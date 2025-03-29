@@ -237,8 +237,10 @@ def threaded(_connection: connection) -> None:
                     ):  
                         
                         _connection.status = int.from_bytes(_package.data, "little")
+                        _connection.status_request_send = False
+                        _connection.status_request_waiting_count = 0 
                         data = bytearray(b"")
-                        time.sleep(0.3) 
+                        time.sleep(0.1) 
 
                     elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
                         _package.message_type, "little"
