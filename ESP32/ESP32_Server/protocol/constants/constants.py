@@ -55,6 +55,8 @@ DISC_REASON = enum(
 )
 
 STATUS = enum(
-    RUNNING=0,
-    ERROR=10
+    OFFLINE=0,
+    RUNNING=1,
+    ERROR=10,
+    UNKOWN=20
 )

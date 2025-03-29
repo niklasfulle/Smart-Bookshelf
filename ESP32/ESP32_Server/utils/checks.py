@@ -19,9 +19,12 @@ def handle_checks(_connection: connection, _package: package) -> bool:
     if not check_for_valid_message_type(_package):
         print("check_for_valid_message_type")
         return False
+    
+    if not check_for_valid_message_type_moment(_connection, _package):
+        print("check_for_valid_message_type_moment")
+        return False
 
     if not check_for_valid_sequence_number(_connection, _package):
-        print(int.from_bytes(_package.message_type, "little"))
         print("check_for_valid_sequence_number")
         return False
 
@@ -111,7 +114,7 @@ def check_for_valid_message_type_moment(_connection: connection, _package: packa
         and not _connection.version_check
     ):
         valid_types = [
-            PACKAGE_MESSAGE_TYPE.ConnApprove, 
+            PACKAGE_MESSAGE_TYPE.ConnApprove,
             PACKAGE_MESSAGE_TYPE.DiscRequest,
             PACKAGE_MESSAGE_TYPE.DiscResponse
         ]
@@ -181,11 +184,6 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
             return True
 
     elif message_type == PACKAGE_MESSAGE_TYPE.ConnResponse:
-        print(sequence_number)
-        print(last_received_package_sequence_number)
-        print(confirmed_sequence_number)
-        print(last_send_package_sequence_number)
-        print("#################")
         if (
             sequence_number != 0
             and confirmed_sequence_number == last_send_package_sequence_number
@@ -193,11 +191,6 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
             return True
 
     elif message_type == PACKAGE_MESSAGE_TYPE.ConnApprove:
-        print(sequence_number)
-        print(last_received_package_sequence_number)
-        print(confirmed_sequence_number)
-        print(last_send_package_sequence_number)
-        print("#################")
         if (
             sequence_number == last_received_package_sequence_number
             and confirmed_sequence_number == last_send_package_sequence_number
@@ -205,11 +198,27 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
             return True
 
     elif message_type == PACKAGE_MESSAGE_TYPE.VerRequest:
-        print(sequence_number)
-        print(last_received_package_sequence_number)
-        print(confirmed_sequence_number)
-        print(last_send_package_sequence_number)
-        print("#################")
+        if (
+            sequence_number == last_received_package_sequence_number
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
+        
+    elif message_type == PACKAGE_MESSAGE_TYPE.VerResponse:
+        if (
+            sequence_number == last_received_package_sequence_number
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
+        
+    elif message_type == PACKAGE_MESSAGE_TYPE.StatusRequest:
+        if (
+            sequence_number == last_received_package_sequence_number
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
+
+    elif message_type == PACKAGE_MESSAGE_TYPE.StatusResponse:
         if (
             sequence_number == last_received_package_sequence_number
             and confirmed_sequence_number == last_send_package_sequence_number
