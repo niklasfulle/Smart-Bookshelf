@@ -23,6 +23,7 @@ from utils.build_helper import (
     get_bookshelf_version,
 )
 from utils.converter import int_to_2byte_array
+from utils.tasks import check_tasks, handle_tasks
 from hardware.bookshelf import bookshelf
 from protocol.parser.parser_default_package import parse_package
 from protocol.constants.constants import PACKAGE_MESSAGE_TYPE, DISC_REASON, STATUS
@@ -32,7 +33,6 @@ from protocol.builder.builder_default_package import (
     build_status_request,
     build_disconnection_request,
 )
-from datatype.task import task
 
 load_dotenv()
 
@@ -97,26 +97,6 @@ def fetch_configs() -> int:
     return len(clients)
 
 
-def check_for_tasks(_connection: connection) -> None:
-    cursor.execute('select * from "tasks" ORDER BY "createdAt" ASC')
-
-    tasks = cursor.fetchall()
-
-    first_task: task
-    if len(tasks) > 0:
-        first_task = task(
-            tasks[0][0],
-            tasks[0][1],
-            tasks[0][2],
-            tasks[0][3],
-        )
-        _connection._task = first_task
-
-        delete_sql = 'DELETE FROM "tasks" WHERE id = %s;'
-        cursor.execute(delete_sql, (first_task.id,))
-        postgres.commit()
-
-
 def listening_thread(sock) -> None:
     """
     -
@@ -150,14 +130,14 @@ def threaded(_connection: connection) -> None:
                     and _connection.version_check
                     and _connection._task is not None
                 ):
-                    print(_connection._task.id, _connection._task.type)
+                    handle_tasks(_connection)
                 elif (
                     _connection.connection_request_send
                     and _connection.handshake
                     and _connection.version_check
                     and _connection._task is None
                 ):
-                    check_for_tasks(_connection)
+                    check_tasks(postgres, cursor, _connection)
 
                 if (
                     _connection.connection_request_send

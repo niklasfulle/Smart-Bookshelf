@@ -14,3 +14,5 @@ FILES = enum(
 )
 
 BUFFER_SIZE: int = 1024
+
+BOOKSHELF_MODE = enum(BOOKS="books", LIGHT="light", SLEEP="sleep")

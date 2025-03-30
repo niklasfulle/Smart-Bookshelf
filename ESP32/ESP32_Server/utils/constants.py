@@ -14,3 +14,17 @@ FILES = enum(
 )
 
 BUFFER_SIZE: int = 1024
+
+TASK_TYPES = enum(
+    SLEEP="task_sleep",
+    REBOOT="task_reboot",
+    CONFIG_SEND="task_config_send",
+    CONFIG_REQUEST="task_config_request",
+    DATA_SEND_BOOK="task_data_send_book",
+    DATA_SEND_BOOKS="task_data_send_books",
+    DATA_SEND_MODE="task_data_send_mode",
+    DATA_SEND_LIGHT_ON="task_data_send_ligh_on",
+    DATA_SEND_LIGHT_OFF="task_data_send_ligh_off",
+)
+
+BOOKSHELF_MODE = enum(BOOKS="books", LIGHT="light", SLEEP="sleep")

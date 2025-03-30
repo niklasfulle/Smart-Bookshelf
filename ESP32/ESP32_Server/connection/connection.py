@@ -38,6 +38,12 @@ class connection:
     waiting_count: int
     status_request_waiting_count: int
 
+    data_send_mode: bool
+    data_reveiv_mode: bool
+
+    data_to_send: bytearray
+    data_to_reveiv: bytearray
+
     def __init__(
         self,
         client: tuple[str, int],
@@ -69,6 +75,12 @@ class connection:
         self.waiting_count = 0
         self.status_request_waiting_count = 0
 
+        self.data_send_mode = False
+        self.data_reveiv_mode = False
+
+        self.data_to_send = None
+        self.data_to_reveiv = None
+
         self.sock.bind((self.server[0], self.server[1]))
 
     def reset(self) -> None:
@@ -82,6 +94,12 @@ class connection:
         self._task = None
         self.waiting_count = 0
         self.status_request_waiting_count = 0
+
+        self.data_send_mode = False
+        self.data_reveiv_mode = False
+
+        self.data_to_send = None
+        self.data_to_reveiv = None
 
     def send_message(self, msg: bytearray, addressPort: tuple[str, int]) -> None:
         """
