@@ -75,6 +75,12 @@ local vals_message_type = {
     [6000] = "Daten Hochladen"
 }
 
+local vals_status = {
+    [0] = "OFFLINE",
+    [1] = "RUNNING",
+    [10] = "ERROR",
+    [20] = "UNKOWN",
+}
 
 local vals_disconnect_reason = {
     [0] = "user enquiry",
@@ -100,6 +106,8 @@ local sbp_c_timestamp         = ProtoField.uint32("sbp.cts", "Bestätigter Zeits
 local sbp_protocol_version    = ProtoField.string("sbp.protocol_version", "Protokollversion")
 local sbp_config_version      = ProtoField.string("sbp.config_version", "Configversion")
 local sbp_Bookshelf_version   = ProtoField.string("sbp.Bookshelf_version", "Bookshelfversion")
+local sbp_status              = ProtoField.uint16("sbp.status", "Status", base.DEC, vals_status)
+local sbp_disconnect_reason   = ProtoField.uint16("sbp.disconnect_reason", "Trenngrund", base.DEC, vals_disconnect_reason)
 local sbp_data                = ProtoField.new("Nutzdaten", "sbp.data", ftypes.BYTES)
 local sbp_safety_code         = ProtoField.new("Sicherheitscode", "sbp.safety_code", ftypes.BYTES)
 local sbp_safety_code_valid   = ProtoField.new("Sicherheitscode gültig", "sbp.safety_code_valid", ftypes.BOOLEAN)
@@ -118,6 +126,8 @@ p_sbp.fields = {
     sbp_protocol_version,
     sbp_config_version,
     sbp_Bookshelf_version,
+    sbp_status,
+    sbp_disconnect_reason,
     sbp_data,
     sbp_safety_code,
     sbp_safety_code_valid
@@ -152,6 +162,13 @@ function p_sbp.dissector(buf, pktinfo, root)
         sbp:add_le(sbp_protocol_version, buf:range(28, 2))
         sbp:add_le(sbp_config_version, buf:range(30, 2))
         sbp:add_le(sbp_Bookshelf_version, buf:range(32, 2))
+    elseif (msg_type:le_uint() == 3060) then
+
+        sbp:add_le(sbp_status, buf:range(28, 2))
+    
+    elseif (msg_type:le_uint() == 3070 or msg_type:le_uint() == 3080) then
+
+        sbp:add_le(sbp_disconnect_reason, buf:range(28, 2))
 
     elseif (msg_type:le_uint() == 5000 or msg_type:le_uint() == 6000) then
         -- data and retransmitted data
