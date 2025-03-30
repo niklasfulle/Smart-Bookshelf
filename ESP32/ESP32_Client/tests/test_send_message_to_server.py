@@ -194,7 +194,7 @@ class TestSendMessageServer:
             sequence_number,
             timestamp,
             timestamp,
-            int_to_2byte_array(STATUS.RUNNING)
+            int_to_2byte_array(STATUS.RUNNING),
         )
         self.connection_object.send_message_to_server(package)
 
@@ -211,7 +211,7 @@ class TestSendMessageServer:
             sequence_number,
             timestamp,
             timestamp,
-            int_to_2byte_array(DISC_REASON.USERREQUEST)
+            int_to_2byte_array(DISC_REASON.USERREQUEST),
         )
         self.connection_object.send_message_to_server(package)
 
@@ -228,7 +228,7 @@ class TestSendMessageServer:
             sequence_number,
             timestamp,
             timestamp,
-            int_to_2byte_array(DISC_REASON.USERREQUEST)
+            int_to_2byte_array(DISC_REASON.USERREQUEST),
         )
         self.connection_object.send_message_to_server(package)
 
