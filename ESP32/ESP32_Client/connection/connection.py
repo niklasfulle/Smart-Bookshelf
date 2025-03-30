@@ -53,7 +53,7 @@ class connection:
         self.bookshelf_object = Bookshelf_object
         self.last_send_package = None
         self.last_received_package = None
-        
+
         self.status = STATUS.OFFLINE
 
         self.handshake = False
@@ -96,3 +96,21 @@ class connection:
         """
         self.send_message(_package.complete_data, self.server)
         self.last_send_package = _package
+
+    def print_info(self) -> None:
+        print("####################")
+        print(self.client)
+        print(self.server)
+        print(self.receiver_id_int)
+        print(self.sender_id_int)
+        print(self.receiver_id)
+        print(self.sender_id)
+        print(self.bookshelf_object)
+        print(self.last_send_package)
+        print(self.last_received_package)
+        print(self.status)
+        print(self.handshake)
+        print(self.connection_request_send)
+        print(self.version_check)
+        print(self.task)
+        print("####################")

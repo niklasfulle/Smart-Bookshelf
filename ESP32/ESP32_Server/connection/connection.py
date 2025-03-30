@@ -8,6 +8,7 @@ from hardware.bookshelf import bookshelf
 from protocol.package import package
 from protocol.constants.constants import STATUS
 from utils.converter import int_to_4byte_array
+from datatype.task import task
 
 
 class connection:
@@ -32,7 +33,7 @@ class connection:
     connection_request_send: bool
     version_check: bool
     status_request_send: bool
-    task: bool
+    _task: task
 
     waiting_count: int
     status_request_waiting_count: int
@@ -56,14 +57,14 @@ class connection:
 
         self.last_send_package = None
         self.last_received_package = None
-        
+
         self.status = STATUS.OFFLINE
 
         self.handshake = False
         self.connection_request_send = False
         self.version_check = False
         self.status_request_send = False
-        self.task = False
+        self._task = None
 
         self.waiting_count = 0
         self.status_request_waiting_count = 0
@@ -78,7 +79,7 @@ class connection:
         self.connection_request_send = False
         self.version_check = False
         self.status_request_send = False
-        self.task = False
+        self._task = None
         self.waiting_count = 0
         self.status_request_waiting_count = 0
 
@@ -102,3 +103,21 @@ class connection:
         """
         self.send_message(_package.complete_data, self.server)
         self.last_send_package = _package
+
+    def print_info(self) -> None:
+        print("####################")
+        print(self.client)
+        print(self.server)
+        print(self.receiver_id_int)
+        print(self.sender_id_int)
+        print(self.receiver_id)
+        print(self.sender_id)
+        print(self.bookshelf_object)
+        print(self.last_send_package)
+        print(self.last_received_package)
+        print(self.status)
+        print(self.handshake)
+        print(self.connection_request_send)
+        print(self.version_check)
+        print(self.task)
+        print("####################")
