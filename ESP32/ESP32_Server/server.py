@@ -220,7 +220,7 @@ def threaded(_connection: connection) -> None:
                         _connection.connection_request_send = True
                         _connection.waiting_count = 0
                         data = bytearray(b"")
-                        time.sleep(0.1)
+                        time.sleep(0.2)
 
                     elif PACKAGE_MESSAGE_TYPE.ConnApprove == int.from_bytes(
                         _package.message_type, "little"
@@ -228,7 +228,7 @@ def threaded(_connection: connection) -> None:
                         _connection.handshake = True
                         _connection.waiting_count = 0
                         data = bytearray(b"")
-                        time.sleep(0.1)
+                        time.sleep(0.2)
 
                     elif PACKAGE_MESSAGE_TYPE.VerRequest == int.from_bytes(
                         _package.message_type, "little"
@@ -249,7 +249,7 @@ def threaded(_connection: connection) -> None:
                         _connection.version_check = True
                         _connection.waiting_count = 0
                         data = bytearray(b"")
-                        time.sleep(0.3)
+                        time.sleep(0.2)
 
                     elif PACKAGE_MESSAGE_TYPE.StatusResponse == int.from_bytes(
                         _package.message_type, "little"
@@ -258,7 +258,19 @@ def threaded(_connection: connection) -> None:
                         _connection.status_request_send = False
                         _connection.status_request_waiting_count = 0
                         data = bytearray(b"")
-                        time.sleep(0.1)
+                        time.sleep(0.2)
+
+                    elif PACKAGE_MESSAGE_TYPE.SleepResponse == int.from_bytes(
+                        _package.message_type, "little"
+                    ):
+                        data = bytearray(b"")
+                        time.sleep(0.2)
+
+                    elif PACKAGE_MESSAGE_TYPE.RebootResponse == int.from_bytes(
+                        _package.message_type, "little"
+                    ):
+                        data = bytearray(b"")
+                        time.sleep(0.2)
 
                     elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
                         _package.message_type, "little"
@@ -269,7 +281,7 @@ def threaded(_connection: connection) -> None:
                         ):
                             _connection.reset()
                         data = bytearray(b"")
-                        time.sleep(0)
+                        time.sleep(0.2)
 
             gc.collect()
         except KeyboardInterrupt:

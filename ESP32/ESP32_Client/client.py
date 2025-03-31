@@ -221,6 +221,20 @@ while True:
                     data = bytearray(b"")
                     time.sleep(0.2)
 
+                elif PACKAGE_MESSAGE_TYPE.SleepRequest == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    print("SleepRequest")
+                    data = bytearray(b"")
+                    time.sleep(0.2)
+
+                elif PACKAGE_MESSAGE_TYPE.RebootRequest == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    print("RebootRequest")
+                    data = bytearray(b"")
+                    time.sleep(0.2)
+
                 elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):

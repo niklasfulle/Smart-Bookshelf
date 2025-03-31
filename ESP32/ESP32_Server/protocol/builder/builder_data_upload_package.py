@@ -20,6 +20,18 @@ def build_data_upload_package_data(
     )
 
 
+def build_data_upload_package_data_confirm(
+    package_number: bytearray,
+) -> data_upload_package:
+    """
+    -
+    """
+
+    return initialize_data_upload_package(
+        DATA_UPLOAD_MESSAGE_TYPE.DataConfirm, (package_number)
+    )
+
+
 def build_data_upload_package_data_start(datatype: bytearray) -> data_upload_package:
     """
     -

@@ -59,7 +59,7 @@ class TestParseDataUploadPackage:
         parsed_package = parse_data_upload_package(package.complete_data)
 
         assert int.from_bytes(parsed_package.lenght, "little") == 4
-        assert int.from_bytes(parsed_package.message_type, "little") == 6003
+        assert int.from_bytes(parsed_package.message_type, "little") == 6004
 
     def test_parse_data_upload_package_data_error(self) -> None:
         """
@@ -70,7 +70,7 @@ class TestParseDataUploadPackage:
         parsed_package = parse_data_upload_package(package.complete_data)
 
         assert int.from_bytes(parsed_package.lenght, "little") == 6
-        assert int.from_bytes(parsed_package.message_type, "little") == 6004
+        assert int.from_bytes(parsed_package.message_type, "little") == 6005
 
     def test_parse_data_upload_package_data_cancel(self) -> None:
         """
@@ -81,4 +81,4 @@ class TestParseDataUploadPackage:
         parsed_package = parse_data_upload_package(package.complete_data)
 
         assert int.from_bytes(parsed_package.lenght, "little") == 4
-        assert int.from_bytes(parsed_package.message_type, "little") == 6005
+        assert int.from_bytes(parsed_package.message_type, "little") == 6006
