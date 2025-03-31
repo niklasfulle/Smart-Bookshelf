@@ -235,6 +235,16 @@ while True:
                     data = bytearray(b"")
                     time.sleep(0.2)
 
+                elif PACKAGE_MESSAGE_TYPE.Data == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    print("Data")
+
+                elif PACKAGE_MESSAGE_TYPE.DataUpload == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    print("DataUpload")
+
                 elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):

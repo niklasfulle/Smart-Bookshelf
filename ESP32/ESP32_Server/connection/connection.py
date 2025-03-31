@@ -41,7 +41,7 @@ class connection:
     data_send_mode: bool
     data_reveiv_mode: bool
 
-    data_to_send: bytearray
+    data_to_send: list
     data_to_reveiv: bytearray
 
     def __init__(
