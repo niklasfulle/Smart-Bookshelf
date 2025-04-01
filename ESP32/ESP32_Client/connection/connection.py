@@ -35,6 +35,14 @@ class connection:
 
     waiting_count: int
 
+    data_send_mode: bool
+    data_reveiv_mode: bool
+
+    data_to_send: bytearray
+    data_to_reveiv: bytearray
+
+    timeout_counter: int
+
     def __init__(
         self,
         client: tuple[str, int],
@@ -53,7 +61,7 @@ class connection:
         self.bookshelf_object = Bookshelf_object
         self.last_send_package = None
         self.last_received_package = None
-        
+
         self.status = STATUS.OFFLINE
 
         self.handshake = False
@@ -62,6 +70,14 @@ class connection:
         self.task = False
 
         self.waiting_count = 0
+
+        self.data_send_mode = False
+        self.data_reveiv_mode = False
+
+        self.data_to_send = None
+        self.data_to_reveiv = None
+
+        self.timeout_counter = 0
 
         self.sock.bind((client[0], client[1]))
 
@@ -72,9 +88,17 @@ class connection:
         self.handshake = False
         self.connection_request_send = False
         self.version_check = False
-        self.task = False
+        self._task = None
         self.status = STATUS.OFFLINE
         self.waiting_count = 0
+
+        self.data_send_mode = False
+        self.data_reveiv_mode = False
+
+        self.data_to_send = None
+        self.data_to_reveiv = None
+
+        self.timeout_counter = 0
 
     def send_message(self, msg: bytearray, addressPort: tuple[str, int]) -> None:
         """
@@ -96,3 +120,21 @@ class connection:
         """
         self.send_message(_package.complete_data, self.server)
         self.last_send_package = _package
+
+    def print_info(self) -> None:
+        print("####################")
+        print(self.client)
+        print(self.server)
+        print(self.receiver_id_int)
+        print(self.sender_id_int)
+        print(self.receiver_id)
+        print(self.sender_id)
+        print(self.bookshelf_object)
+        print(self.last_send_package)
+        print(self.last_received_package)
+        print(self.status)
+        print(self.handshake)
+        print(self.connection_request_send)
+        print(self.version_check)
+        print(self.task)
+        print("####################")

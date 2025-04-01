@@ -343,12 +343,21 @@
 <br>
 <b>Datenhochladennachricht (Upload data Message)</b>
 
-|     Byte Nr.      | Inhalt                         |
-| :---------------: | :----------------------------- |
-|      00 - 01      | Nachrichtenlänge = 7 + n < 100 |
-|      02 - 03      | Nachrichtentyp = 6002          |
-|      04 - 05      | Datenpaket Nummer              |
-| 06 - 06 + n < 100 | Datenpaket                     |
+|     Byte Nr.     | Inhalt                        |
+| :--------------: | :---------------------------- |
+|     00 - 01      | Nachrichtenlänge = 7 + n < 88 |
+|     02 - 03      | Nachrichtentyp = 6002         |
+|     04 - 05      | Datenpaket Nummer             |
+| 06 - 06 + n < 88 | Datenpaket                    |
+
+<br>
+<b>Datenbestätigungsnachricht (Upload confirm Message)</b>
+
+| Byte Nr. | Inhalt                |
+| :------: | :-------------------- |
+| 00 - 01  | Nachrichtenlänge = 6  |
+| 02 - 03  | Nachrichtentyp = 6003 |
+| 04 - 05  | Datenpaket Nummer     |
 
 <br>
 <b>Datenhochladenabgeschlossennachricht (Upload data Completed Message)</b>
@@ -356,7 +365,7 @@
 | Byte Nr. | Inhalt                |
 | :------: | :-------------------- |
 | 00 - 01  | Nachrichtenlänge = 4  |
-| 02 - 03  | Nachrichtentyp = 6003 |
+| 02 - 03  | Nachrichtentyp = 6004 |
 
 <br>
 <b>Datenhochladenfehlernachricht (Upload data Error Message)</b>
@@ -364,7 +373,7 @@
 | Byte Nr. | Inhalt                |
 | :------: | :-------------------- |
 | 00 - 01  | Nachrichtenlänge = 5  |
-| 02 - 03  | Nachrichtentyp = 6004 |
+| 02 - 03  | Nachrichtentyp = 6005 |
 |    04    | Fehler                |
 
 <br>
@@ -373,4 +382,4 @@
 | Byte Nr. | Inhalt                |
 | :------: | :-------------------- |
 | 00 - 01  | Nachrichtenlänge = 4  |
-| 02 - 03  | Nachrichtentyp = 6005 |
+| 02 - 03  | Nachrichtentyp = 6006 |

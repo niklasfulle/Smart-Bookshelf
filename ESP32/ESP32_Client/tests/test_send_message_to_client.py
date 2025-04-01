@@ -45,6 +45,7 @@ from protocol.builder.builder_data_upload_package import (
 )
 from protocol.constants.constants import DISC_REASON, STATUS
 
+
 class TestSendMessageClient:
     """
     -
@@ -193,7 +194,7 @@ class TestSendMessageClient:
             sequence_number,
             timestamp,
             timestamp,
-            int_to_2byte_array(STATUS.RUNNING)
+            int_to_2byte_array(STATUS.RUNNING),
         )
         self.connection_object.send_message_to_client(package)
 
@@ -210,7 +211,7 @@ class TestSendMessageClient:
             sequence_number,
             timestamp,
             timestamp,
-            int_to_2byte_array(DISC_REASON.USERREQUEST)
+            int_to_2byte_array(DISC_REASON.USERREQUEST),
         )
         self.connection_object.send_message_to_client(package)
 
@@ -227,7 +228,7 @@ class TestSendMessageClient:
             sequence_number,
             timestamp,
             timestamp,
-            int_to_2byte_array(DISC_REASON.USERREQUEST)
+            int_to_2byte_array(DISC_REASON.USERREQUEST),
         )
         self.connection_object.send_message_to_client(package)
 

@@ -12,10 +12,26 @@ from utils.build_helper import get_timestamp, get_random_sequence_number
 from utils.checks import check_for_valid_message_type_moment
 from hardware.bookshelf import bookshelf
 from connection.connection import connection
-from protocol.builder.builder_default_package import build_connection_request, build_connection_response, build_connection_approve, build_version_request, build_version_response, build_status_request, build_disconnection_request, build_disconnection_response, build_sleep_request, build_reboot_request, build_data, build_upload_data
-from protocol.builder.builder_data_upload_package import build_data_upload_package_data_start
+from protocol.builder.builder_default_package import (
+    build_connection_request,
+    build_connection_response,
+    build_connection_approve,
+    build_version_request,
+    build_version_response,
+    build_status_request,
+    build_disconnection_request,
+    build_disconnection_response,
+    build_sleep_request,
+    build_reboot_request,
+    build_data,
+    build_upload_data,
+)
+from protocol.builder.builder_data_upload_package import (
+    build_data_upload_package_data_start,
+)
 from protocol.builder.builder_data_package import build_data_package_mode
 from protocol.constants.constants import DISC_REASON
+
 
 class TestChecks:
     """
@@ -46,36 +62,36 @@ class TestChecks:
         sender_id,
         bookshelf_object,
     )
-    
+
     def test_checks1(self):
         """
         -
         """
         package = build_connection_request(10, 20, 0, 0, 0, 0)
-        
+
         result1 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         package = build_connection_response(10, 20, 0, sequence_number, 0, 0)
-        
+
         result2 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_connection_approve(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result3 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_version_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result4 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_version_response(
@@ -110,49 +126,61 @@ class TestChecks:
                 )
             ),
         )
-        
+
         result5 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_status_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result6 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_request(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.USERREQUEST)
+            10,
+            20,
+            sequence_number,
+            sequence_number,
+            timestamp,
+            timestamp,
+            int_to_2byte_array(DISC_REASON.USERREQUEST),
         )
-        
+
         result7 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_response(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.USERREQUEST)
+            10,
+            20,
+            sequence_number,
+            sequence_number,
+            timestamp,
+            timestamp,
+            int_to_2byte_array(DISC_REASON.USERREQUEST),
         )
-        
+
         result8 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_sleep_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result9 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_reboot_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result10 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         data_package = build_data_package_mode(int_to_2byte_array(1))
 
         sequence_number = get_random_sequence_number()
@@ -166,9 +194,9 @@ class TestChecks:
             timestamp,
             data_package.complete_data,
         )
-        
+
         result11 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         data_upload_package = build_data_upload_package_data_start(
             int_to_2byte_array(1)
         )
@@ -184,53 +212,53 @@ class TestChecks:
             timestamp,
             data_upload_package.complete_data,
         )
-        
+
         result12 = check_for_valid_message_type_moment(self.connection_object, package)
-        
-        assert result1 == False
-        assert result2 == False
-        assert result3 == False
-        assert result4 == False
-        assert result5 == False
-        assert result6 == False
-        assert result7 == True
-        assert result8 == False
-        assert result9 == False
-        assert result10 == False
-        assert result11 == False
-        assert result12 == False
-        
+
+        assert result1 is False
+        assert result2 is True
+        assert result3 is False
+        assert result4 is False
+        assert result5 is False
+        assert result6 is False
+        assert result7 is True
+        assert result8 is False
+        assert result9 is False
+        assert result10 is False
+        assert result11 is False
+        assert result12 is False
+
     def test_checks2(self):
         """
         -
         """
         self.connection_object.connection_request_send = True
-        
+
         package = build_connection_request(10, 20, 0, 0, 0, 0)
-        
+
         result1 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         package = build_connection_response(10, 20, 0, sequence_number, 0, 0)
-        
+
         result2 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_connection_approve(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result3 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_version_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result4 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_version_response(
@@ -265,49 +293,61 @@ class TestChecks:
                 )
             ),
         )
-        
+
         result5 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_status_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result6 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_request(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.USERREQUEST)
+            10,
+            20,
+            sequence_number,
+            sequence_number,
+            timestamp,
+            timestamp,
+            int_to_2byte_array(DISC_REASON.USERREQUEST),
         )
-        
+
         result7 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_response(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.USERREQUEST)
+            10,
+            20,
+            sequence_number,
+            sequence_number,
+            timestamp,
+            timestamp,
+            int_to_2byte_array(DISC_REASON.USERREQUEST),
         )
-        
+
         result8 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_sleep_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result9 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_reboot_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result10 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         data_package = build_data_package_mode(int_to_2byte_array(1))
 
         sequence_number = get_random_sequence_number()
@@ -321,9 +361,9 @@ class TestChecks:
             timestamp,
             data_package.complete_data,
         )
-        
+
         result11 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         data_upload_package = build_data_upload_package_data_start(
             int_to_2byte_array(1)
         )
@@ -339,54 +379,54 @@ class TestChecks:
             timestamp,
             data_upload_package.complete_data,
         )
-        
+
         result12 = check_for_valid_message_type_moment(self.connection_object, package)
-        
-        assert result1 == False
-        assert result2 == True
-        assert result3 == False
-        assert result4 == False
-        assert result5 == False
-        assert result6 == False
-        assert result7 == True
-        assert result8 == True
-        assert result9 == False
-        assert result10 == False
-        assert result11 == False
-        assert result12 == False
-        
+
+        assert result1 is False
+        assert result2 is True
+        assert result3 is False
+        assert result4 is False
+        assert result5 is False
+        assert result6 is False
+        assert result7 is True
+        assert result8 is True
+        assert result9 is False
+        assert result10 is False
+        assert result11 is False
+        assert result12 is False
+
     def test_checks3(self):
         """
         -
         """
         self.connection_object.connection_request_send = True
         self.connection_object.handshake = True
-        
+
         package = build_connection_request(10, 20, 0, 0, 0, 0)
-        
+
         result1 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         package = build_connection_response(10, 20, 0, sequence_number, 0, 0)
-        
+
         result2 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_connection_approve(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result3 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_version_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result4 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_version_response(
@@ -421,49 +461,61 @@ class TestChecks:
                 )
             ),
         )
-        
+
         result5 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_status_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result6 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_request(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.USERREQUEST)
+            10,
+            20,
+            sequence_number,
+            sequence_number,
+            timestamp,
+            timestamp,
+            int_to_2byte_array(DISC_REASON.USERREQUEST),
         )
-        
+
         result7 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_response(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.USERREQUEST)
+            10,
+            20,
+            sequence_number,
+            sequence_number,
+            timestamp,
+            timestamp,
+            int_to_2byte_array(DISC_REASON.USERREQUEST),
         )
-        
+
         result8 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_sleep_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result9 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_reboot_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result10 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         data_package = build_data_package_mode(int_to_2byte_array(1))
 
         sequence_number = get_random_sequence_number()
@@ -477,9 +529,9 @@ class TestChecks:
             timestamp,
             data_package.complete_data,
         )
-        
+
         result11 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         data_upload_package = build_data_upload_package_data_start(
             int_to_2byte_array(1)
         )
@@ -495,22 +547,22 @@ class TestChecks:
             timestamp,
             data_upload_package.complete_data,
         )
-        
+
         result12 = check_for_valid_message_type_moment(self.connection_object, package)
-        
-        assert result1 == False
-        assert result2 == False
-        assert result3 == False
-        assert result4 == False
-        assert result5 == True
-        assert result6 == False
-        assert result7 == True
-        assert result8 == True
-        assert result9 == False
-        assert result10 == False
-        assert result11 == False
-        assert result12 == False
-        
+
+        assert result1 is False
+        assert result2 is False
+        assert result3 is False
+        assert result4 is False
+        assert result5 is True
+        assert result6 is False
+        assert result7 is True
+        assert result8 is True
+        assert result9 is False
+        assert result10 is False
+        assert result11 is False
+        assert result12 is False
+
     def test_checks4(self):
         """
         -
@@ -518,32 +570,32 @@ class TestChecks:
         self.connection_object.connection_request_send = True
         self.connection_object.handshake = True
         self.connection_object.version_check = True
-        
+
         package = build_connection_request(10, 20, 0, 0, 0, 0)
-        
+
         result1 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         package = build_connection_response(10, 20, 0, sequence_number, 0, 0)
-        
+
         result2 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_connection_approve(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result3 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_version_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result4 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_version_response(
@@ -578,49 +630,61 @@ class TestChecks:
                 )
             ),
         )
-        
+
         result5 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_status_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result6 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_request(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.USERREQUEST)
+            10,
+            20,
+            sequence_number,
+            sequence_number,
+            timestamp,
+            timestamp,
+            int_to_2byte_array(DISC_REASON.USERREQUEST),
         )
-        
+
         result7 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_response(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.USERREQUEST)
+            10,
+            20,
+            sequence_number,
+            sequence_number,
+            timestamp,
+            timestamp,
+            int_to_2byte_array(DISC_REASON.USERREQUEST),
         )
-        
+
         result8 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_sleep_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result9 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_reboot_request(
             10, 20, sequence_number, sequence_number, timestamp, timestamp
         )
-        
+
         result10 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         data_package = build_data_package_mode(int_to_2byte_array(1))
 
         sequence_number = get_random_sequence_number()
@@ -634,9 +698,9 @@ class TestChecks:
             timestamp,
             data_package.complete_data,
         )
-        
+
         result11 = check_for_valid_message_type_moment(self.connection_object, package)
-        
+
         data_upload_package = build_data_upload_package_data_start(
             int_to_2byte_array(1)
         )
@@ -652,19 +716,18 @@ class TestChecks:
             timestamp,
             data_upload_package.complete_data,
         )
-        
+
         result12 = check_for_valid_message_type_moment(self.connection_object, package)
-        
-        assert result1 == False
-        assert result2 == False
-        assert result3 == False
-        assert result4 == False
-        assert result5 == False
-        assert result6 == True
-        assert result7 == True
-        assert result8 == True
-        assert result9 == True
-        assert result10 == True
-        assert result11 == True
-        assert result12 == True
-        
+
+        assert result1 is False
+        assert result2 is False
+        assert result3 is False
+        assert result4 is False
+        assert result5 is False
+        assert result6 is True
+        assert result7 is True
+        assert result8 is True
+        assert result9 is True
+        assert result10 is True
+        assert result11 is True
+        assert result12 is True

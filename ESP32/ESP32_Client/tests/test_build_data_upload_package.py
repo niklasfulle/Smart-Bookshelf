@@ -13,6 +13,7 @@ from protocol.builder.builder_data_upload_package import (
     build_data_upload_package_data_end,
     build_data_upload_package_data_cancel,
     build_data_upload_package_data_error,
+    build_data_upload_package_data_confirm,
 )
 from utils.converter import int_to_2byte_array
 
@@ -21,6 +22,15 @@ class TestBuildDataUploadPackage:
     """
     -
     """
+
+    def test_build_data_upload_package_data_start(self) -> None:
+        """
+        -
+        """
+        package = build_data_upload_package_data_start(bytearray(b"\x00\x00"))
+
+        assert int.from_bytes(package.lenght, "little") == 6
+        assert int.from_bytes(package.message_type, "little") == 6001
 
     def test_build_data_upload_package_data(self) -> None:
         """
@@ -37,14 +47,17 @@ class TestBuildDataUploadPackage:
         assert int.from_bytes(package.message_type, "little") == 6002
         assert int.from_bytes(package.data[0:2], "little") == 1
 
-    def test_build_data_upload_package_data_start(self) -> None:
+    def test_build_data_upload_package_data_confirm(self) -> None:
         """
         -
         """
-        package = build_data_upload_package_data_start(bytearray(b"\x00\x00"))
+        package = build_data_upload_package_data_confirm(
+            int_to_2byte_array(1),
+        )
 
         assert int.from_bytes(package.lenght, "little") == 6
-        assert int.from_bytes(package.message_type, "little") == 6001
+        assert int.from_bytes(package.message_type, "little") == 6003
+        assert int.from_bytes(package.data[0:2], "little") == 1
 
     def test_build_data_upload_package_data_end(self) -> None:
         """
@@ -53,7 +66,7 @@ class TestBuildDataUploadPackage:
         package = build_data_upload_package_data_end()
 
         assert int.from_bytes(package.lenght, "little") == 4
-        assert int.from_bytes(package.message_type, "little") == 6003
+        assert int.from_bytes(package.message_type, "little") == 6004
 
     def test_build_data_upload_package_data_error(self) -> None:
         """
@@ -62,7 +75,7 @@ class TestBuildDataUploadPackage:
         package = build_data_upload_package_data_error(bytearray(b"\x00\x00"))
 
         assert int.from_bytes(package.lenght, "little") == 6
-        assert int.from_bytes(package.message_type, "little") == 6004
+        assert int.from_bytes(package.message_type, "little") == 6005
         assert int.from_bytes(package.data[0:2], "little") == 0
 
     def test_build_data_upload_package_data_cancel(self) -> None:
@@ -72,4 +85,4 @@ class TestBuildDataUploadPackage:
         package = build_data_upload_package_data_cancel()
 
         assert int.from_bytes(package.lenght, "little") == 4
-        assert int.from_bytes(package.message_type, "little") == 6005
+        assert int.from_bytes(package.message_type, "little") == 6006

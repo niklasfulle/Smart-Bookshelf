@@ -22,7 +22,9 @@ from protocol.builder.builder_default_package import (
     build_disconnection_request,
     build_connection_approve,
     build_version_request,
-    build_status_response
+    build_status_response,
+    build_sleep_response,
+    build_reboot_response,
 )
 
 
@@ -117,7 +119,7 @@ while True:
                         _connection.receiver_id_int,
                         _connection.sender_id_int,
                         *[0] * 4,
-                        int_to_2byte_array(DISC_REASON.TIMEOUT)
+                        int_to_2byte_array(DISC_REASON.TIMEOUT),
                     )
                 )
                 _connection.connection_request_send = False
@@ -136,8 +138,8 @@ while True:
                 and _connection.version_check
             ):
                 time.sleep(0.1)
-            
-            else: 
+
+            else:
                 time.sleep(0.1)
 
         elif data != bytearray(b""):
@@ -148,7 +150,7 @@ while True:
             if not handle_checks(_connection, _package):
                 print("Check Error")
                 data = bytearray(b"")
-            
+
             else:
                 if PACKAGE_MESSAGE_TYPE.ConnResponse == int.from_bytes(
                     _package.message_type, "little"
@@ -165,7 +167,7 @@ while True:
                     )
                     _connection.handshake = True
                     time.sleep(2)
-                    
+
                     _connection.send_message_to_server(
                         build_version_request(
                             _connection.receiver_id_int,
@@ -176,7 +178,7 @@ while True:
                             _connection.last_received_package.timestamp,
                         )
                     )
-                    
+
                     time.sleep(1)
                     data = bytearray(b"")
 
@@ -185,8 +187,8 @@ while True:
                 ):
                     if check_versions(_package):
                         _connection.version_check = True
-                    
-                    else: 
+
+                    else:
                         _connection.version_check = False
                         _connection.send_message_to_server(
                             build_disconnection_request(
@@ -196,13 +198,13 @@ while True:
                                 _connection.last_received_package.sequence_number,
                                 0,
                                 _connection.last_received_package.timestamp,
-                                int_to_2byte_array(DISC_REASON.INCOMPATIBLEVERSION)
+                                int_to_2byte_array(DISC_REASON.INCOMPATIBLEVERSION),
                             )
                         )
-                    
+                    _connection.version_check
                     data = bytearray(b"")
                     time.sleep(0.2)
-                    
+
                 elif PACKAGE_MESSAGE_TYPE.StatusRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):
@@ -214,21 +216,77 @@ while True:
                             _connection.last_received_package.sequence_number,
                             0,
                             _connection.last_received_package.timestamp,
-                            int_to_2byte_array(_connection.status)
+                            int_to_2byte_array(_connection.status),
                         )
                     )
-                    
+
                     data = bytearray(b"")
                     time.sleep(0.2)
+
+                elif PACKAGE_MESSAGE_TYPE.SleepRequest == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    time.sleep(0.2)
+                    _connection.send_message_to_server(
+                        build_sleep_response(
+                            _connection.receiver_id_int,
+                            _connection.sender_id_int,
+                            _connection.last_send_package.sequence_number,
+                            _connection.last_received_package.sequence_number,
+                            0,
+                            _connection.last_received_package.timestamp,
+                        )
+                    )
+                    data = bytearray(b"")
+                    time.sleep(0.2)
+
+                elif PACKAGE_MESSAGE_TYPE.RebootRequest == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    time.sleep(0.2)
+                    _connection.send_message_to_server(
+                        build_reboot_response(
+                            _connection.receiver_id_int,
+                            _connection.sender_id_int,
+                            _connection.last_send_package.sequence_number,
+                            _connection.last_received_package.sequence_number,
+                            0,
+                            _connection.last_received_package.timestamp,
+                        )
+                    )
+                    data = bytearray(b"")
+                    time.sleep(0.2)
+
+                elif PACKAGE_MESSAGE_TYPE.Data == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    print("Data")
+
+                elif PACKAGE_MESSAGE_TYPE.DataUpload == int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    print("DataUpload")
 
                 elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):
-                    _connection.reset()
+                    if int.from_bytes(_package.data, "little") != DISC_REASON.TIMEOUT:
+                        _connection.reset()
                     data = bytearray(b"")
 
         gc.collect()
     except KeyboardInterrupt:
-        print("ESP terminated")
+        print("Client terminated")
+        _connection.send_message_to_server(
+            build_disconnection_request(
+                _connection.receiver_id_int,
+                _connection.sender_id_int,
+                _connection.last_send_package.sequence_number,
+                _connection.last_received_package.sequence_number,
+                0,
+                _connection.last_received_package.timestamp,
+                int_to_2byte_array(DISC_REASON.USERREQUEST),
+            )
+        )
         data = bytearray(b"")
         sys.exit(0)

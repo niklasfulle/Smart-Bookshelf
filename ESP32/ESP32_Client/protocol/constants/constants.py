@@ -34,9 +34,10 @@ DATA_LIGHT_MODUS = enum(On=1, Off=2, Auto=3)
 DATA_UPLOAD_MESSAGE_TYPE = enum(
     DataUpStart=6001,
     DataUp=6002,
-    DataUpCompleted=6003,
-    DataUpError=6004,
-    DataUpCancel=6005,
+    DataConfirm=6003,
+    DataUpCompleted=6004,
+    DataUpError=6005,
+    DataUpCancel=6006,
 )
 
 DATA_UPLOAD_ERROR = enum(ParseError=1, MD4Error=2, Unknown=10)
@@ -54,9 +55,4 @@ DISC_REASON = enum(
     PROTOCOLERROR=8,
 )
 
-STATUS = enum(
-    OFFLINE=0,
-    RUNNING=1,
-    ERROR=10,
-    UNKOWN=20
-)
+STATUS = enum(OFFLINE=0, RUNNING=1, ERROR=10, UNKOWN=20)

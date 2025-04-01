@@ -8,6 +8,7 @@ from hardware.bookshelf import bookshelf
 from protocol.package import package
 from protocol.constants.constants import STATUS
 from utils.converter import int_to_4byte_array
+from datatype.task import task
 
 
 class connection:
@@ -32,10 +33,19 @@ class connection:
     connection_request_send: bool
     version_check: bool
     status_request_send: bool
-    task: bool
+    _task: task
+    _wait_for_task_response: bool
 
     waiting_count: int
     status_request_waiting_count: int
+
+    data_send_mode: bool
+    data_reveiv_mode: bool
+
+    data_to_send: list
+    data_to_reveiv: bytearray
+
+    timeout_counter: int
 
     def __init__(
         self,
@@ -56,17 +66,27 @@ class connection:
 
         self.last_send_package = None
         self.last_received_package = None
-        
+
         self.status = STATUS.OFFLINE
 
         self.handshake = False
         self.connection_request_send = False
         self.version_check = False
         self.status_request_send = False
-        self.task = False
+        self._task = None
+        self._wait_for_task_response = False
+        self._wait_for_task_response_count = 0
 
         self.waiting_count = 0
         self.status_request_waiting_count = 0
+
+        self.data_send_mode = False
+        self.data_reveiv_mode = False
+
+        self.data_to_send = None
+        self.data_to_reveiv = None
+
+        self.timeout_counter = 0
 
         self.sock.bind((self.server[0], self.server[1]))
 
@@ -78,9 +98,20 @@ class connection:
         self.connection_request_send = False
         self.version_check = False
         self.status_request_send = False
-        self.task = False
+        self._task = None
+        self._wait_for_task_response = False
+        self._wait_for_task_response_count = 0
+        self.status = STATUS.OFFLINE
         self.waiting_count = 0
         self.status_request_waiting_count = 0
+
+        self.data_send_mode = False
+        self.data_reveiv_mode = False
+
+        self.data_to_send = None
+        self.data_to_reveiv = None
+
+        self.timeout_counter = 0
 
     def send_message(self, msg: bytearray, addressPort: tuple[str, int]) -> None:
         """
@@ -102,3 +133,22 @@ class connection:
         """
         self.send_message(_package.complete_data, self.server)
         self.last_send_package = _package
+
+    def print_info(self) -> None:
+        print("####################")
+        print(self.client)
+        print(self.server)
+        print(self.receiver_id_int)
+        print(self.sender_id_int)
+        print(self.receiver_id)
+        print(self.sender_id)
+        print(self.bookshelf_object)
+        print(self.last_send_package)
+        print(self.last_received_package)
+        print(self.status)
+        print(self.handshake)
+        print(self.connection_request_send)
+        print(self.version_check)
+        if self._task is not None:
+            print(self._task.type)
+        print("####################")

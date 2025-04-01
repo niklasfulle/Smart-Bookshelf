@@ -196,7 +196,13 @@ class TestParseDefaultPackage:
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_status_response(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(STATUS.RUNNING)
+            10,
+            20,
+            sequence_number,
+            sequence_number,
+            timestamp,
+            timestamp,
+            int_to_2byte_array(STATUS.RUNNING),
         )
 
         parsed_package = parse_package(package.complete_data)
@@ -219,7 +225,13 @@ class TestParseDefaultPackage:
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_request(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.TIMEOUT)
+            10,
+            20,
+            sequence_number,
+            sequence_number,
+            timestamp,
+            timestamp,
+            int_to_2byte_array(DISC_REASON.TIMEOUT),
         )
 
         parsed_package = parse_package(package.complete_data)
@@ -242,7 +254,13 @@ class TestParseDefaultPackage:
         sequence_number = get_random_sequence_number()
         timestamp = get_timestamp()
         package = build_disconnection_response(
-            10, 20, sequence_number, sequence_number, timestamp, timestamp, int_to_2byte_array(DISC_REASON.TIMEOUT)
+            10,
+            20,
+            sequence_number,
+            sequence_number,
+            timestamp,
+            timestamp,
+            int_to_2byte_array(DISC_REASON.TIMEOUT),
         )
 
         parsed_package = parse_package(package.complete_data)
