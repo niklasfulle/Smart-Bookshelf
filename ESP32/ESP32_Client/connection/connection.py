@@ -41,6 +41,8 @@ class connection:
     data_to_send: bytearray
     data_to_reveiv: bytearray
 
+    timeout_counter: int
+
     def __init__(
         self,
         client: tuple[str, int],
@@ -75,6 +77,8 @@ class connection:
         self.data_to_send = None
         self.data_to_reveiv = None
 
+        self.timeout_counter = 0
+
         self.sock.bind((client[0], client[1]))
 
     def reset(self) -> None:
@@ -84,7 +88,7 @@ class connection:
         self.handshake = False
         self.connection_request_send = False
         self.version_check = False
-        self.task = False
+        self._task = None
         self.status = STATUS.OFFLINE
         self.waiting_count = 0
 
@@ -93,6 +97,8 @@ class connection:
 
         self.data_to_send = None
         self.data_to_reveiv = None
+
+        self.timeout_counter = 0
 
     def send_message(self, msg: bytearray, addressPort: tuple[str, int]) -> None:
         """

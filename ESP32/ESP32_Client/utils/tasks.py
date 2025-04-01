@@ -8,7 +8,7 @@ import time
 from connection.connection import connection
 from utils.constants import TASK_TYPES
 from utils.send_data import build_data_to_send_bytearray_arr
-from datatype.task import task
+from datatype import task
 from protocol.builder.builder_default_package import (
     build_sleep_request,
     build_reboot_request,
@@ -16,13 +16,7 @@ from protocol.builder.builder_default_package import (
 
 
 def check_tasks(postgres, cursor, _connection: connection) -> None:
-    select_sql = (
-        'select * from "tasks" WHERE "client_id" = %s ORDER BY "createdAt" ASC;'
-    )
-    cursor.execute(
-        select_sql,
-        (str(_connection.client[1]),),
-    )
+    cursor.execute('select * from "tasks" ORDER BY "createdAt" ASC')
 
     tasks = cursor.fetchall()
 
@@ -43,6 +37,7 @@ def check_tasks(postgres, cursor, _connection: connection) -> None:
 
 def handle_tasks(_connection: connection) -> None:
     if _connection._task.type == TASK_TYPES.SLEEP:
+        print("SLEEP")
         _connection.send_message_to_client(
             build_sleep_request(
                 _connection.receiver_id_int,
@@ -53,11 +48,10 @@ def handle_tasks(_connection: connection) -> None:
                 _connection.last_received_package.timestamp,
             )
         )
-
-        _connection._wait_for_task_response = True
         time.sleep(0.2)
 
     elif _connection._task.type == TASK_TYPES.REBOOT:
+        print("REBOOT")
         _connection.send_message_to_client(
             build_reboot_request(
                 _connection.receiver_id_int,
@@ -68,8 +62,6 @@ def handle_tasks(_connection: connection) -> None:
                 _connection.last_received_package.timestamp,
             )
         )
-
-        _connection._wait_for_task_response = True
         time.sleep(0.2)
 
     elif _connection._task.type == TASK_TYPES.CONFIG_SEND:

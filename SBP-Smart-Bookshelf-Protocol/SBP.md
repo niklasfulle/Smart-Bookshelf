@@ -343,12 +343,12 @@
 <br>
 <b>Datenhochladennachricht (Upload data Message)</b>
 
-|     Byte Nr.      | Inhalt                         |
-| :---------------: | :----------------------------- |
-|      00 - 01      | Nachrichtenlänge = 7 + n < 100 |
-|      02 - 03      | Nachrichtentyp = 6002          |
-|      04 - 05      | Datenpaket Nummer              |
-| 06 - 06 + n < 100 | Datenpaket                     |
+|     Byte Nr.     | Inhalt                        |
+| :--------------: | :---------------------------- |
+|     00 - 01      | Nachrichtenlänge = 7 + n < 88 |
+|     02 - 03      | Nachrichtentyp = 6002         |
+|     04 - 05      | Datenpaket Nummer             |
+| 06 - 06 + n < 88 | Datenpaket                    |
 
 <br>
 <b>Datenbestätigungsnachricht (Upload confirm Message)</b>

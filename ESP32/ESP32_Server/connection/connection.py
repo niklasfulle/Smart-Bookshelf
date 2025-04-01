@@ -34,6 +34,7 @@ class connection:
     version_check: bool
     status_request_send: bool
     _task: task
+    _wait_for_task_response: bool
 
     waiting_count: int
     status_request_waiting_count: int
@@ -43,6 +44,8 @@ class connection:
 
     data_to_send: list
     data_to_reveiv: bytearray
+
+    timeout_counter: int
 
     def __init__(
         self,
@@ -71,6 +74,8 @@ class connection:
         self.version_check = False
         self.status_request_send = False
         self._task = None
+        self._wait_for_task_response = False
+        self._wait_for_task_response_count = 0
 
         self.waiting_count = 0
         self.status_request_waiting_count = 0
@@ -80,6 +85,8 @@ class connection:
 
         self.data_to_send = None
         self.data_to_reveiv = None
+
+        self.timeout_counter = 0
 
         self.sock.bind((self.server[0], self.server[1]))
 
@@ -92,6 +99,9 @@ class connection:
         self.version_check = False
         self.status_request_send = False
         self._task = None
+        self._wait_for_task_response = False
+        self._wait_for_task_response_count = 0
+        self.status = STATUS.OFFLINE
         self.waiting_count = 0
         self.status_request_waiting_count = 0
 
@@ -100,6 +110,8 @@ class connection:
 
         self.data_to_send = None
         self.data_to_reveiv = None
+
+        self.timeout_counter = 0
 
     def send_message(self, msg: bytearray, addressPort: tuple[str, int]) -> None:
         """
@@ -137,5 +149,6 @@ class connection:
         print(self.handshake)
         print(self.connection_request_send)
         print(self.version_check)
-        print(self.task)
+        if self._task is not None:
+            print(self._task.type)
         print("####################")

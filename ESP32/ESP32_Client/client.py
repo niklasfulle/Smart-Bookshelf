@@ -23,6 +23,8 @@ from protocol.builder.builder_default_package import (
     build_connection_approve,
     build_version_request,
     build_status_response,
+    build_sleep_response,
+    build_reboot_response,
 )
 
 
@@ -199,7 +201,7 @@ while True:
                                 int_to_2byte_array(DISC_REASON.INCOMPATIBLEVERSION),
                             )
                         )
-
+                    _connection.version_check
                     data = bytearray(b"")
                     time.sleep(0.2)
 
@@ -224,14 +226,34 @@ while True:
                 elif PACKAGE_MESSAGE_TYPE.SleepRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):
-                    print("SleepRequest")
+                    time.sleep(0.2)
+                    _connection.send_message_to_server(
+                        build_sleep_response(
+                            _connection.receiver_id_int,
+                            _connection.sender_id_int,
+                            _connection.last_send_package.sequence_number,
+                            _connection.last_received_package.sequence_number,
+                            0,
+                            _connection.last_received_package.timestamp,
+                        )
+                    )
                     data = bytearray(b"")
                     time.sleep(0.2)
 
                 elif PACKAGE_MESSAGE_TYPE.RebootRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):
-                    print("RebootRequest")
+                    time.sleep(0.2)
+                    _connection.send_message_to_server(
+                        build_reboot_response(
+                            _connection.receiver_id_int,
+                            _connection.sender_id_int,
+                            _connection.last_send_package.sequence_number,
+                            _connection.last_received_package.sequence_number,
+                            0,
+                            _connection.last_received_package.timestamp,
+                        )
+                    )
                     data = bytearray(b"")
                     time.sleep(0.2)
 

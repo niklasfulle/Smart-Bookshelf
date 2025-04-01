@@ -105,6 +105,7 @@ def check_for_valid_message_type_moment(
         and not _connection.handshake
         and not _connection.version_check
     ):
+        print(1)
         valid_types = [
             PACKAGE_MESSAGE_TYPE.ConnRequest,
             PACKAGE_MESSAGE_TYPE.DiscRequest,
@@ -115,6 +116,7 @@ def check_for_valid_message_type_moment(
         and not _connection.handshake
         and not _connection.version_check
     ):
+        print(2)
         valid_types = [
             PACKAGE_MESSAGE_TYPE.ConnApprove,
             PACKAGE_MESSAGE_TYPE.DiscRequest,
@@ -126,6 +128,7 @@ def check_for_valid_message_type_moment(
         and _connection.handshake
         and not _connection.version_check
     ):
+        print(3)
         valid_types = [
             PACKAGE_MESSAGE_TYPE.VerRequest,
             PACKAGE_MESSAGE_TYPE.DiscRequest,
@@ -137,6 +140,7 @@ def check_for_valid_message_type_moment(
         and _connection.handshake
         and _connection.version_check
     ):
+        print(4)
         valid_types = [
             PACKAGE_MESSAGE_TYPE.StatusResponse,
             PACKAGE_MESSAGE_TYPE.SleepResponse,
@@ -222,6 +226,34 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
             return True
 
     elif message_type == PACKAGE_MESSAGE_TYPE.StatusResponse:
+        if (
+            sequence_number == last_received_package_sequence_number
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
+
+    elif message_type == PACKAGE_MESSAGE_TYPE.SleepRequest:
+        if (
+            sequence_number == last_received_package_sequence_number
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
+
+    elif message_type == PACKAGE_MESSAGE_TYPE.SleepResponse:
+        if (
+            sequence_number == last_received_package_sequence_number
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
+
+    elif message_type == PACKAGE_MESSAGE_TYPE.RebootRequest:
+        if (
+            sequence_number == last_received_package_sequence_number
+            and confirmed_sequence_number == last_send_package_sequence_number
+        ):
+            return True
+
+    elif message_type == PACKAGE_MESSAGE_TYPE.RebootResponse:
         if (
             sequence_number == last_received_package_sequence_number
             and confirmed_sequence_number == last_send_package_sequence_number

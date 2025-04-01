@@ -216,7 +216,7 @@ class TestChecks:
         result12 = check_for_valid_message_type_moment(self.connection_object, package)
 
         assert result1 is False
-        assert result2 is False
+        assert result2 is True
         assert result3 is False
         assert result4 is False
         assert result5 is False

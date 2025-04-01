@@ -7,6 +7,7 @@ import sys
 
 sys.path.append("../")
 from utils.send_data import build_data_to_send_bytearray_arr
+from datatype.task import task
 
 
 class TestBookshelf:
@@ -18,9 +19,16 @@ class TestBookshelf:
         """
         -
         """
-        data = "test"
+        task_data = (
+            "1",
+            "CONFIG_SEND",
+            "40000",
+            "test",
+        )
 
-        result = build_data_to_send_bytearray_arr(data)
+        _task = task(task_data[0], task_data[1], task_data[2], task_data[3])
+
+        result = build_data_to_send_bytearray_arr(_task.data)
 
         assert len(result) == 1
         assert len(result[0]) == 12
@@ -30,9 +38,16 @@ class TestBookshelf:
         """
         -
         """
-        data = "testdpoawhjdpawohdapdihlawkdiapwdhapwi"
+        task_data = (
+            "1",
+            "CONFIG_SEND",
+            "40000",
+            "testdpoawhjdpawohdapdihlawkdiapwdhapwi",
+        )
 
-        result = build_data_to_send_bytearray_arr(data)
+        _task = task(task_data[0], task_data[1], task_data[2], task_data[3])
+
+        result = build_data_to_send_bytearray_arr(_task.data)
 
         assert len(result) == 1
         assert len(result[0]) == 46
@@ -44,9 +59,16 @@ class TestBookshelf:
         """
         -
         """
-        data = "testdpoawhjdpawohdapdihlawkdicaüpjfeüfosjeofpsefjpofjsepofespofpsofposehfposhefpsnpfohepsfnsioefnpefnhesofinspeifnsepifnseonsefpisencpseifhnsipfsnehfipsnfspeoifbensifpiseapwdhapwi"
+        task_data = (
+            "1",
+            "CONFIG_SEND",
+            "40000",
+            "testdpoawhjdpawohdapdihlawkdicaüpjfeüfosjeofpsefjpofjsepofespofpsofposehfposhefpsnpfohepsfnsioefnpefnhesofinspeifnsepifnseonsefpisencpseifhnsipfsnehfipsnfspeoifbensifpiseapwdhapwi",
+        )
 
-        result = build_data_to_send_bytearray_arr(data)
+        _task = task(task_data[0], task_data[1], task_data[2], task_data[3])
+
+        result = build_data_to_send_bytearray_arr(_task.data)
 
         assert len(result) == 3
         assert len(result[0]) == 88
@@ -66,9 +88,16 @@ class TestBookshelf:
         """
         -
         """
-        data = "testdpoawhjdpawohdapdihlawkdicaüpjfeüfosjeofpsefjofjsepofespofpsofposehfposhefpsnpfohepsfnsioefnpefnhesofinspeifnsepifnseonsefpisencpseifhnsipfsnehfipsntestdpoawhjdpawohdapdihlawkdicaüpjfeüfosjeofpsefjpofjsepofespofpsofposehfposhefpsnpfohepsfnsioefnpefnhesofinspeifnsepifnseonsefpisencpseifhnsipfsnehfipsnfspeoifbensifpiseapwdhapwi"
+        task_data = (
+            "1",
+            "CONFIG_SEND",
+            "40000",
+            "testdpoawhjdpawohdapdihlawkdicaüpjfeüfosjeofpsefjofjsepofespofpsofposehfposhefpsnpfohepsfnsioefnpefnhesofinspeifnsepifnseonsefpisencpseifhnsipfsnehfipsntestdpoawhjdpawohdapdihlawkdicaüpjfeüfosjeofpsefjpofjsepofespofpsofposehfposhefpsnpfohepsfnsioefnpefnhesofinspeifnsepifnseonsefpisencpseifhnsipfsnehfipsnfspeoifbensifpiseapwdhapwi",
+        )
 
-        result = build_data_to_send_bytearray_arr(data)
+        _task = task(task_data[0], task_data[1], task_data[2], task_data[3])
+
+        result = build_data_to_send_bytearray_arr(_task.data)
 
         assert len(result) == 5
         assert len(result[0]) == 88

@@ -10,6 +10,7 @@ import time
 import sys
 import psycopg2
 
+sys.path.append("../")
 from dotenv import load_dotenv
 
 from connection.connection import connection
@@ -129,9 +130,34 @@ def threaded(_connection: connection) -> None:
                     and _connection.handshake
                     and _connection.version_check
                     and _connection._task is not None
+                    and not _connection._wait_for_task_response
                 ):
                     handle_tasks(_connection)
 
+                elif (
+                    _connection.connection_request_send
+                    and _connection.handshake
+                    and _connection.version_check
+                    and _connection._task is not None
+                    and _connection._wait_for_task_response
+                ):
+                    if _connection._wait_for_task_response_count < 51:
+                        _connection._wait_for_task_response_count += 1
+                        time.sleep(0.1)
+
+                    else:
+                        _connection.send_message_to_client(
+                            build_disconnection_request(
+                                _connection.receiver_id_int,
+                                _connection.sender_id_int,
+                                _connection.last_send_package.sequence_number,
+                                _connection.last_received_package.sequence_number,
+                                0,
+                                _connection.last_received_package.timestamp,
+                                int_to_2byte_array(DISC_REASON.USERREQUEST),
+                            )
+                        )
+                        _connection.reset()
                 elif (
                     _connection.connection_request_send
                     and _connection.handshake
@@ -198,7 +224,10 @@ def threaded(_connection: connection) -> None:
             elif data != bytearray(b""):
                 _package = parse_package(data)
 
-                _connection.last_received_package = _package
+                if PACKAGE_MESSAGE_TYPE.DiscRequest != int.from_bytes(
+                    _package.message_type, "little"
+                ):
+                    _connection.last_received_package = _package
 
                 if not handle_checks(_connection, _package):
                     print("Check Error")
@@ -228,6 +257,7 @@ def threaded(_connection: connection) -> None:
                     ):
                         _connection.handshake = True
                         _connection.waiting_count = 0
+                        _connection.handshake
                         data = bytearray(b"")
                         time.sleep(0.2)
 
@@ -249,8 +279,9 @@ def threaded(_connection: connection) -> None:
                         )
                         _connection.version_check = True
                         _connection.waiting_count = 0
+                        _connection.version_check
                         data = bytearray(b"")
-                        time.sleep(0.2)
+                        time.sleep(0.1)
 
                     elif PACKAGE_MESSAGE_TYPE.StatusResponse == int.from_bytes(
                         _package.message_type, "little"
@@ -264,12 +295,18 @@ def threaded(_connection: connection) -> None:
                     elif PACKAGE_MESSAGE_TYPE.SleepResponse == int.from_bytes(
                         _package.message_type, "little"
                     ):
+                        _connection._wait_for_task_response = False
+                        _connection._task = None
+                        _connection._wait_for_task_response_count = 0
                         data = bytearray(b"")
                         time.sleep(0.2)
 
                     elif PACKAGE_MESSAGE_TYPE.RebootResponse == int.from_bytes(
                         _package.message_type, "little"
                     ):
+                        _connection._wait_for_task_response = False
+                        _connection._task = None
+                        _connection._wait_for_task_response_count = 0
                         data = bytearray(b"")
                         time.sleep(0.2)
 
@@ -286,11 +323,18 @@ def threaded(_connection: connection) -> None:
                     elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
                         _package.message_type, "little"
                     ):
+                        print(
+                            int.from_bytes(_package.data, "little")
+                            != DISC_REASON.TIMEOUT
+                        )
                         if (
                             int.from_bytes(_package.data, "little")
                             != DISC_REASON.TIMEOUT
                         ):
                             _connection.reset()
+                            data = bytearray(b"")
+                        else:
+                            _connection.timeout_counter += 1
                         data = bytearray(b"")
                         time.sleep(0.2)
 
