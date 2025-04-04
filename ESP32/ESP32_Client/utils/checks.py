@@ -15,23 +15,27 @@ from utils.build_helper import (
 
 def handle_checks(_connection: connection, _package: package) -> bool:
     """
-    -
+    Performs a series of validation checks on the provided connection and package.
+    This function sequentially verifies the validity of the ID, message type,
+    message type moment, and sequence number associated with the given connection
+    and package. If any of these checks fail, the function prints the name of the
+    failed check and returns False. If all checks pass, it returns True.
+    Args:
+        _connection (connection): The connection object to validate.
+        _package (package): The package object to validate.
+    Returns:
+        bool: True if all checks pass, False otherwise.
     """
+
     if not check_for_valid_id(_connection, _package):
         print("check_for_valid_id")
         return False
 
     if not check_for_valid_message_type(_package):
-        print(int.from_bytes(_package.message_type, "little"))
         print("check_for_valid_message_type")
         return False
 
     if not check_for_valid_message_type_moment(_connection, _package):
-        print(int.from_bytes(_package.message_type, "little"))
-        print("connection_request_send", _connection.connection_request_send)
-        print("handshake", _connection.handshake)
-        print("version_check", _connection.version_check)
-
         print("check_for_valid_message_type_moment")
         return False
 
@@ -44,8 +48,18 @@ def handle_checks(_connection: connection, _package: package) -> bool:
 
 def check_for_valid_id(_connection: connection, _package: package) -> bool:
     """
-    -
+    Validates whether the sender and receiver IDs in the given package match the
+    expected client and server IDs from the connection.
+    Args:
+        _connection (connection): The connection object containing the client
+            (receiver) and server (sender) IDs as integers.
+        _package (package): The package object containing the sender and receiver
+            IDs, which may be integers or bytearrays.
+    Returns:
+        bool: True if the package sender ID matches the client ID and the package
+        receiver ID matches the server ID, otherwise False.
     """
+
     client_id = _connection.receiver_id_int
     server_id = _connection.sender_id_int
     package_sender_id = _package.sender_id
@@ -65,7 +79,15 @@ def check_for_valid_id(_connection: connection, _package: package) -> bool:
 
 def check_for_valid_message_type(_package: package) -> bool:
     """
-    -
+    Checks if the message type of the given package is valid.
+    Args:
+        _package (package): The package object containing a message_type attribute.
+    Returns:
+        bool: True if the message type is valid, False otherwise.
+    Notes:
+        - The function supports message_type as either an integer or a bytearray.
+        - If message_type is a bytearray, it is converted to an integer using little-endian format.
+        - Valid message types are defined in the PACKAGE_MESSAGE_TYPE enumeration.
     """
 
     message_type = _package.message_type
@@ -101,7 +123,20 @@ def check_for_valid_message_type_moment(
     _connection: connection, _package: package
 ) -> bool:
     """
-    -
+    Checks if the message type of a given package is valid based on the current
+    state of the connection.
+    The function determines the valid message types depending on the state of
+    the connection, which is defined by the attributes `connection_request_send`,
+    `handshake`, and `version_check`. It then verifies if the message type of
+    the provided package is within the list of valid types.
+    Args:
+        _connection (connection): The connection object representing the current
+            state of the connection.
+        _package (package): The package object containing the message type to be
+            validated.
+    Returns:
+        bool: True if the message type is valid for the current connection state,
+        False otherwise.
     """
 
     message_type = _package.message_type
@@ -166,8 +201,29 @@ def check_for_valid_message_type_moment(
 
 def check_for_valid_sequence_number(_connection: connection, _package: package) -> bool:
     """
-    -
+    Validates the sequence number and confirmed sequence number of a package
+    based on the message type and the connection's last sent and received packages.
+    Args:
+        _connection (connection): The connection object containing information
+            about the last sent and received packages.
+        _package (package): The package object containing the message type,
+            sequence number, and confirmed sequence number.
+    Returns:
+        bool: True if the sequence number and confirmed sequence number are valid
+        for the given message type, otherwise False.
+    Message Type Validation:
+        - ConnRequest: sequence_number must be 0 and confirmed_sequence_number must be 0.
+        - ConnResponse: sequence_number must not be 0 and confirmed_sequence_number
+          must match the last sent package's sequence number.
+        - ConnApprove, VerRequest, VerResponse, StatusRequest, StatusResponse:
+          sequence_number must match the last received package's sequence number,
+          and confirmed_sequence_number must match the last sent package's sequence number.
+        - Data, DataUpload: Always valid.
+        - Other message types: sequence_number must match the last received package's
+          sequence number, and confirmed_sequence_number must match the last sent
+          package's sequence number.
     """
+
     message_type = _package.message_type
     sequence_number = _package.sequence_number
     confirmed_sequence_number = _package.confirmed_sequence_number
@@ -288,8 +344,14 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
 
 def check_versions(_package: package) -> bool:
     """
-    -
+    Validates the version information in the given package against the expected protocol,
+    client, and bookshelf versions.
+    Args:
+        _package (package): The package object containing version data to be checked.
+    Returns:
+        bool: True if all version checks pass, False otherwise.
     """
+
     package_data: bytearray = _package.data
 
     if package_data[0:2] != get_protocol_version():

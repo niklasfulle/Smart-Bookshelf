@@ -9,16 +9,17 @@ from utils.converter import convert_string_bytes_to_bytearray
 
 
 def get_checksumme(data: bytearray, type: MD4_Type) -> bytearray:
-    """the function receives a byte array and the type of the desired checksum
-    and then returns either no checksum, the lower half or the entire checksum
-
-    Args:
-        data (bytearray): the value from which the checksum is to be formed
-        type (RASTA_SAFTEY_OPTION): The type of checksum
-
-    Returns:
-        bytearray: checksum
     """
+    Computes the checksum of the given data using the MD4 hashing algorithm.
+    Args:
+        data (bytearray): The input data for which the checksum is to be calculated.
+        type (MD4_Type): Specifies the type of checksum to compute. It can be one of the following:
+            - MD4_Type.LOWER_HALF: Computes the checksum using only the lower half of the MD4 hash.
+            - MD4_Type.FULL: Computes the checksum using the full MD4 hash.
+    Returns:
+        bytearray: The computed checksum as a bytearray. Returns an empty bytearray (b"") if the type is invalid.
+    """
+
     if type == MD4_Type.LOWER_HALF:
         md4 = MD4(data)
         md4_len = [

@@ -9,7 +9,18 @@ from utils.build_helper import get_bytearrays_size_sum
 
 class data_upload_package:
     """
-    -
+    A class representing a data upload package for communication.
+    Attributes:
+        length (bytearray): The length of the complete data package as a bytearray.
+        message_type (bytearray): The type of the message as a bytearray.
+        data (bytearray): The data payload of the package as a bytearray.
+        complete_data (bytearray): The complete data package including length, message type, and data.
+    Methods:
+        __init__(message_type: bytearray, data: bytearray) -> None:
+            Initializes a data_upload_package instance with the given message type and data.
+            Calculates the length and constructs the complete data package.
+        print_data() -> None:
+            Prints the complete data package in a formatted matrix of hexadecimal strings.
     """
 
     length: bytearray
@@ -18,6 +29,21 @@ class data_upload_package:
     complete_data: bytearray
 
     def __init__(self, message_type: bytearray, data: bytearray) -> None:
+        """
+        Initializes a data upload package with a message type and optional data.
+        Args:
+            message_type (bytearray): The type of the message, represented as a bytearray.
+            data (bytearray): The data to be included in the package, represented as a bytearray.
+                              Can be None if no data is provided.
+        Attributes:
+            message_type (bytearray): Stores the provided message type.
+            data (bytearray): Stores the provided data or None if no data is provided.
+            lenght (bytearray): A 2-byte array representing the total length of the package,
+                                including the message type, data, and length field itself.
+            complete_data (bytearray): The complete package data, including the length,
+                                       message type, and optional data.
+        """
+
         self.message_type = message_type
         self.data = data
 
@@ -37,8 +63,23 @@ class data_upload_package:
 
     def print_data(self) -> None:
         """
-        -
+        Prints the complete data in a formatted matrix form.
+        This method processes the `complete_data` attribute by splitting it into
+        hexadecimal string arrays using the `get_hex_string_arrs` function. It then
+        organizes the data into an 8-column matrix and prints the resulting matrix.
+        Steps:
+        1. Splits the `complete_data` into an array of hexadecimal strings.
+        2. Calculates the number of rows required for an 8-column matrix.
+        3. Initializes a matrix with the calculated dimensions.
+        4. Fills the matrix with the split data.
+        5. Prints the matrix.
+        Note:
+            The matrix will have 8 columns, and the number of rows is determined
+            by rounding the length of the split data divided by 8.
+        Returns:
+            None
         """
+
         split_data = get_hex_string_arrs(self.complete_data)
 
         lenList: int = len(split_data)

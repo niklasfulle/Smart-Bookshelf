@@ -12,7 +12,20 @@ from hardware.bookshelf import bookshelf
 
 class TestBookshelf:
     """
-    -
+    TestBookshelf is a test class designed to validate the functionality of the Bookshelf class.
+    Attributes:
+        client_config (str): A JSON string containing the configuration for the client, including its ID, name,
+            connection details (IP and port), and server information.
+        bookshelf_config (str): A JSON string containing the configuration for the bookshelf, including its name
+            and a list of shelving units with their order and length.
+    Methods:
+        test_Bookshelf1():
+            Tests the initialization of a Bookshelf object using the provided client and bookshelf configurations.
+            Validates the following:
+                - The name of the Bookshelf object matches the expected value.
+                - The IP address of the Bookshelf object matches the expected value.
+                - The number of LED stripes in the Bookshelf object matches the expected count.
+                - The order and length of the first and last LED stripes match the expected values.
     """
 
     client_config: str = '{"id": 10,"name": "Client_0","connection": { "ip": "127.0.0.1", "port": 40000 },"server": {"id": 20,"name": "Server","ip": "127.0.0.1","port": 50000}}'
@@ -20,8 +33,20 @@ class TestBookshelf:
 
     def test_Bookshelf1(self):
         """
-        -
+        Test case for the Bookshelf class.
+        This test verifies the initialization and properties of a Bookshelf object
+        created using the provided configuration data.
+        Steps:
+        1. Reads the IP address, bookshelf name, and shelving units from the configuration files.
+        2. Creates a Bookshelf object using the retrieved data.
+        3. Asserts that the Bookshelf object has the expected name, IP address, and LED stripe properties.
+        Assertions:
+        - The name of the Bookshelf object matches the expected value.
+        - The IP address of the Bookshelf object matches the expected value.
+        - The number of LED stripes in the Bookshelf object matches the expected count.
+        - The order and length of the first and last LED stripes match the expected values.
         """
+
         ip = json_data_reader(self.client_config, ["connection", "ip"], 2)
         bookshelf_name = json_data_reader(self.bookshelf_config, ["name"], 2)
         shelving_units = json_data_reader(self.bookshelf_config, ["shelving_units"], 2)

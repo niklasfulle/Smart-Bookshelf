@@ -67,8 +67,16 @@ _connection: connection = connection(
 
 def listening_thread():
     """
-    -
+    Continuously listens for incoming data on a socket connection and updates the global `data` variable.
+    This function runs in an infinite loop, receiving data from a socket connection using the `recvfrom` method.
+    The received data is stored as a bytearray in the global variable `data`.
+    Global Variables:
+        data (bytearray): A global variable that is updated with the received data.
+    Notes:
+        - The function assumes that `_connection.sock` is a valid socket object and `BUFFER_SIZE` is defined.
+        - This function is designed to run indefinitely and should be executed in a separate thread to avoid blocking the main program.
     """
+
     global data
 
     while True:
@@ -92,7 +100,9 @@ _connection.status = STATUS.RUNNING
 
 while True:
     try:
+        # If no data is received, handle connection and handshake processes
         if data == bytearray(b""):
+            # Send connection request if not already sent and handshake/version check not done
             if (
                 not _connection.connection_request_send
                 and not _connection.handshake
@@ -109,6 +119,7 @@ while True:
                 data = bytearray(b"")
                 time.sleep(2)
 
+            # Handle timeout if connection request was sent but handshake/version check not done
             elif (
                 _connection.connection_request_send
                 and not _connection.handshake
@@ -125,6 +136,7 @@ while True:
                 _connection.connection_request_send = False
                 time.sleep(0.2)
 
+            # Wait if handshake is in progress but version check not done
             elif (
                 _connection.connection_request_send
                 and _connection.handshake
@@ -132,6 +144,7 @@ while True:
             ):
                 time.sleep(0.1)
 
+            # Wait if both handshake and version check are completed
             elif (
                 _connection.connection_request_send
                 and _connection.handshake
@@ -139,19 +152,24 @@ while True:
             ):
                 time.sleep(0.1)
 
+            # Default wait
             else:
                 time.sleep(0.1)
 
+        # If data is received, parse and handle it
         elif data != bytearray(b""):
             _package = parse_package(data)
 
+            # Store the last received package
             _connection.last_received_package = _package
 
+            # Perform checks on the received package
             if not handle_checks(_connection, _package):
                 print("Check Error")
                 data = bytearray(b"")
 
             else:
+                # Handle connection response
                 if PACKAGE_MESSAGE_TYPE.ConnResponse == int.from_bytes(
                     _package.message_type, "little"
                 ):
@@ -168,6 +186,7 @@ while True:
                     _connection.handshake = True
                     time.sleep(2)
 
+                    # Send version request after handshake
                     _connection.send_message_to_server(
                         build_version_request(
                             _connection.receiver_id_int,
@@ -182,12 +201,12 @@ while True:
                     time.sleep(1)
                     data = bytearray(b"")
 
+                # Handle version response
                 elif PACKAGE_MESSAGE_TYPE.VerResponse == int.from_bytes(
                     _package.message_type, "little"
                 ):
                     if check_versions(_package):
                         _connection.version_check = True
-
                     else:
                         _connection.version_check = False
                         _connection.send_message_to_server(
@@ -201,10 +220,10 @@ while True:
                                 int_to_2byte_array(DISC_REASON.INCOMPATIBLEVERSION),
                             )
                         )
-                    _connection.version_check
                     data = bytearray(b"")
                     time.sleep(0.2)
 
+                # Handle status request
                 elif PACKAGE_MESSAGE_TYPE.StatusRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):
@@ -219,10 +238,10 @@ while True:
                             int_to_2byte_array(_connection.status),
                         )
                     )
-
                     data = bytearray(b"")
                     time.sleep(0.2)
 
+                # Handle sleep request
                 elif PACKAGE_MESSAGE_TYPE.SleepRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):
@@ -240,6 +259,7 @@ while True:
                     data = bytearray(b"")
                     time.sleep(0.2)
 
+                # Handle reboot request
                 elif PACKAGE_MESSAGE_TYPE.RebootRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):
@@ -257,16 +277,19 @@ while True:
                     data = bytearray(b"")
                     time.sleep(0.2)
 
+                # Handle data package
                 elif PACKAGE_MESSAGE_TYPE.Data == int.from_bytes(
                     _package.message_type, "little"
                 ):
                     print("Data")
 
+                # Handle data upload package
                 elif PACKAGE_MESSAGE_TYPE.DataUpload == int.from_bytes(
                     _package.message_type, "little"
                 ):
                     print("DataUpload")
 
+                # Handle disconnection request
                 elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):
@@ -274,7 +297,10 @@ while True:
                         _connection.reset()
                     data = bytearray(b"")
 
+        # Perform garbage collection
         gc.collect()
+
+    # Handle keyboard interrupt for graceful termination
     except KeyboardInterrupt:
         print("Client terminated")
         _connection.send_message_to_server(

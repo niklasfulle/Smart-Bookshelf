@@ -9,8 +9,19 @@ from utils.parse_helper import parse_data_start_end, get_data_string_array
 
 def parse_data_upload_package(data: bytearray) -> data_upload_package:
     """
-    -
+    Parses a data upload package from the given bytearray.
+    This function extracts specific components from the input data, including
+    the message type and the upload package data, by processing the data as a string
+    and slicing it based on predefined indices.
+    Args:
+        data (bytearray): The raw data to be parsed, provided as a bytearray.
+    Returns:
+        data_upload_package: An instance of `data_upload_package` containing the
+        parsed message type and upload package data.
+    Raises:
+        ValueError: If the input data is invalid or does not conform to the expected format.
     """
+
     data_str: str = get_data_string_array(data)
 
     message_type: bytearray = parse_data_start_end(data_str, 4, 2)

@@ -14,7 +14,22 @@ from connection.connection import connection
 
 class TestConnection:
     """
-    -
+    TestConnection class contains unit tests for verifying the functionality of the connection
+    and bookshelf objects used in the Smart Bookshelf ESP32 client application.
+    Attributes:
+        client_config (str): JSON string containing client configuration details such as
+            client ID, name, connection IP and port, and server details.
+        bookshelf_config (str): JSON string containing bookshelf configuration details such as
+            bookshelf name and shelving unit specifications.
+    Methods:
+        test_connection1():
+            Tests the creation and initialization of a connection object, ensuring that
+            all attributes are correctly set, including socket creation, client and server
+            details, sender and receiver IDs, and handshake/task flags.
+        test_connection2():
+            Tests the creation of a connection object and verifies the attributes of the
+            associated bookshelf object, including its name, IP, and the details of its
+            shelving units (order and length).
     """
 
     client_config: str = '{"id": 10,"name": "Client_0","connection": { "ip": "127.0.0.1", "port": 40001 },"server": {"id": 20,"name": "Server","ip": "127.0.0.1","port": 50001}}'
@@ -22,8 +37,26 @@ class TestConnection:
 
     def test_connection1(self):
         """
-        -
+        Test the initialization and properties of the `connection` object.
+        This test verifies the following:
+        - Proper creation of a `bookshelf` object using configuration data.
+        - Proper creation of a `connection` object using configuration data.
+        - The `connection` object has a valid socket instance.
+        - The `client` and `server` attributes of the `connection` object are correctly set.
+        - The `receiver_id` and `sender_id` attributes are correctly set as both integers and bytearrays.
+        - The `handshake` and `task` attributes are initialized to `False`.
+        Assertions:
+        - `connection_object.sock` is an instance of `socket.socket`.
+        - `connection_object.client` matches the expected client address and port.
+        - `connection_object.server` matches the expected server address and port.
+        - `connection_object.receiver_id_int` matches the expected integer value.
+        - `connection_object.receiver_id` matches the expected bytearray value.
+        - `connection_object.sender_id_int` matches the expected integer value.
+        - `connection_object.sender_id` matches the expected bytearray value.
+        - `connection_object.handshake` is `False`.
+        - `connection_object.task` is `False`.
         """
+
         ip = json_data_reader(self.client_config, ["connection", "ip"], 2)
         bookshelf_name = json_data_reader(self.bookshelf_config, ["name"], 2)
         shelving_units = json_data_reader(self.bookshelf_config, ["shelving_units"], 2)
@@ -59,8 +92,18 @@ class TestConnection:
 
     def test_connection2(self):
         """
-        -
+        Test the creation and initialization of a `connection` object and its associated `bookshelf` object.
+        This test verifies:
+        - The `bookshelf` object is correctly initialized with the expected name, IP address, and shelving unit details.
+        - The `connection` object is correctly initialized with the client and server connection details, as well as the associated `bookshelf` object.
+        - The attributes of the `bookshelf` object, including the number of LED stripes and their properties (order and length), are as expected.
+        Assertions:
+        - The `bookshelf` object's name matches the expected value.
+        - The `bookshelf` object's IP address matches the expected value.
+        - The number of LED stripes in the `bookshelf` object matches the expected count.
+        - The order and length of the first and last LED stripes in the `bookshelf` object match the expected values.
         """
+
         ip = json_data_reader(self.client_config, ["connection", "ip"], 2)
         bookshelf_name = json_data_reader(self.bookshelf_config, ["name"], 2)
         shelving_units = json_data_reader(self.bookshelf_config, ["shelving_units"], 2)
