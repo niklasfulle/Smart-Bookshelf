@@ -6,6 +6,7 @@
 from utils.converter import int_to_2byte_array, get_hex_string_arrs
 from utils.build_helper import get_bytearrays_size_sum
 from utils.checksumme import get_checksumme
+from utils.constants import MD4_Type
 
 
 class package:
@@ -169,7 +170,7 @@ class package:
                     + self.confirmed_timestamp
                     + self.data
                 ),
-                1,
+                MD4_Type.LOWER_HALF,
             )
         else:
             checksumme = get_checksumme(
@@ -183,7 +184,7 @@ class package:
                     + self.timestamp
                     + self.confirmed_timestamp
                 ),
-                1,
+                MD4_Type.LOWER_HALF,
             )
 
         self.complete_data = complete_data + checksumme

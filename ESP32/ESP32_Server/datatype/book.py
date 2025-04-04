@@ -7,10 +7,15 @@ from utils.converter import int_to_2byte_array
 
 
 class book:
-    """_summary_
-
-    Returns:
-        _type_: _description_
+    """
+    Represents a book with its shelving unit and position information.
+    Attributes:
+        shelving_unit (int): The shelving unit where the book is located.
+        position (int): The position of the book within the shelving unit.
+        data (bytearray): A bytearray representation of the shelving unit and position.
+    Methods:
+        __init__(shelving_unit: int, position: int) -> None:
+            Initializes a book instance with the given shelving unit and position.
     """
 
     shelving_unit: int

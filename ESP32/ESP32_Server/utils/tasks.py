@@ -8,7 +8,7 @@ import time
 from connection.connection import connection
 from utils.constants import TASK_TYPES
 from utils.send_data import build_data_to_send_bytearray_arr
-from datatype.task import task
+from datatype import task
 from protocol.builder.builder_default_package import (
     build_sleep_request,
     build_reboot_request,
@@ -16,13 +16,22 @@ from protocol.builder.builder_default_package import (
 
 
 def check_tasks(postgres, cursor, _connection: connection) -> None:
-    select_sql = (
-        'select * from "tasks" WHERE "client_id" = %s ORDER BY "createdAt" ASC;'
-    )
-    cursor.execute(
-        select_sql,
-        (str(_connection.client[1]),),
-    )
+    """
+    Processes tasks from the "tasks" table in the database.
+    This function retrieves all tasks from the "tasks" table, orders them by
+    their creation time in ascending order, and assigns the first task to the
+    `_task` attribute of the provided `_connection` object. After processing
+    the first task, it deletes the task from the database.
+    Args:
+        postgres: The PostgreSQL database connection object used to commit changes.
+        cursor: The database cursor used to execute SQL queries.
+        _connection (connection): An object that contains a `_task` attribute
+            to store the first task retrieved from the database.
+    Returns:
+        None
+    """
+
+    cursor.execute('select * from "tasks" ORDER BY "createdAt" ASC')
 
     tasks = cursor.fetchall()
 
@@ -42,7 +51,41 @@ def check_tasks(postgres, cursor, _connection: connection) -> None:
 
 
 def handle_tasks(_connection: connection) -> None:
+    """
+    Handles various tasks based on the type of task assigned to the connection.
+    Args:
+        _connection (connection): The connection object containing task details and
+                                  methods for communication.
+    Task Types:
+        - TASK_TYPES.SLEEP:
+            Sends a sleep request to the client and pauses execution briefly.
+        - TASK_TYPES.REBOOT:
+            Sends a reboot request to the client and pauses execution briefly.
+        - TASK_TYPES.CONFIG_SEND:
+            Prepares the connection for sending configuration data by enabling
+            data send mode and disabling data receive mode. Converts the task's
+            data into a bytearray for transmission.
+        - TASK_TYPES.CONFIG_REQUEST:
+            Prepares the connection for receiving configuration data by enabling
+            data receive mode and disabling data send mode.
+        - TASK_TYPES.DATA_SEND_BOOK:
+            Placeholder for handling book data sending tasks.
+        - TASK_TYPES.DATA_SEND_BOOKS:
+            Placeholder for handling multiple books data sending tasks.
+        - TASK_TYPES.DATA_SEND_MODE:
+            Placeholder for handling data send mode tasks.
+        - TASK_TYPES.DATA_SEND_LIGHT_ON:
+            Placeholder for handling tasks to send light-on commands.
+        - TASK_TYPES.DATA_SEND_LIGHT_OFF:
+            Placeholder for handling tasks to send light-off commands.
+    Note:
+        This function assumes that the `_connection` object has specific attributes
+        and methods, such as `_task`, `send_message_to_client`, and others, which
+        are used to perform the required operations.
+    """
+
     if _connection._task.type == TASK_TYPES.SLEEP:
+        print("SLEEP")
         _connection.send_message_to_client(
             build_sleep_request(
                 _connection.receiver_id_int,
@@ -53,11 +96,10 @@ def handle_tasks(_connection: connection) -> None:
                 _connection.last_received_package.timestamp,
             )
         )
-
-        _connection._wait_for_task_response = True
         time.sleep(0.2)
 
     elif _connection._task.type == TASK_TYPES.REBOOT:
+        print("REBOOT")
         _connection.send_message_to_client(
             build_reboot_request(
                 _connection.receiver_id_int,
@@ -68,8 +110,6 @@ def handle_tasks(_connection: connection) -> None:
                 _connection.last_received_package.timestamp,
             )
         )
-
-        _connection._wait_for_task_response = True
         time.sleep(0.2)
 
     elif _connection._task.type == TASK_TYPES.CONFIG_SEND:

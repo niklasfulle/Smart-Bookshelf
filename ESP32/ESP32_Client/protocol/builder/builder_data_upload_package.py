@@ -28,6 +28,24 @@ def build_data_upload_package_data(
     )
 
 
+def build_data_upload_package_data_confirm(
+    package_number: bytearray,
+) -> data_upload_package:
+    """
+    Constructs a data upload package with a "DataConfirm" message type.
+
+    Args:
+        package_number (bytearray): The package number to include in the data upload package.
+
+    Returns:
+        data_upload_package: The constructed data upload package with the specified message type and package number.
+    """
+
+    return initialize_data_upload_package(
+        DATA_UPLOAD_MESSAGE_TYPE.DataConfirm, (package_number)
+    )
+
+
 def build_data_upload_package_data_start(datatype: bytearray) -> data_upload_package:
     """
     Constructs and initializes a data upload package with the "DataUpStart" message type.
