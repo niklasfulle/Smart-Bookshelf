@@ -5,10 +5,14 @@
 
 
 class ledstripe:
-    """_summary_
-
-    Returns:
-        _type_: _description_
+    """
+    A class to represent an LED stripe.
+    Attributes:
+        order (int): The order or position of the LED stripe.
+        length (int): The number of LEDs in the stripe.
+    Methods:
+        __init__(order, length):
+            Initializes the LED stripe with the specified order and length.
     """
 
     order: int

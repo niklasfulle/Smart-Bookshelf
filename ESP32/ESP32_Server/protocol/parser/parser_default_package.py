@@ -14,8 +14,29 @@ from utils.checksumme import get_checksumme
 
 def parse_package(data: bytearray) -> package:
     """
-    -
+    Parses a given bytearray into a `package` object if the checksum is valid.
+    Args:
+        data (bytearray): The raw bytearray data to be parsed.
+    Returns:
+        package: A `package` object containing parsed data fields if the checksum is valid.
+        None: If the checksum validation fails.
+    The function performs the following steps:
+    1. Converts the bytearray into a string array for easier manipulation.
+    2. Extracts the length of the package, checksum, and validates the checksum.
+    3. If the checksum is valid, extracts the following fields:
+        - message_type: The type of the message.
+        - receiver_id: The ID of the receiver.
+        - sender_id: The ID of the sender.
+        - sequence_number: The sequence number of the message.
+        - confirmed_sequence_number: The confirmed sequence number.
+        - timestamp: The timestamp of the message.
+        - confirmed_timestamp: The confirmed timestamp.
+    4. If the data length exceeds 36 bytes, processes the data field based on the message type:
+        - For message type 5000, parses the data as a `data_package`.
+        - For message type 6000, parses the data as a `data_upload_package`.
+    5. Returns a `package` object with all the parsed fields or `None` if the checksum is invalid.
     """
+
     data_str: str = get_data_string_array(data)
 
     length = int.from_bytes(parse_data_start_end(data_str, 1, 0), "little")

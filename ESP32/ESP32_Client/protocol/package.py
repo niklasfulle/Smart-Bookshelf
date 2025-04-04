@@ -6,11 +6,31 @@
 from utils.converter import int_to_2byte_array, get_hex_string_arrs
 from utils.build_helper import get_bytearrays_size_sum
 from utils.checksumme import get_checksumme
+from utils.constants import MD4_Type
 
 
 class package:
     """
-    -
+    A class representing a data package with various attributes and methods for handling
+    and processing the package's data.
+    Attributes:
+        length (int): The length of the package in bytes.
+        message_type (bytearray): The type of message being sent.
+        receiver_id (bytearray): The ID of the receiver.
+        sender_id (bytearray): The ID of the sender.
+        sequence_number (bytearray): The sequence number of the package.
+        confirmed_sequence_number (bytearray): The confirmed sequence number.
+        timestamp (bytearray): The timestamp of the package.
+        confirmed_timestamp (bytearray): The confirmed timestamp.
+        data (bytearray): The payload data of the package.
+        checksumme (bytearray): The checksum of the package for validation.
+        complete_data (bytearray): The complete serialized data of the package.
+    Methods:
+        __init__:
+            Initializes a new instance of the package class with the provided attributes.
+            Calculates the length, checksum, and complete data of the package.
+        print_data:
+            Prints the complete data of the package in a formatted matrix of hexadecimal values.
     """
 
     length: int
@@ -42,6 +62,31 @@ class package:
         confirmed_timestamp: bytearray,
         data: bytearray,
     ) -> None:
+        """
+        Initializes a package object with the given parameters and computes its
+        length, complete data, and checksum.
+        Args:
+            message_type (bytearray): The type of the message.
+            receiver_id (bytearray): The ID of the receiver.
+            sender_id (bytearray): The ID of the sender.
+            sequence_number (bytearray): The sequence number of the message.
+            confirmed_sequence_number (bytearray): The confirmed sequence number.
+            timestamp (bytearray): The timestamp of the message.
+            confirmed_timestamp (bytearray): The confirmed timestamp.
+            data (bytearray): The payload data of the message. Can be None.
+        Attributes:
+            message_type (bytearray): The type of the message.
+            receiver_id (bytearray): The ID of the receiver.
+            sender_id (bytearray): The ID of the sender.
+            sequence_number (bytearray): The sequence number of the message.
+            confirmed_sequence_number (bytearray): The confirmed sequence number.
+            timestamp (bytearray): The timestamp of the message.
+            confirmed_timestamp (bytearray): The confirmed timestamp.
+            data (bytearray): The payload data of the message.
+            lenght (bytearray): The computed length of the package as a 2-byte array.
+            complete_data (bytearray): The complete package data including the checksum.
+        """
+
         self.message_type = message_type
         self.receiver_id = receiver_id
         self.sender_id = sender_id
@@ -125,7 +170,7 @@ class package:
                     + self.confirmed_timestamp
                     + self.data
                 ),
-                1,
+                MD4_Type.LOWER_HALF,
             )
         else:
             checksumme = get_checksumme(
@@ -139,15 +184,29 @@ class package:
                     + self.timestamp
                     + self.confirmed_timestamp
                 ),
-                1,
+                MD4_Type.LOWER_HALF,
             )
 
         self.complete_data = complete_data + checksumme
 
     def print_data(self) -> None:
         """
-        -
+        Prints the complete data in a formatted matrix form.
+        The method processes the `complete_data` attribute by splitting it into
+        hexadecimal string arrays using the `get_hex_string_arrs` function. It then
+        organizes the data into a matrix with 8 columns per row and prints the matrix.
+        Steps:
+        1. Splits the `complete_data` into an array of hexadecimal strings.
+        2. Calculates the number of rows required for the matrix based on the length
+           of the split data.
+        3. Initializes a matrix with the calculated number of rows and 8 columns.
+        4. Populates the matrix with the split data.
+        5. Prints the resulting matrix.
+        Note:
+            - Assumes `complete_data` is already set and `get_hex_string_arrs` is
+              a valid function that processes the data correctly.
         """
+
         split_data = get_hex_string_arrs(self.complete_data)
 
         lenList: int = len(split_data)

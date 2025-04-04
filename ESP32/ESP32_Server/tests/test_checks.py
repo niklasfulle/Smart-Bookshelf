@@ -35,7 +35,38 @@ from protocol.constants.constants import DISC_REASON, STATUS
 
 class TestChecks:
     """
-    -
+    TestChecks is a test suite designed to validate the behavior of the `check_for_valid_message_type_moment` function
+    under various conditions. It simulates different states of a connection object and verifies the correctness of
+    message type handling for a smart bookshelf system.
+    Attributes:
+        client_config (str): JSON string containing client configuration details such as ID, name, connection IP, and port.
+        bookshelf_config (str): JSON string containing bookshelf configuration details such as name and shelving units.
+        file1 (str): JSON string containing protocol, server, and bookshelf version information.
+        ip (str): Extracted IP address of the client from the client configuration.
+        bookshelf_name (str): Extracted name of the bookshelf from the bookshelf configuration.
+        shelving_units (list): Extracted shelving unit details from the bookshelf configuration.
+        bookshelf_object (bookshelf): Bookshelf object initialized with the extracted details.
+        client_ip (str): Extracted client IP address from the client configuration.
+        client_port (int): Extracted client port from the client configuration.
+        server_ip (str): Extracted server IP address from the client configuration.
+        server_port (int): Extracted server port from the client configuration.
+        sender_id (int): Extracted sender ID from the client configuration.
+        receiver_id (int): Extracted receiver ID from the client configuration.
+        connection_object (connection): Connection object initialized with the extracted details.
+    Methods:
+        test_checks1():
+            Tests the behavior of `check_for_valid_message_type_moment` when no connection request has been sent.
+            Asserts the expected results for various message types.
+        test_checks2():
+            Tests the behavior of `check_for_valid_message_type_moment` when a connection request has been sent.
+            Asserts the expected results for various message types.
+        test_checks3():
+            Tests the behavior of `check_for_valid_message_type_moment` when a connection request has been sent
+            and the handshake is complete. Asserts the expected results for various message types.
+        test_checks4():
+            Tests the behavior of `check_for_valid_message_type_moment` when a connection request has been sent,
+            the handshake is complete, and the version check is complete. Asserts the expected results for various
+            message types.
     """
 
     client_config: str = '{"id": 10,"name": "Client_0","connection": { "ip": "127.0.0.1", "port": 40008 },"server": {"id": 20,"name": "Server","ip": "127.0.0.1","port": 50008}}'
@@ -65,8 +96,27 @@ class TestChecks:
 
     def test_checks1(self):
         """
-        -
+        Test the `check_for_valid_message_type_moment` function with various message types.
+        This test validates the behavior of the `check_for_valid_message_type_moment` function
+        when provided with different types of messages. It ensures that the function correctly
+        identifies valid and invalid message types based on the constructed packages.
+        Test Cases:
+        - Connection Request: Should return True.
+        - Connection Response: Should return False.
+        - Connection Approve: Should return False.
+        - Version Request: Should return False.
+        - Version Response: Should return False.
+        - Status Response: Should return False.
+        - Sleep Response: Should return False.
+        - Reboot Response: Should return False.
+        - Disconnection Request: Should return True.
+        - Disconnection Response: Should return False.
+        - Data Package: Should return False.
+        - Data Upload Package: Should return False.
+        Assertions:
+        - Each result is asserted against the expected outcome to verify correctness.
         """
+
         package = build_connection_request(10, 20, 0, 0, 0, 0)
 
         result1 = check_for_valid_message_type_moment(self.connection_object, package)
@@ -236,8 +286,27 @@ class TestChecks:
 
     def test_checks2(self):
         """
-        -
+        Test the `check_for_valid_message_type_moment` function with various message types.
+        This test validates the behavior of the `check_for_valid_message_type_moment` function
+        when provided with different types of messages. It ensures that the function correctly
+        identifies valid and invalid message types based on the current state of the connection object.
+        Test Cases:
+            1. Connection Request: Should return False.
+            2. Connection Response: Should return False.
+            3. Connection Approve: Should return True.
+            4. Version Request: Should return False.
+            5. Version Response: Should return False.
+            6. Status Response: Should return False.
+            7. Sleep Response: Should return False.
+            8. Reboot Response: Should return False.
+            9. Disconnection Request: Should return True.
+            10. Disconnection Response: Should return True.
+            11. Data Package: Should return False.
+            12. Data Upload Package: Should return False.
+        Assertions:
+            - Each result is asserted against its expected value to ensure correctness.
         """
+
         self.connection_object.connection_request_send = True
 
         package = build_connection_request(10, 20, 0, 0, 0, 0)
@@ -409,8 +478,28 @@ class TestChecks:
 
     def test_checks3(self):
         """
-        -
+        Test the `check_for_valid_message_type_moment` function with various message types.
+        This test verifies the behavior of the `check_for_valid_message_type_moment` function
+        when provided with different types of messages. It ensures that the function correctly
+        identifies valid and invalid message types based on the current state of the connection
+        object.
+        Test Cases:
+        - Connection Request: Should return False.
+        - Connection Response: Should return False.
+        - Connection Approve: Should return False.
+        - Version Request: Should return True.
+        - Version Response: Should return False.
+        - Status Response: Should return False.
+        - Sleep Response: Should return False.
+        - Reboot Response: Should return False.
+        - Disconnection Request: Should return True.
+        - Disconnection Response: Should return True.
+        - Data Package: Should return False.
+        - Data Upload Package: Should return False.
+        Assertions:
+        - Each result is asserted against the expected outcome for the corresponding message type.
         """
+
         self.connection_object.connection_request_send = True
         self.connection_object.handshake = True
 
@@ -583,8 +672,34 @@ class TestChecks:
 
     def test_checks4(self):
         """
-        -
+        Test the `check_for_valid_message_type_moment` function with various message types.
+        This test verifies the behavior of the `check_for_valid_message_type_moment` function
+        when provided with different types of messages. It ensures that the function correctly
+        identifies valid and invalid message types based on the current state of the connection object.
+        Test Steps:
+        1. Set up the connection object with initial states for connection request, handshake, and version check.
+        2. Build and test the following message types:
+            - Connection Request
+            - Connection Response
+            - Connection Approve
+            - Version Request
+            - Version Response
+            - Status Response
+            - Sleep Response
+            - Reboot Response
+            - Disconnection Request
+            - Disconnection Response
+            - Data Message
+            - Upload Data Message
+        3. Assert the expected results for each message type.
+        Expected Results:
+        - Messages of types Connection Request, Connection Response, Connection Approve,
+          Version Request, and Version Response should return `False`.
+        - Messages of types Status Response, Sleep Response, Reboot Response,
+          Disconnection Request, Disconnection Response, Data Message, and Upload Data Message
+          should return `True`.
         """
+
         self.connection_object.connection_request_send = True
         self.connection_object.handshake = True
         self.connection_object.version_check = True

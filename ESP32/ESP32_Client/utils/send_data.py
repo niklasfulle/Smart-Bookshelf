@@ -9,6 +9,22 @@ from utils.constants import MD4_Type
 
 
 def build_data_to_send_bytearray_arr(data: str) -> list:
+    """
+    Splits a given string into chunks of up to 80 bytes, appends a checksum to each chunk,
+    and returns a list of bytearrays.
+    Args:
+        data (str): The input string to be split and processed.
+    Returns:
+        list: A list of bytearrays, where each bytearray represents a chunk of the input
+        string with an appended checksum.
+    Notes:
+        - The function uses UTF-8 encoding to convert the input string into a bytearray.
+        - If the input string is less than or equal to 80 bytes, it is processed as a single chunk.
+        - For input strings longer than 80 bytes, the function splits the data into chunks of
+          80 bytes, calculates a checksum for each chunk, and appends the checksum to the chunk.
+        - The checksum is calculated using the `get_checksumme` function with the `MD4_Type.LOWER_HALF` type.
+    """
+
     data_bytearray: bytearray = bytearray(data.encode("utf-8"))
     data_arr: list = []
 

@@ -7,17 +7,22 @@ from utils.converter import get_hex_string
 
 
 def parse_data_start_end(data: str, end: int, start: int) -> bytearray:
-    """Gets a string array where an index represents a byte, furthermore an end and a start
-    point which represent the range of the value
-
-    Args:
-        data (str): the string array
-        end (int): endpoint of the value
-        start (int): start of the value
-
-    Returns:
-        bytearray: returns the value as bytearray
     """
+    Extracts a substring from the input string `data` between the specified `start`
+    and `end` indices, converts it into a space-separated hexadecimal string, and
+    returns it as a bytearray.
+    Args:
+        data (str): The input string containing hexadecimal characters.
+        end (int): The ending index (exclusive) for the substring extraction.
+        start (int): The starting index (inclusive) for the substring extraction.
+    Returns:
+        bytearray: A bytearray representation of the extracted hexadecimal string.
+    Note:
+        - The function appears to have a logical error in the condition `if i > end`,
+          as `i` will never be greater than `end` due to the loop range. This condition
+          may need to be reviewed and corrected.
+    """
+
     string = ""
     for i in range(start, end, 1):
         if i > end:
@@ -29,13 +34,14 @@ def parse_data_start_end(data: str, end: int, start: int) -> bytearray:
 
 
 def get_data_string_array(data: bytearray) -> str:
-    """convert bytearray to string array with hex strings
-
+    """
+    Converts the input data into a string array representation.
     Args:
-        data (bytearray): the data who gets converted
-
+        data (bytearray or str): The input data to be processed. It can either be a string or a bytearray.
     Returns:
-        str: the string array
+        str: A string array representation of the input data. If the input is a string, it is split by spaces.
+             If the input is a bytearray, it is converted to a hexadecimal string, split by commas, and
+             stripped of the "0x" prefix.
     """
 
     string_split: str = ""

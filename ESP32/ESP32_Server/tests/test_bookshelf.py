@@ -12,7 +12,20 @@ from hardware.bookshelf import bookshelf
 
 class Testbookshelf:
     """
-    -
+    Testbookshelf is a test class designed to validate the functionality of the `bookshelf` class.
+    Attributes:
+        client_config (str): A JSON string representing the client configuration, including client ID, name,
+            connection details (IP and port), and server information.
+        bookshelf_config (str): A JSON string representing the bookshelf configuration, including the name
+            of the bookshelf and a list of shelving units with their order and length.
+    Methods:
+        test_bookshelf1():
+            Tests the initialization of a `bookshelf` object using the provided configurations.
+            Validates the following:
+            - The name of the bookshelf matches the expected value.
+            - The IP address of the bookshelf matches the expected value.
+            - The number of LED stripes matches the expected count.
+            - The order and length of the first and last LED stripes are as expected.
     """
 
     client_config: str = '{"id": 10,"name": "Client_0","connection": { "ip": "127.0.0.1", "port": 40000 },"server": {"id": 20,"name": "Server","ip": "127.0.0.1","port": 50000}}'
@@ -20,8 +33,21 @@ class Testbookshelf:
 
     def test_bookshelf1(self):
         """
-        -
+        Test case for the `bookshelf` class initialization.
+        This test verifies the following:
+        - The `bookshelf` object is correctly initialized with the provided name, IP address, and shelving units.
+        - The `name` attribute of the `bookshelf` object matches the expected value.
+        - The `ip` attribute of the `bookshelf` object matches the expected value.
+        - The number of LED stripes in the `bookshelf` object matches the expected count.
+        - The order and length of the first and last LED stripes are correctly set.
+        Assertions:
+        - `bookshelf_object.name` is "bookshelf_Name1".
+        - `bookshelf_object.ip` is "127.0.0.1".
+        - The length of `bookshelf_object.ledstripes` is 8.
+        - The `order` and `length` of the first LED stripe are 1 and 50, respectively.
+        - The `order` and `length` of the last LED stripe are 8 and 50, respectively.
         """
+
         ip = json_data_reader(self.client_config, ["connection", "ip"], 2)
         bookshelf_name = json_data_reader(self.bookshelf_config, ["name"], 2)
         shelving_units = json_data_reader(self.bookshelf_config, ["shelving_units"], 2)

@@ -59,8 +59,21 @@ threads: int = 0
 
 def fetch_configs() -> int:
     """
-    -
+    Fetches configuration data for bookshelves and connections, initializes objects,
+    and validates the consistency between the number of bookshelves and clients.
+    This function performs the following tasks:
+    1. Reads bookshelf configuration data from a JSON file.
+    2. Fetches client connection data from a database.
+    3. Validates that the number of bookshelves matches the number of clients.
+    4. Initializes `bookshelf` objects for each bookshelf configuration.
+    5. Reads server connection details from a JSON file.
+    6. Initializes `connection` objects for each client-server connection.
+    Returns:
+        int: The number of clients (and bookshelves) successfully processed.
+    Raises:
+        SystemExit: If the number of bookshelves and clients do not match.
     """
+
     bookshelfs_json = json_data_reader(FILES.BOOKSHELFS, [], 1)
 
     cursor.execute('SELECT * FROM "connection"')
@@ -100,8 +113,17 @@ def fetch_configs() -> int:
 
 def listening_thread(sock) -> None:
     """
-    -
+    Listens for incoming data on the provided socket and updates the global databuffer.
+    This function runs in an infinite loop, continuously receiving data from the socket.
+    The received data is stored in the global `databuffer` as a tuple containing the
+    sender's address and the received data as a bytearray. New data is inserted at the
+    beginning of the buffer.
+    Args:
+        sock (socket.socket): The socket object used to receive data.
+    Returns:
+        None
     """
+
     global databuffer
 
     while True:
@@ -111,20 +133,31 @@ def listening_thread(sock) -> None:
 
 def threaded(_connection: connection) -> None:
     """
-    -
+    Handles the communication and task management for a single connection.
+    This function runs in an infinite loop, processing incoming data, managing
+    connection states, and handling tasks or requests based on the protocol.
+
+    Args:
+        _connection (connection): The connection object representing a client-server connection.
+
+    Returns:
+        None
     """
-    data = bytearray(b"")
-    _connection.status = STATUS.UNKOWN
+    data = bytearray(b"")  # Initialize an empty bytearray for incoming data
+    _connection.status = STATUS.UNKOWN  # Set the initial status of the connection
 
     while True:
+        # Check if there is new data in the global databuffer for this connection
         index = get_last_databuffer_element(databuffer, _connection.client)
 
         if index is not None:
+            # Retrieve and remove the data from the databuffer
             data = databuffer[index][1]
             databuffer.remove(databuffer[index])
 
         try:
-            if data == bytearray(b""):
+            if data == bytearray(b""):  # No new data received
+                # Handle tasks if the connection is established and ready
                 if (
                     _connection.connection_request_send
                     and _connection.handshake
@@ -134,6 +167,7 @@ def threaded(_connection: connection) -> None:
                 ):
                     handle_tasks(_connection)
 
+                # Handle task response waiting logic
                 elif (
                     _connection.connection_request_send
                     and _connection.handshake
@@ -144,8 +178,8 @@ def threaded(_connection: connection) -> None:
                     if _connection._wait_for_task_response_count < 51:
                         _connection._wait_for_task_response_count += 1
                         time.sleep(0.1)
-
                     else:
+                        # Disconnect if task response timeout occurs
                         _connection.send_message_to_client(
                             build_disconnection_request(
                                 _connection.receiver_id_int,
@@ -158,6 +192,8 @@ def threaded(_connection: connection) -> None:
                             )
                         )
                         _connection.reset()
+
+                # Check for new tasks if no task is currently assigned
                 elif (
                     _connection.connection_request_send
                     and _connection.handshake
@@ -166,6 +202,7 @@ def threaded(_connection: connection) -> None:
                 ):
                     check_tasks(postgres, cursor, _connection)
 
+                # Send a status request if no task is assigned and no status request is pending
                 if (
                     _connection.connection_request_send
                     and _connection.handshake
@@ -187,11 +224,11 @@ def threaded(_connection: connection) -> None:
                                 _connection.last_received_package.timestamp,
                             )
                         )
-
                         _connection.status_request_send = True
                         _connection.waiting_count = 0
                         time.sleep(0.2)
 
+                # Handle status request timeout
                 elif (
                     _connection.connection_request_send
                     and _connection.handshake
@@ -202,8 +239,8 @@ def threaded(_connection: connection) -> None:
                     if _connection.status_request_waiting_count < 51:
                         _connection.status_request_waiting_count += 1
                         time.sleep(0.1)
-
                     else:
+                        # Disconnect if status request timeout occurs
                         _connection.send_message_to_client(
                             build_disconnection_request(
                                 _connection.receiver_id_int,
@@ -218,25 +255,28 @@ def threaded(_connection: connection) -> None:
                         _connection.reset()
 
                 else:
-                    # print("nothing")
+                    # No action needed, wait for new data or events
                     time.sleep(0.1)
 
-            elif data != bytearray(b""):
-                _package = parse_package(data)
+            elif data != bytearray(b""):  # New data received
+                _package = parse_package(data)  # Parse the received package
 
+                # Update the last received package if it's not a disconnect request
                 if PACKAGE_MESSAGE_TYPE.DiscRequest != int.from_bytes(
                     _package.message_type, "little"
                 ):
                     _connection.last_received_package = _package
 
+                # Validate the package and handle errors
                 if not handle_checks(_connection, _package):
                     print("Check Error")
                     data = bytearray(b"")
-
                 else:
+                    # Handle different package types based on the protocol
                     if PACKAGE_MESSAGE_TYPE.ConnRequest == int.from_bytes(
                         _package.message_type, "little"
                     ):
+                        # Respond to connection request
                         _connection.send_message_to_client(
                             build_connection_response(
                                 _connection.receiver_id_int,
@@ -255,15 +295,16 @@ def threaded(_connection: connection) -> None:
                     elif PACKAGE_MESSAGE_TYPE.ConnApprove == int.from_bytes(
                         _package.message_type, "little"
                     ):
+                        # Handle connection approval
                         _connection.handshake = True
                         _connection.waiting_count = 0
-                        _connection.handshake
                         data = bytearray(b"")
                         time.sleep(0.2)
 
                     elif PACKAGE_MESSAGE_TYPE.VerRequest == int.from_bytes(
                         _package.message_type, "little"
                     ):
+                        # Respond to version request
                         _connection.send_message_to_client(
                             build_version_response(
                                 _connection.receiver_id_int,
@@ -279,13 +320,13 @@ def threaded(_connection: connection) -> None:
                         )
                         _connection.version_check = True
                         _connection.waiting_count = 0
-                        _connection.version_check
                         data = bytearray(b"")
                         time.sleep(0.1)
 
                     elif PACKAGE_MESSAGE_TYPE.StatusResponse == int.from_bytes(
                         _package.message_type, "little"
                     ):
+                        # Update connection status
                         _connection.status = int.from_bytes(_package.data, "little")
                         _connection.status_request_send = False
                         _connection.status_request_waiting_count = 0
@@ -295,6 +336,7 @@ def threaded(_connection: connection) -> None:
                     elif PACKAGE_MESSAGE_TYPE.SleepResponse == int.from_bytes(
                         _package.message_type, "little"
                     ):
+                        # Handle sleep response
                         _connection._wait_for_task_response = False
                         _connection._task = None
                         _connection._wait_for_task_response_count = 0
@@ -304,6 +346,7 @@ def threaded(_connection: connection) -> None:
                     elif PACKAGE_MESSAGE_TYPE.RebootResponse == int.from_bytes(
                         _package.message_type, "little"
                     ):
+                        # Handle reboot response
                         _connection._wait_for_task_response = False
                         _connection._task = None
                         _connection._wait_for_task_response_count = 0
@@ -313,20 +356,19 @@ def threaded(_connection: connection) -> None:
                     elif PACKAGE_MESSAGE_TYPE.Data == int.from_bytes(
                         _package.message_type, "little"
                     ):
+                        # Handle data package
                         print("Data")
 
                     elif PACKAGE_MESSAGE_TYPE.DataUpload == int.from_bytes(
                         _package.message_type, "little"
                     ):
+                        # Handle data upload package
                         print("DataUpload")
 
                     elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
                         _package.message_type, "little"
                     ):
-                        print(
-                            int.from_bytes(_package.data, "little")
-                            != DISC_REASON.TIMEOUT
-                        )
+                        # Handle disconnect request
                         if (
                             int.from_bytes(_package.data, "little")
                             != DISC_REASON.TIMEOUT
@@ -338,8 +380,9 @@ def threaded(_connection: connection) -> None:
                         data = bytearray(b"")
                         time.sleep(0.2)
 
-            gc.collect()
+            gc.collect()  # Perform garbage collection to free memory
         except KeyboardInterrupt:
+            # Handle server termination
             print("Server terminated")
             _connection.send_message_to_client(
                 build_disconnection_request(
@@ -355,12 +398,33 @@ def threaded(_connection: connection) -> None:
             data = bytearray(b"")
             sys.exit(0)
 
-        time.sleep(2)
+        time.sleep(2)  # Wait before the next iteration
 
 
 def main():
     """
-    -
+    Main function to manage server connections and threads.
+    This function initializes the server by fetching the number of threads
+    from the configuration and continuously monitors the active connections.
+    It starts new threads for handling client connections and listens for
+    incoming messages. The server shuts down gracefully upon a keyboard
+    interrupt or when there are no active connections.
+    Workflow:
+    - Fetch the initial number of threads from the configuration.
+    - Monitor the number of active connections.
+    - Start new threads for handling client connections if needed.
+    - Handle server termination on a keyboard interrupt or when no clients are connected.
+    Exceptions:
+    - Handles and prints any exceptions that occur while starting new threads.
+    - Gracefully terminates the server on a KeyboardInterrupt by sending a
+      disconnection request to all connected clients.
+    Note:
+    - The function assumes the existence of global variables `connections` and
+      `DISC_REASON`, as well as utility functions like `fetch_configs`,
+      `listening_thread`, `threaded`, `build_disconnection_request`, and
+      `int_to_2byte_array`.
+    Raises:
+    - SystemExit: When there are no active connections or during server termination.
     """
     threads = fetch_configs()
     while True:

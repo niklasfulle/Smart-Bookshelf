@@ -5,12 +5,17 @@
 
 
 class task:
-    """_summary_
-
-    Returns:
-        _type_: _description_
     """
-
+    Represents a task with associated metadata and data payload.
+    Attributes:
+        id (str): The unique identifier for the task.
+        type (str): The type or category of the task.
+        client_id (str): The identifier of the client associated with the task.
+        data (str): The data or payload associated with the task.
+    Methods:
+        __init__(id: str, type: str, client_id: str, data: str) -> None:
+            Initializes a new instance of the task class with the given attributes.
+    """
     id: str
     type: str
     client_id: str

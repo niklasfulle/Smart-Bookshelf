@@ -8,8 +8,21 @@ import json
 
 def json_data_reader(_json, path: list[str], type: int) -> str:
     """
-    -
+    Reads and retrieves data from a JSON object or file based on a specified path.
+    Args:
+        _json (str): The JSON data as a string or the file path to a JSON file.
+        path (list[str]): A list of keys representing the path to the desired data.
+        type (int): Specifies the input type:
+            - 1: `_json` is a file path to a JSON file.
+            - 2: `_json` is a JSON string.
+    Returns:
+        str: The value retrieved from the JSON data at the specified path.
+    Raises:
+        KeyError: If the specified path does not exist in the JSON data.
+        json.JSONDecodeError: If the JSON data is invalid.
+        FileNotFoundError: If the file specified in `_json` does not exist (when type is 1).
     """
+
     data = None
 
     if type == 1:
