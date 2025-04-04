@@ -151,6 +151,7 @@ def check_for_valid_message_type_moment(
         and not _connection.handshake
         and not _connection.version_check
     ):
+        print(1)
         valid_types = [
             PACKAGE_MESSAGE_TYPE.ConnResponse,
             PACKAGE_MESSAGE_TYPE.DiscRequest,
@@ -161,6 +162,7 @@ def check_for_valid_message_type_moment(
         and not _connection.handshake
         and not _connection.version_check
     ):
+        print(2)
         valid_types = [
             PACKAGE_MESSAGE_TYPE.ConnResponse,
             PACKAGE_MESSAGE_TYPE.DiscRequest,
@@ -172,6 +174,7 @@ def check_for_valid_message_type_moment(
         and _connection.handshake
         and not _connection.version_check
     ):
+        print(3)
         valid_types = [
             PACKAGE_MESSAGE_TYPE.VerResponse,
             PACKAGE_MESSAGE_TYPE.DiscRequest,
@@ -183,6 +186,7 @@ def check_for_valid_message_type_moment(
         and _connection.handshake
         and _connection.version_check
     ):
+        print(4)
         valid_types = [
             PACKAGE_MESSAGE_TYPE.StatusRequest,
             PACKAGE_MESSAGE_TYPE.SleepRequest,

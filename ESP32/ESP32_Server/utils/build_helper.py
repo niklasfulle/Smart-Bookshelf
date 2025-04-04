@@ -98,7 +98,7 @@ def get_protocol_version() -> bytearray:
     )
 
 
-def get_client_version() -> bytearray:
+def get_server_version() -> bytearray:
     """
     Retrieves the client version as a bytearray by reading the major and minor
     version numbers from the configuration file.
