@@ -8,6 +8,34 @@ from protocol.init_package import initialize_data_upload_package
 from protocol.constants.constants import DATA_UPLOAD_MESSAGE_TYPE
 
 
+def build_data_upload_package_data_start(datatype: bytearray) -> data_upload_package:
+    """
+    Constructs and initializes a data upload package with the "DataUpStart" message type.
+
+    Args:
+        datatype (bytearray): The type of data to be included in the upload package.
+
+    Returns:
+        data_upload_package: An initialized data upload package with the specified message type and data type.
+    """
+
+    return initialize_data_upload_package(
+        DATA_UPLOAD_MESSAGE_TYPE.DataUpStart, datatype
+    )
+
+
+def build_data_upload_package_data_request(datatype: bytearray) -> data_upload_package:
+    return initialize_data_upload_package(
+        DATA_UPLOAD_MESSAGE_TYPE.DataUpRequest, datatype
+    )
+
+
+def build_data_upload_package_data_response(datatype: bytearray) -> data_upload_package:
+    return initialize_data_upload_package(
+        DATA_UPLOAD_MESSAGE_TYPE.DataUpResponse, datatype
+    )
+
+
 def build_data_upload_package_data(
     package_number: bytearray, datapackage: bytearray
 ) -> data_upload_package:
@@ -43,22 +71,6 @@ def build_data_upload_package_data_confirm(
 
     return initialize_data_upload_package(
         DATA_UPLOAD_MESSAGE_TYPE.DataConfirm, (package_number)
-    )
-
-
-def build_data_upload_package_data_start(datatype: bytearray) -> data_upload_package:
-    """
-    Constructs and initializes a data upload package with the "DataUpStart" message type.
-
-    Args:
-        datatype (bytearray): The type of data to be included in the upload package.
-
-    Returns:
-        data_upload_package: An initialized data upload package with the specified message type and data type.
-    """
-
-    return initialize_data_upload_package(
-        DATA_UPLOAD_MESSAGE_TYPE.DataUpStart, datatype
     )
 
 

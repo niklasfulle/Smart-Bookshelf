@@ -10,6 +10,8 @@ sys.path.append("../")
 from protocol.builder.builder_data_upload_package import (
     build_data_upload_package_data,
     build_data_upload_package_data_start,
+    build_data_upload_package_data_request,
+    build_data_upload_package_data_response,
     build_data_upload_package_data_end,
     build_data_upload_package_data_cancel,
     build_data_upload_package_data_error,
@@ -29,6 +31,41 @@ class TestParseDataUploadPackage:
     5. Parsing a data upload package that cancels the data transmission.
     Each test ensures that the parsed package's length and message type match the expected values.
     """
+
+    def test_parse_data_upload_package_data_start(self) -> None:
+        """
+        Test the `parse_data_upload_package` function for a data upload package
+        with a "data start" message type.
+        This test verifies that the parsed package has the correct length and
+        message type when provided with a package created using
+        `build_data_upload_package_data_start`.
+        Assertions:
+            - The length of the parsed package matches the expected value (6).
+            - The message type of the parsed package matches the expected value (6001).
+        """
+
+        package = build_data_upload_package_data_start(bytearray(b"\x00\x00"))
+
+        parsed_package = parse_data_upload_package(package.complete_data)
+
+        assert int.from_bytes(parsed_package.lenght, "little") == 6
+        assert int.from_bytes(parsed_package.message_type, "little") == 6001
+
+    def test_parse_data_upload_package_data_request(self) -> None:
+        package = build_data_upload_package_data_request(bytearray(b"\x00\x00"))
+
+        parsed_package = parse_data_upload_package(package.complete_data)
+
+        assert int.from_bytes(parsed_package.lenght, "little") == 6
+        assert int.from_bytes(parsed_package.message_type, "little") == 6002
+
+    def test_parse_data_upload_package_data_response(self) -> None:
+        package = build_data_upload_package_data_response(bytearray(b"\x00\x00"))
+
+        parsed_package = parse_data_upload_package(package.complete_data)
+
+        assert int.from_bytes(parsed_package.lenght, "little") == 6
+        assert int.from_bytes(parsed_package.message_type, "little") == 6003
 
     def test_parse_data_upload_package_data(self) -> None:
         """
@@ -52,26 +89,7 @@ class TestParseDataUploadPackage:
         parsed_package = parse_data_upload_package(package.complete_data)
 
         assert int.from_bytes(parsed_package.lenght, "little") == 22
-        assert int.from_bytes(parsed_package.message_type, "little") == 6002
-
-    def test_parse_data_upload_package_data_start(self) -> None:
-        """
-        Test the `parse_data_upload_package` function for a data upload package
-        with a "data start" message type.
-        This test verifies that the parsed package has the correct length and
-        message type when provided with a package created using
-        `build_data_upload_package_data_start`.
-        Assertions:
-            - The length of the parsed package matches the expected value (6).
-            - The message type of the parsed package matches the expected value (6001).
-        """
-
-        package = build_data_upload_package_data_start(bytearray(b"\x00\x00"))
-
-        parsed_package = parse_data_upload_package(package.complete_data)
-
-        assert int.from_bytes(parsed_package.lenght, "little") == 6
-        assert int.from_bytes(parsed_package.message_type, "little") == 6001
+        assert int.from_bytes(parsed_package.message_type, "little") == 6004
 
     def test_parse_data_upload_package_data_end(self) -> None:
         """
@@ -90,7 +108,7 @@ class TestParseDataUploadPackage:
         parsed_package = parse_data_upload_package(package.complete_data)
 
         assert int.from_bytes(parsed_package.lenght, "little") == 4
-        assert int.from_bytes(parsed_package.message_type, "little") == 6004
+        assert int.from_bytes(parsed_package.message_type, "little") == 6006
 
     def test_parse_data_upload_package_data_error(self) -> None:
         """
@@ -111,7 +129,7 @@ class TestParseDataUploadPackage:
         parsed_package = parse_data_upload_package(package.complete_data)
 
         assert int.from_bytes(parsed_package.lenght, "little") == 6
-        assert int.from_bytes(parsed_package.message_type, "little") == 6005
+        assert int.from_bytes(parsed_package.message_type, "little") == 6007
 
     def test_parse_data_upload_package_data_cancel(self) -> None:
         """
@@ -129,4 +147,4 @@ class TestParseDataUploadPackage:
         parsed_package = parse_data_upload_package(package.complete_data)
 
         assert int.from_bytes(parsed_package.lenght, "little") == 4
-        assert int.from_bytes(parsed_package.message_type, "little") == 6006
+        assert int.from_bytes(parsed_package.message_type, "little") == 6008

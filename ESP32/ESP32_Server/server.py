@@ -25,6 +25,7 @@ from utils.build_helper import (
 )
 from utils.converter import int_to_2byte_array
 from utils.tasks import check_tasks, handle_tasks
+from utils.send_data import handle_data_reveiv_mode, handle_data_send_mode
 from hardware.bookshelf import bookshelf
 from protocol.parser.parser_default_package import parse_package
 from protocol.constants.constants import PACKAGE_MESSAGE_TYPE, DISC_REASON, STATUS
@@ -164,16 +165,34 @@ def threaded(_connection: connection) -> None:
                     and _connection.version_check
                     and _connection._task is not None
                     and not _connection._wait_for_task_response
+                    and not _connection.data_reveiv_mode
+                    and not _connection.data_send_mode
                 ):
                     handle_tasks(_connection)
 
+                elif (
+                    _connection.connection_request_send
+                    and _connection.handshake
+                    and _connection.version_check
+                    and _connection._task is not None
+                    and not _connection._wait_for_task_response
+                    and (_connection.data_reveiv_mode or _connection.data_send_mode)
+                ):
+                    if _connection.data_reveiv_mode:
+                        handle_data_reveiv_mode(_connection)
+                    elif _connection.data_send_mode:
+                        handle_data_send_mode(_connection)
+
                 # Handle task response waiting logic
+
                 elif (
                     _connection.connection_request_send
                     and _connection.handshake
                     and _connection.version_check
                     and _connection._task is not None
                     and _connection._wait_for_task_response
+                    and not _connection.data_reveiv_mode
+                    and not _connection.data_send_mode
                 ):
                     if _connection._wait_for_task_response_count < 51:
                         _connection._wait_for_task_response_count += 1
