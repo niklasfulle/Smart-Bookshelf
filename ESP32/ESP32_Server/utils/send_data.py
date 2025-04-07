@@ -6,7 +6,6 @@
 import math
 from utils.checksumme import get_checksumme
 from utils.constants import MD4_Type
-from connection.connection import connection
 
 
 def build_data_to_send_bytearray_arr(data: str) -> list:
@@ -62,11 +61,3 @@ def build_data_to_send_bytearray_arr(data: str) -> list:
                 )
 
     return data_arr
-
-
-def handle_data_reveiv_mode(_connection: connection) -> None:
-    print(_connection.data_reveiv_mode)
-
-
-def handle_data_send_mode(_connection: connection) -> None:
-    print(_connection.data_send_mode)

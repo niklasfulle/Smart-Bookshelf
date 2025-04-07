@@ -81,3 +81,4 @@ def build_data_package_mode(data: bytearray) -> data_package:
     """
 
     return initialize_data_package(DATA_MESSAGE_TYPE.LightMode, data)
+

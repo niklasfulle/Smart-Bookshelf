@@ -15,7 +15,11 @@ from dotenv import load_dotenv
 
 from connection.connection import connection
 from utils.json_data_reader import json_data_reader
-from utils.checks import handle_checks
+from utils.checks import (
+    handle_checks,
+    check_data_upload_message_type,
+    check_data_message_type,
+)
 from utils.constants import FILES, BUFFER_SIZE
 from utils.connection_helper import get_last_databuffer_element
 from utils.build_helper import (
@@ -25,16 +29,29 @@ from utils.build_helper import (
 )
 from utils.converter import int_to_2byte_array
 from utils.tasks import check_tasks, handle_tasks
-from utils.send_data import handle_data_reveiv_mode, handle_data_send_mode
 from hardware.bookshelf import bookshelf
 from protocol.parser.parser_default_package import parse_package
-from protocol.constants.constants import PACKAGE_MESSAGE_TYPE, DISC_REASON, STATUS
+from protocol.constants.constants import (
+    PACKAGE_MESSAGE_TYPE,
+    DISC_REASON,
+    STATUS,
+    DATA_MESSAGE_TYPE,
+    DATA_UPLOAD_MESSAGE_TYPE,
+    DATA_UPLOAD_TYPE,
+)
 from protocol.builder.builder_default_package import (
     build_connection_response,
     build_version_response,
     build_status_request,
+    build_upload_data,
     build_disconnection_request,
 )
+from protocol.builder.builder_data_upload_package import (
+    build_data_upload_package_data_start,
+    build_data_upload_package_data_request,
+)
+from protocol.parser.parser_data_upload_package import parse_data_upload_package
+from protocol.parser.parser_data_package import parse_data_package
 
 load_dotenv()
 
@@ -179,12 +196,92 @@ def threaded(_connection: connection) -> None:
                     and (_connection.data_reveiv_mode or _connection.data_send_mode)
                 ):
                     if _connection.data_reveiv_mode:
-                        handle_data_reveiv_mode(_connection)
+                        print("data_reveiv_mode", _connection.data_reveiv_mode)
+
+                        data_split = _connection._task.data.split(", ")
+
+                        data_upload_package = None
+
+                        if data_split[0] == "config":
+                            print("Config")
+
+                            data_upload_package = (
+                                build_data_upload_package_data_request(
+                                    int_to_2byte_array(DATA_UPLOAD_TYPE.Config)
+                                )
+                            )
+
+                        elif data_split[0] == "bookshelf":
+                            print("Bookshelf")
+
+                            data_upload_package = (
+                                build_data_upload_package_data_request(
+                                    int_to_2byte_array(DATA_UPLOAD_TYPE.Bookshelf)
+                                )
+                            )
+
+                        elif data_split[0] == "client":
+                            print("Client")
+
+                            data_upload_package = (
+                                build_data_upload_package_data_request(
+                                    int_to_2byte_array(DATA_UPLOAD_TYPE.Client)
+                                )
+                            )
+
+                        _connection.send_message_to_client(
+                            build_upload_data(
+                                _connection.receiver_id_int,
+                                _connection.sender_id_int,
+                                _connection.last_send_package.sequence_number,
+                                _connection.last_received_package.sequence_number,
+                                0,
+                                _connection.last_received_package.timestamp,
+                                data_upload_package.complete_data,
+                            )
+                        )
+
                     elif _connection.data_send_mode:
-                        handle_data_send_mode(_connection)
+                        print("data_send_mode", _connection.data_send_mode)
+
+                        data_split = _connection._task.data.split(", ")
+
+                        data_upload_package = None
+
+                        if data_split[0] == "config":
+                            print("Config")
+
+                            data_upload_package = build_data_upload_package_data_start(
+                                int_to_2byte_array(DATA_UPLOAD_TYPE.Config)
+                            )
+
+                        elif data_split[0] == "bookshelf":
+                            print("Bookshelf")
+
+                            data_upload_package = build_data_upload_package_data_start(
+                                int_to_2byte_array(DATA_UPLOAD_TYPE.Bookshelf)
+                            )
+
+                        elif data_split[0] == "client":
+                            print("Client")
+
+                            data_upload_package = build_data_upload_package_data_start(
+                                int_to_2byte_array(DATA_UPLOAD_TYPE.Client)
+                            )
+
+                        _connection.send_message_to_client(
+                            build_upload_data(
+                                _connection.receiver_id_int,
+                                _connection.sender_id_int,
+                                _connection.last_send_package.sequence_number,
+                                _connection.last_received_package.sequence_number,
+                                0,
+                                _connection.last_received_package.timestamp,
+                                data_upload_package.complete_data,
+                            )
+                        )
 
                 # Handle task response waiting logic
-
                 elif (
                     _connection.connection_request_send
                     and _connection.handshake
@@ -378,11 +475,44 @@ def threaded(_connection: connection) -> None:
                         # Handle data package
                         print("Data")
 
+                        parsed_data_package = parse_data_package(_package.complete_data)
+
+                        if not check_data_upload_message_type(parsed_data_package):
+                            print("Check Error")
+                            data = bytearray(b"")
+
+                        else:
+                            if DATA_MESSAGE_TYPE.DataResponse == int.from_bytes(
+                                parsed_data_package.message_type, "little"
+                            ):
+                                print("DataResponse")
+
+                            elif DATA_MESSAGE_TYPE.DataError == int.from_bytes(
+                                parsed_data_package.message_type, "little"
+                            ):
+                                print("DataError")
+
                     elif PACKAGE_MESSAGE_TYPE.DataUpload == int.from_bytes(
                         _package.message_type, "little"
                     ):
                         # Handle data upload package
                         print("DataUpload")
+
+                        parsed_data_upload_package = parse_data_upload_package(
+                            _package.complete_data
+                        )
+
+                        if not check_data_upload_message_type(
+                            parsed_data_upload_package
+                        ):
+                            print("Check Error")
+                            data = bytearray(b"")
+
+                        else:
+                            if DATA_UPLOAD_MESSAGE_TYPE.DataUpStart == int.from_bytes(
+                                parsed_data_upload_package.message_type, "little"
+                            ):
+                                print("DataUpStart")
 
                     elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
                         _package.message_type, "little"

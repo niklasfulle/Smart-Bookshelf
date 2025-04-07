@@ -118,9 +118,9 @@ def handle_tasks(_connection: connection) -> None:
         _connection.data_send_mode = True
         _connection.data_reveiv_mode = False
 
-        _connection.data_to_send = build_data_to_send_bytearray_arr(
-            _connection._task.data
-        )
+        data_split = _connection._task.data.split(", ")
+
+        _connection.data_to_send = build_data_to_send_bytearray_arr(data_split[1])
 
     elif _connection._task.type == TASK_TYPES.CONFIG_REQUEST:
         print("CONFIG_REQUEST")

@@ -26,7 +26,13 @@ PACKAGE_MESSAGE_TYPE = enum(
 )
 
 DATA_MESSAGE_TYPE = enum(
-    ShowOnLight=5001, ShowOffLight=5002, ShowBook=5003, ShowBooks=5004, LightMode=5020
+    ShowOnLight=5001,
+    ShowOffLight=5002,
+    ShowBook=5003,
+    ShowBooks=5004,
+    LightMode=5020,
+    DataResponse=5030,
+    DataError=5040,
 )
 
 DATA_LIGHT_MODUS = enum(On=1, Off=2, Auto=3)
@@ -41,6 +47,8 @@ DATA_UPLOAD_MESSAGE_TYPE = enum(
     DataUpError=6007,
     DataUpCancel=6008,
 )
+
+DATA_UPLOAD_TYPE = enum(Config=1, Bookshelf=2, Client=3)
 
 DATA_UPLOAD_ERROR = enum(ParseError=1, MD4Error=2, Unknown=10)
 

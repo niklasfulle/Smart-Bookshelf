@@ -3,8 +3,14 @@
 """
 
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,W0719
-from protocol.constants.constants import PACKAGE_MESSAGE_TYPE
+from protocol.constants.constants import (
+    PACKAGE_MESSAGE_TYPE,
+    DATA_MESSAGE_TYPE,
+    DATA_UPLOAD_MESSAGE_TYPE,
+)
 from protocol.package import package
+from protocol.data_package import data_package
+from protocol.data_upload_package import data_upload_package
 from connection.connection import connection
 
 
@@ -342,5 +348,50 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
             and confirmed_sequence_number == last_send_package_sequence_number
         ):
             return True
+
+    return False
+
+
+def check_data_message_type(_package: data_package) -> bool:
+    message_type = _package.message_type
+
+    valid_types = [
+        DATA_MESSAGE_TYPE.ShowOnLight,
+        DATA_MESSAGE_TYPE.ShowOffLight,
+        DATA_MESSAGE_TYPE.ShowBook,
+        DATA_MESSAGE_TYPE.ShowBooks,
+        DATA_MESSAGE_TYPE.LightMode,
+        DATA_MESSAGE_TYPE.DataResponse,
+        DATA_MESSAGE_TYPE.DataError,
+    ]
+
+    if isinstance(message_type, bytearray):
+        message_type = int.from_bytes(message_type, "little")
+
+    if message_type in valid_types:
+        return True
+
+    return False
+
+
+def check_data_upload_message_type(_package: data_upload_package) -> bool:
+    message_type = _package.message_type
+
+    valid_types = [
+        DATA_UPLOAD_MESSAGE_TYPE.DataUpStart,
+        DATA_UPLOAD_MESSAGE_TYPE.DataUpRequest,
+        DATA_UPLOAD_MESSAGE_TYPE.DataUpResponse,
+        DATA_UPLOAD_MESSAGE_TYPE.DataUp,
+        DATA_UPLOAD_MESSAGE_TYPE.DataConfirm,
+        DATA_UPLOAD_MESSAGE_TYPE.DataUpCompleted,
+        DATA_UPLOAD_MESSAGE_TYPE.DataUpError,
+        DATA_UPLOAD_MESSAGE_TYPE.DataUpCancel,
+    ]
+
+    if isinstance(message_type, bytearray):
+        message_type = int.from_bytes(message_type, "little")
+
+    if message_type in valid_types:
+        return True
 
     return False

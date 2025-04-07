@@ -12,10 +12,21 @@ from connection.connection import connection
 
 from utils.json_data_reader import json_data_reader
 from utils.constants import FILES, BUFFER_SIZE
-from utils.checks import handle_checks, check_versions
+from utils.checks import (
+    handle_checks,
+    check_versions,
+    check_data_message_type,
+    check_data_upload_message_type,
+)
 from utils.converter import int_to_2byte_array
 from hardware.bookshelf import bookshelf
-from protocol.constants.constants import PACKAGE_MESSAGE_TYPE, DISC_REASON, STATUS
+from protocol.constants.constants import (
+    PACKAGE_MESSAGE_TYPE,
+    DISC_REASON,
+    STATUS,
+    DATA_MESSAGE_TYPE,
+    DATA_UPLOAD_MESSAGE_TYPE,
+)
 from protocol.parser.parser_default_package import parse_package
 from protocol.builder.builder_default_package import (
     build_connection_request,
@@ -26,6 +37,8 @@ from protocol.builder.builder_default_package import (
     build_sleep_response,
     build_reboot_response,
 )
+from protocol.parser.parser_data_package import parse_data_package
+from protocol.parser.parser_data_upload_package import parse_data_upload_package
 
 
 # _thread.stack_size(2048)
@@ -283,11 +296,47 @@ while True:
                 ):
                     print("Data")
 
+                    parsed_data_package = parse_data_package(_package.complete_data)
+
+                    if not check_data_upload_message_type(parsed_data_package):
+                        print("Check Error")
+                        data = bytearray(b"")
+
+                    else:
+                        if DATA_MESSAGE_TYPE.ShowOnLight == int.from_bytes(
+                            parsed_data_package.message_type, "little"
+                        ):
+                            print("ShowOnLight")
+
+                        elif DATA_MESSAGE_TYPE.ShowOffLight == int.from_bytes(
+                            parsed_data_package.message_type, "little"
+                        ):
+                            print("ShowOffLight")
+
                 # Handle data upload package
                 elif PACKAGE_MESSAGE_TYPE.DataUpload == int.from_bytes(
                     _package.message_type, "little"
                 ):
                     print("DataUpload")
+
+                    parsed_data_upload_package = parse_data_upload_package(
+                        _package.complete_data
+                    )
+
+                    if not check_data_upload_message_type(parsed_data_upload_package):
+                        print("Check Error")
+                        data = bytearray(b"")
+
+                    else:
+                        if DATA_UPLOAD_MESSAGE_TYPE.DataUpStart == int.from_bytes(
+                            parsed_data_upload_package.message_type, "little"
+                        ):
+                            print("DataUpStart")
+
+                        elif DATA_UPLOAD_MESSAGE_TYPE.DataUpRequest == int.from_bytes(
+                            parsed_data_upload_package.message_type, "little"
+                        ):
+                            print("DataUpRequest")
 
                 # Handle disconnection request
                 elif PACKAGE_MESSAGE_TYPE.DiscRequest == int.from_bytes(
