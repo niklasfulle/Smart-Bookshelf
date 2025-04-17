@@ -19,9 +19,10 @@ local sbp_d_message_type     = ProtoField.uint8("sbp_d.message_type", "Protokoll
     [5020] = "LightMode",
     [6001] = "DataUpSta",
     [6002] = "DataUp",
-    [6003] = "DataUpCom",
-    [6004] = "DataUpErr",
-    [6005] = "DataUpCan",
+    [6003] = "DataUpCon",
+    [6004] = "DataUpCom",
+    [6005] = "DataUpErr",
+    [6006] = "DataUpCan",
 })
 local sbp_d_data                = ProtoField.new("Nutzdaten", "sbp.data", ftypes.BYTES)
 
@@ -56,7 +57,9 @@ function p_sbp_d.dissector(buf, pktinfo, root)
         sbp_d:add_le(sbp_d_data, buf:range(4, data_length))
     elseif (msg_type:le_uint() == 6002) then
         sbp_d:add_le(sbp_d_data, buf:range(4, data_length))
-    elseif (msg_type:le_uint() == 6004) then
+    elseif (msg_type:le_uint() == 6003) then
+        sbp_d:add_le(sbp_d_data, buf:range(4, data_length))
+    elseif (msg_type:le_uint() == 6005) then
         sbp_d:add_le(sbp_d_data, buf:range(4, data_length))
     end
 

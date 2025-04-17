@@ -327,9 +327,10 @@
 | :-------------- | :---------------------------- | :-------------------- | :-------- |
 | 6001            | Daten hochladen Starten       | Upload data Start     | DataUpSta |
 | 6002            | Daten hochladen               | Upload data           | DataUp    |
-| 6003            | Daten hochladen Abgeschlossen | Upload data Completed | DataUpCom |
-| 6004            | Daten hochladen Fehler        | Upload data Error     | DataUpErr |
-| 6005            | Daten hochladen Abbrechen     | Upload data Cancel    | DataUpCan |
+| 6003            | Daten hochladen Bestätigen    | Upload data Confirm   | DataUpCon |
+| 6004            | Daten hochladen Abgeschlossen | Upload data Completed | DataUpCom |
+| 6005            | Daten hochladen Fehler        | Upload data Error     | DataUpErr |
+| 6006            | Daten hochladen Abbrechen     | Upload data Cancel    | DataUpCan |
 
 <br>
 <b>Datenhochladenstartnachricht (Start uploading data Message)</b>

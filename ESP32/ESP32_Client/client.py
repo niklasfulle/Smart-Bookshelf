@@ -298,7 +298,7 @@ while True:
 
                     parsed_data_package = parse_data_package(_package.complete_data)
 
-                    if not check_data_upload_message_type(parsed_data_package):
+                    if not check_data_message_type(parsed_data_package):
                         print("Check Error")
                         data = bytearray(b"")
 
@@ -312,6 +312,21 @@ while True:
                             parsed_data_package.message_type, "little"
                         ):
                             print("ShowOffLight")
+
+                        elif DATA_MESSAGE_TYPE.ShowBook == int.from_bytes(
+                            parsed_data_package.message_type, "little"
+                        ):
+                            print("ShowBook")
+
+                        elif DATA_MESSAGE_TYPE.ShowBooks == int.from_bytes(
+                            parsed_data_package.message_type, "little"
+                        ):
+                            print("ShowBooks")
+
+                        elif DATA_MESSAGE_TYPE.LightMode == int.from_bytes(
+                            parsed_data_package.message_type, "little"
+                        ):
+                            print("LightMode")
 
                 # Handle data upload package
                 elif PACKAGE_MESSAGE_TYPE.DataUpload == int.from_bytes(
@@ -351,17 +366,30 @@ while True:
 
     # Handle keyboard interrupt for graceful termination
     except KeyboardInterrupt:
-        print("Client terminated")
+        print("Start terminating the Client...")
+        confirmed_sequence_number = 0
+        confirmed_timestamp = 0
+
+        if _connection.last_received_package is not None:
+            confirmed_sequence_number = (
+                _connection.last_received_package.sequence_number
+            )
+
+            confirmed_timestamp = _connection.last_received_package.timestamp
+
         _connection.send_message_to_server(
             build_disconnection_request(
                 _connection.receiver_id_int,
                 _connection.sender_id_int,
                 _connection.last_send_package.sequence_number,
-                _connection.last_received_package.sequence_number,
+                confirmed_sequence_number,
                 0,
-                _connection.last_received_package.timestamp,
+                confirmed_timestamp,
                 int_to_2byte_array(DISC_REASON.USERREQUEST),
             )
         )
         data = bytearray(b"")
+
+        time.sleep(2)
+        print("Client terminated")
         sys.exit(0)

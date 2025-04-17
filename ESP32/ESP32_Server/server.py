@@ -477,7 +477,7 @@ def threaded(_connection: connection) -> None:
 
                         parsed_data_package = parse_data_package(_package.complete_data)
 
-                        if not check_data_upload_message_type(parsed_data_package):
+                        if not check_data_message_type(parsed_data_package):
                             print("Check Error")
                             data = bytearray(b"")
 
@@ -600,19 +600,32 @@ def main():
             time.sleep(5)
 
         except KeyboardInterrupt:
-            print("Server terminated")
+            print("Start terminating the Server...")
+
             for _connection in connections:
+                confirmed_sequence_number = 0
+                confirmed_timestamp = 0
+
+                if _connection.last_received_package is not None:
+                    confirmed_sequence_number = (
+                        _connection.last_received_package.sequence_number
+                    )
+
+                    confirmed_timestamp = _connection.last_received_package.timestamp
+
                 _connection.send_message_to_client(
                     build_disconnection_request(
                         _connection.receiver_id_int,
                         _connection.sender_id_int,
                         _connection.last_send_package.sequence_number,
-                        _connection.last_received_package.sequence_number,
+                        confirmed_sequence_number,
                         0,
-                        _connection.last_received_package.timestamp,
+                        confirmed_timestamp,
                         int_to_2byte_array(DISC_REASON.USERREQUEST),
                     )
                 )
+            time.sleep(2)
+            print("Server terminated")
             sys.exit(0)
 
 
