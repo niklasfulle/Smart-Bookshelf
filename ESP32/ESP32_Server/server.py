@@ -261,6 +261,66 @@ def threaded(_connection: connection) -> None:
             elif data != bytearray(b""):  # New data received
                 _package = parse_package(data)  # Parse the received package
 
+                # debug: print received package type and sequence numbers
+                try:
+                    msg_type_num = (
+                        int.from_bytes(_package.message_type, "little")
+                        if isinstance(_package.message_type, bytearray)
+                        else int(_package.message_type)
+                    )
+                except Exception:
+                    msg_type_num = _package.message_type
+
+                try:
+                    seq_num = (
+                        int.from_bytes(_package.sequence_number, "little")
+                        if isinstance(_package.sequence_number, bytearray)
+                        else int(_package.sequence_number)
+                    )
+                except Exception:
+                    seq_num = _package.sequence_number
+
+                try:
+                    conf_seq = (
+                        int.from_bytes(_package.confirmed_sequence_number, "little")
+                        if isinstance(_package.confirmed_sequence_number, bytearray)
+                        else int(_package.confirmed_sequence_number)
+                    )
+                except Exception:
+                    conf_seq = _package.confirmed_sequence_number
+
+                try:
+                    last_recv = (
+                        int.from_bytes(_connection.last_received_package.sequence_number, "little")
+                        if _connection.last_received_package is not None
+                        else None
+                    )
+                except Exception:
+                    last_recv = None
+
+                try:
+                    last_send = (
+                        int.from_bytes(_connection.last_send_package.sequence_number, "little")
+                        if _connection.last_send_package is not None
+                        else None
+                    )
+                except Exception:
+                    last_send = None
+
+                print(
+                    "srv: recv msg=",
+                    msg_type_num,
+                    "seq=",
+                    seq_num,
+                    "conf=",
+                    conf_seq,
+                    "last_recv=",
+                    last_recv,
+                    "last_send=",
+                    last_send,
+                )
+                sys.stdout.flush()
+
                 # Update the last received package if it's not a disconnect request
                 if PACKAGE_MESSAGE_TYPE.DiscRequest != int.from_bytes(
                     _package.message_type, "little"
@@ -298,6 +358,14 @@ def threaded(_connection: connection) -> None:
                         # Handle connection approval
                         _connection.handshake = True
                         _connection.waiting_count = 0
+                        # clear any queued messages for this client to avoid processing old packets
+                        try:
+                            print("clearing databuffer for", _connection.client)
+                            sys.stdout.flush()
+                            databuffer[:] = [e for e in databuffer if e[0] != _connection.client]
+                        except Exception:
+                            pass
+
                         data = bytearray(b"")
                         time.sleep(0.2)
 
@@ -340,6 +408,18 @@ def threaded(_connection: connection) -> None:
                         _connection._wait_for_task_response = False
                         _connection._task = None
                         _connection._wait_for_task_response_count = 0
+                        print("Received SleepResponse: resetting connection and waiting for re-join")
+                        sys.stdout.flush()
+                        # Put connection into offline/reset state so client can re-connect after sleep
+                        try:
+                            _connection.reset()
+                        except Exception:
+                            pass
+                        # clear any queued messages for this client after reset
+                        try:
+                            databuffer[:] = [e for e in databuffer if e[0] != _connection.client]
+                        except Exception:
+                            pass
                         data = bytearray(b"")
                         time.sleep(0.2)
 
@@ -350,6 +430,17 @@ def threaded(_connection: connection) -> None:
                         _connection._wait_for_task_response = False
                         _connection._task = None
                         _connection._wait_for_task_response_count = 0
+                        print("Received RebootResponse: resetting connection and waiting for re-join")
+                        sys.stdout.flush()
+                        try:
+                            _connection.reset()
+                        except Exception:
+                            pass
+                        # clear any queued messages for this client after reset
+                        try:
+                            databuffer[:] = [e for e in databuffer if e[0] != _connection.client]
+                        except Exception:
+                            pass
                         data = bytearray(b"")
                         time.sleep(0.2)
 

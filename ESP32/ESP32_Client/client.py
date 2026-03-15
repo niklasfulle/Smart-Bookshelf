@@ -163,6 +163,68 @@ while True:
             # Store the last received package
             _connection.last_received_package = _package
 
+            # Debug: print received message type before checks
+            try:
+                msg_type_num = (
+                    int.from_bytes(_package.message_type, "little")
+                    if isinstance(_package.message_type, bytearray)
+                    else int(_package.message_type)
+                )
+            except Exception:
+                msg_type_num = _package.message_type
+            print("Received message type:", msg_type_num)
+
+            # packet-level debug (seq, confirmed, last seen numbers)
+            try:
+                seq_num = (
+                    int.from_bytes(_package.sequence_number, "little")
+                    if isinstance(_package.sequence_number, bytearray)
+                    else int(_package.sequence_number)
+                )
+            except Exception:
+                seq_num = _package.sequence_number
+
+            try:
+                conf_seq = (
+                    int.from_bytes(_package.confirmed_sequence_number, "little")
+                    if isinstance(_package.confirmed_sequence_number, bytearray)
+                    else int(_package.confirmed_sequence_number)
+                )
+            except Exception:
+                conf_seq = _package.confirmed_sequence_number
+
+            try:
+                last_recv = (
+                    int.from_bytes(_connection.last_received_package.sequence_number, "little")
+                    if _connection.last_received_package is not None
+                    else None
+                )
+            except Exception:
+                last_recv = None
+
+            try:
+                last_send = (
+                    int.from_bytes(_connection.last_send_package.sequence_number, "little")
+                    if _connection.last_send_package is not None
+                    else None
+                )
+            except Exception:
+                last_send = None
+
+            print(
+                "cli: recv msg=",
+                msg_type_num,
+                "seq=",
+                seq_num,
+                "conf=",
+                conf_seq,
+                "last_recv=",
+                last_recv,
+                "last_send=",
+                last_send,
+            )
+            sys.stdout.flush()
+
             # Perform checks on the received package
             if not handle_checks(_connection, _package):
                 print("Check Error")
@@ -245,6 +307,15 @@ while True:
                 elif PACKAGE_MESSAGE_TYPE.SleepRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):
+                    # extract duration from request payload if present
+                    duration = 0
+                    try:
+                        if _package.data is not None and len(_package.data) >= 1:
+                            duration = int.from_bytes(_package.data, "little")
+                    except Exception:
+                        duration = 0
+
+                    print("Received SleepRequest duration:", duration)
                     time.sleep(0.2)
                     _connection.send_message_to_server(
                         build_sleep_response(
@@ -256,6 +327,34 @@ while True:
                             _connection.last_received_package.timestamp,
                         )
                     )
+
+                    # Simulate deep sleep during development: set offline, wait, then rejoin
+                    try:
+                        print("Simulating deep sleep for", duration, "seconds")
+                        sys.stdout.flush()
+                        _connection.status = STATUS.OFFLINE
+                        _connection.handshake = False
+                        _connection.connection_request_send = False
+                        _connection.version_check = False
+                        # actual device would power down; here we block to simulate
+                        time.sleep(int(duration) if isinstance(duration, int) else 0)
+                        print("Waking up from simulated deep sleep")
+                        sys.stdout.flush()
+                        _connection.status = STATUS.RUNNING
+                        # clear last packages to avoid sequence-number mismatches
+                        _connection.last_send_package = None
+                        _connection.last_received_package = None
+                        # re-initiate connection
+                        _connection.send_message_to_server(
+                            build_connection_request(
+                                _connection.receiver_id_int,
+                                _connection.sender_id_int,
+                                *[0] * 4,
+                            )
+                        )
+                        _connection.connection_request_send = True
+                    except Exception:
+                        pass
                     data = bytearray(b"")
                     time.sleep(0.2)
 
@@ -263,6 +362,7 @@ while True:
                 elif PACKAGE_MESSAGE_TYPE.RebootRequest == int.from_bytes(
                     _package.message_type, "little"
                 ):
+                    print("Received RebootRequest")
                     time.sleep(0.2)
                     _connection.send_message_to_server(
                         build_reboot_response(
@@ -276,6 +376,33 @@ while True:
                     )
                     data = bytearray(b"")
                     time.sleep(0.2)
+
+                    # Simulate reboot during development: go offline briefly, then reconnect
+                    try:
+                        print("Simulating reboot (brief pause)")
+                        sys.stdout.flush()
+                        _connection.status = STATUS.OFFLINE
+                        _connection.handshake = False
+                        _connection.connection_request_send = False
+                        _connection.version_check = False
+                        # short reboot delay
+                        time.sleep(2)
+                        print("Reboot complete, re-connecting")
+                        sys.stdout.flush()
+                        _connection.status = STATUS.RUNNING
+                        # clear last packages to avoid sequence-number mismatches after reboot
+                        _connection.last_send_package = None
+                        _connection.last_received_package = None
+                        _connection.send_message_to_server(
+                            build_connection_request(
+                                _connection.receiver_id_int,
+                                _connection.sender_id_int,
+                                *[0] * 4,
+                            )
+                        )
+                        _connection.connection_request_send = True
+                    except Exception:
+                        pass
 
                 # Handle data package
                 elif PACKAGE_MESSAGE_TYPE.Data == int.from_bytes(

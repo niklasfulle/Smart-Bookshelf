@@ -82,7 +82,7 @@ class connection:
         server: tuple[str, int],
         receiver_id: int,
         sender_id: int,
-        Bookshelf_object: bookshelf,
+        bookshelf_object: bookshelf,
     ):
         """
         Initializes a connection object for managing UDP communication between a client and a server.
@@ -125,7 +125,7 @@ class connection:
         self.sender_id_int = sender_id
         self.receiver_id = int_to_4byte_array(receiver_id)
         self.sender_id = int_to_4byte_array(sender_id)
-        self.bookshelf_object = Bookshelf_object
+        self.bookshelf_object = bookshelf_object
         self.last_send_package = None
         self.last_received_package = None
 

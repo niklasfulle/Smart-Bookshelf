@@ -1,7 +1,7 @@
 """
 -
 """
-
+import sys
 # pylint: disable-msg=W0603,W0718,E1101,C0209,E0401,E0611,W0105,R0903,R0913,W0622,W0719
 from protocol.constants.constants import PACKAGE_MESSAGE_TYPE
 from protocol.package import package
@@ -158,8 +158,10 @@ def check_for_valid_message_type_moment(
         and not _connection.version_check
     ):
         print(2)
+        # accept ConnResponse and also VerRequest here to tolerate reordered packets
         valid_types = [
             PACKAGE_MESSAGE_TYPE.ConnApprove,
+            PACKAGE_MESSAGE_TYPE.VerRequest,
             PACKAGE_MESSAGE_TYPE.DiscRequest,
             PACKAGE_MESSAGE_TYPE.DiscResponse,
         ]
@@ -172,6 +174,22 @@ def check_for_valid_message_type_moment(
         print(3)
         valid_types = [
             PACKAGE_MESSAGE_TYPE.VerRequest,
+            PACKAGE_MESSAGE_TYPE.DiscRequest,
+            PACKAGE_MESSAGE_TYPE.DiscResponse,
+        ]
+
+    elif (
+        _connection.connection_request_send
+        and not _connection.handshake
+        and _connection.version_check
+    ):
+        # tolerate out-of-order/recovery state: conn_req true, version_check true but handshake false
+        print("2b")
+        valid_types = [
+            PACKAGE_MESSAGE_TYPE.ConnResponse,
+            PACKAGE_MESSAGE_TYPE.ConnApprove,
+            PACKAGE_MESSAGE_TYPE.VerRequest,
+            PACKAGE_MESSAGE_TYPE.VerResponse,
             PACKAGE_MESSAGE_TYPE.DiscRequest,
             PACKAGE_MESSAGE_TYPE.DiscResponse,
         ]
@@ -194,6 +212,25 @@ def check_for_valid_message_type_moment(
 
     if message_type in valid_types:
         return True
+
+    # debug: print connection state when message type not valid for moment
+    try:
+        print(
+            "invalid_message_moment:",
+            "msg=",
+            message_type,
+            "conn_req=",
+            _connection.connection_request_send,
+            "handshake=",
+            _connection.handshake,
+            "version_check=",
+            _connection.version_check,
+            "valid_types=",
+            valid_types,
+        )
+        sys.stdout.flush()
+    except Exception:
+        pass
 
     return False
 
@@ -265,6 +302,12 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
             return True
 
     elif message_type == PACKAGE_MESSAGE_TYPE.ConnApprove:
+        # tolerate reordered handshake packets during connection setup
+        if (
+            last_received_package_sequence_number is None
+            or sequence_number <= last_received_package_sequence_number
+        ):
+            return True
         if (
             sequence_number == last_received_package_sequence_number
             and confirmed_sequence_number == last_send_package_sequence_number
@@ -272,6 +315,12 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
             return True
 
     elif message_type == PACKAGE_MESSAGE_TYPE.VerRequest:
+        # accept VerRequest even if reordered during handshake
+        if (
+            last_received_package_sequence_number is None
+            or sequence_number <= last_received_package_sequence_number
+        ):
+            return True
         if (
             sequence_number == last_received_package_sequence_number
             and confirmed_sequence_number == last_send_package_sequence_number
@@ -279,6 +328,12 @@ def check_for_valid_sequence_number(_connection: connection, _package: package) 
             return True
 
     elif message_type == PACKAGE_MESSAGE_TYPE.VerResponse:
+        # accept VerResponse even if reordered during handshake
+        if (
+            last_received_package_sequence_number is None
+            or sequence_number <= last_received_package_sequence_number
+        ):
+            return True
         if (
             sequence_number == last_received_package_sequence_number
             and confirmed_sequence_number == last_send_package_sequence_number

@@ -6,6 +6,7 @@
 from protocol.constants.constants import PACKAGE_MESSAGE_TYPE
 from protocol.init_package import initialize_package
 from protocol.package import package
+from utils.converter import int_to_4byte_array
 
 
 def build_connection_request(
@@ -355,6 +356,7 @@ def build_sleep_request(
     confirmed_sequence_number: bytearray,
     timestamp: bytearray,
     confirmed_timestamp: bytearray,
+    duration: int = 0,
 ) -> package:
     """
     Constructs a SleepRequest package using the provided parameters.
@@ -371,6 +373,12 @@ def build_sleep_request(
         package: A SleepRequest package initialized with the provided parameters.
     """
 
+    data = None
+    try:
+        data = int_to_4byte_array(int(duration))
+    except Exception:
+        data = None
+
     return initialize_package(
         PACKAGE_MESSAGE_TYPE.SleepRequest,
         receiver_id,
@@ -379,7 +387,7 @@ def build_sleep_request(
         confirmed_sequence_number,
         timestamp,
         confirmed_timestamp,
-        None,
+        data,
     )
 
 

@@ -8,7 +8,7 @@ import time
 from connection.connection import connection
 from utils.constants import TASK_TYPES
 from utils.send_data import build_data_to_send_bytearray_arr
-from datatype import task
+from datatype.task import task
 from protocol.builder.builder_default_package import (
     build_sleep_request,
     build_reboot_request,

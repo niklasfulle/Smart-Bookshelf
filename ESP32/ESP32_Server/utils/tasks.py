@@ -8,11 +8,15 @@ import time
 from connection.connection import connection
 from utils.constants import TASK_TYPES
 from utils.send_data import build_data_to_send_bytearray_arr
-from datatype import task
+from datatype.task import task
 from protocol.builder.builder_default_package import (
     build_sleep_request,
     build_reboot_request,
 )
+import os
+import psycopg2
+from dotenv import load_dotenv
+import sys
 
 
 def check_tasks(postgres, cursor, _connection: connection) -> None:
@@ -31,23 +35,53 @@ def check_tasks(postgres, cursor, _connection: connection) -> None:
         None
     """
 
-    cursor.execute('select * from "tasks" ORDER BY "createdAt" ASC')
+    print("Checking for tasks...")
 
-    tasks = cursor.fetchall()
-
-    first_task: task
-    if len(tasks) > 0:
-        first_task = task(
-            tasks[0][0],
-            tasks[0][1],
-            tasks[0][2],
-            tasks[0][3],
+    # Open a dedicated DB connection for this thread to avoid sharing the
+    # global `postgres` connection across threads which may block.
+    load_dotenv()
+    local_conn = None
+    try:
+        print("check_tasks: opening local DB connection")
+        sys.stdout.flush()
+        local_conn = psycopg2.connect(
+            database=os.getenv("DATABASE"),
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            port=os.getenv("DB_PORT"),
         )
-        _connection._task = first_task
+        local_cursor = local_conn.cursor()
+        print("check_tasks: executing select")
+        sys.stdout.flush()
+        local_cursor.execute('select * from "tasks" ORDER BY "createdAt" ASC')
+        tasks = local_cursor.fetchall()
+        print("check_tasks: fetched", len(tasks), "tasks")
+        sys.stdout.flush()
 
-        delete_sql = 'DELETE FROM "tasks" WHERE id = %s;'
-        cursor.execute(delete_sql, (first_task.id,))
-        postgres.commit()
+        first_task: task
+        if len(tasks) > 0:
+            first_task = task(
+                tasks[0][0],
+                tasks[0][1],
+                tasks[0][2],
+                tasks[0][3],
+            )
+            _connection._task = first_task
+
+            delete_sql = 'DELETE FROM "tasks" WHERE id = %s;'
+            print("check_tasks: deleting task id", first_task.id)
+            sys.stdout.flush()
+            local_cursor.execute(delete_sql, (first_task.id,))
+            local_conn.commit()
+            print("check_tasks: delete committed")
+            sys.stdout.flush()
+    finally:
+        if local_conn is not None:
+            try:
+                local_conn.close()
+            except Exception:
+                pass
 
 
 def handle_tasks(_connection: connection) -> None:
@@ -84,8 +118,39 @@ def handle_tasks(_connection: connection) -> None:
         are used to perform the required operations.
     """
 
-    if _connection._task.type == TASK_TYPES.SLEEP:
+    print(
+        "handle_tasks: starting, task id:",
+        getattr(_connection, "_task").id if _connection._task else None,
+        "type:",
+        getattr(_connection, "_task").type if _connection._task else None,
+    )
+    sys.stdout.flush()
+
+    # normalize task type (accept 'SLEEP', 'task_sleep', etc.)
+    task_type_raw = _connection._task.type if _connection._task else None
+    task_type = task_type_raw.lower() if isinstance(task_type_raw, str) else None
+
+    if task_type and task_type.endswith("sleep"):
         print("SLEEP")
+        # determine duration from task data (accept JSON {"duration":N} or numeric string)
+        duration = 0
+        try:
+            import json
+
+            if _connection._task.data is not None:
+                try:
+                    parsed = json.loads(_connection._task.data)
+                    if isinstance(parsed, dict) and "duration" in parsed:
+                        duration = int(parsed["duration"])
+                except Exception:
+                    # not json, try numeric
+                    try:
+                        duration = int(str(_connection._task.data))
+                    except Exception:
+                        duration = 0
+        except Exception:
+            duration = 0
+
         _connection.send_message_to_client(
             build_sleep_request(
                 _connection.receiver_id_int,
@@ -94,11 +159,15 @@ def handle_tasks(_connection: connection) -> None:
                 _connection.last_received_package.sequence_number,
                 0,
                 _connection.last_received_package.timestamp,
+                duration,
             )
         )
+        _connection._wait_for_task_response = True
+        print("handle_tasks: sent SLEEP request, waiting for response")
+        sys.stdout.flush()
         time.sleep(0.2)
 
-    elif _connection._task.type == TASK_TYPES.REBOOT:
+    elif task_type and task_type.endswith("reboot"):
         print("REBOOT")
         _connection.send_message_to_client(
             build_reboot_request(
@@ -110,9 +179,12 @@ def handle_tasks(_connection: connection) -> None:
                 _connection.last_received_package.timestamp,
             )
         )
+        _connection._wait_for_task_response = True
+        print("handle_tasks: sent REBOOT request, waiting for response")
+        sys.stdout.flush()
         time.sleep(0.2)
 
-    elif _connection._task.type == TASK_TYPES.CONFIG_SEND:
+    elif task_type and task_type.endswith("config_send"):
         print("CONFIG_SEND")
 
         _connection.data_send_mode = True
@@ -122,23 +194,23 @@ def handle_tasks(_connection: connection) -> None:
             _connection._task.data
         )
 
-    elif _connection._task.type == TASK_TYPES.CONFIG_REQUEST:
+    elif task_type and task_type.endswith("config_request"):
         print("CONFIG_REQUEST")
 
         _connection.data_reveiv_mode = True
         _connection.data_send_mode = False
 
-    elif _connection._task.type == TASK_TYPES.DATA_SEND_BOOK:
+    elif task_type and task_type.endswith("data_send_book"):
         print("DATA_SEND_BOOK")
 
-    elif _connection._task.type == TASK_TYPES.DATA_SEND_BOOKS:
+    elif task_type and task_type.endswith("data_send_books"):
         print("DATA_SEND_BOOKS")
 
-    elif _connection._task.type == TASK_TYPES.DATA_SEND_MODE:
+    elif task_type and task_type.endswith("data_send_mode"):
         print("DATA_SEND_MODE")
 
-    elif _connection._task.type == TASK_TYPES.DATA_SEND_LIGHT_ON:
+    elif task_type and task_type.endswith("data_send_ligh_on"):
         print("DATA_SEND_LIGHT_ON")
 
-    elif _connection._task.type == TASK_TYPES.DATA_SEND_LIGHT_OFF:
+    elif task_type and task_type.endswith("data_send_ligh_off"):
         print("DATA_SEND_LIGHT_OFF")

@@ -1,6 +1,6 @@
 [
   {
-    "name": "Bookshelf_Name1",
+    "name": "Bookshelf_Name0",
     "shelving_units": [
       { "order": 1, "length": 50 },
       { "order": 2, "length": 50 },
