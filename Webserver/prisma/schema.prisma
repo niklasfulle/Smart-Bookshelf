@@ -1,0 +1,234 @@
+// This is the Prisma schema for Smart Bookshelf.
+// It is the single source of truth for the database model.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Auth models (required by @auth/prisma-adapter)
+// ---------------------------------------------------------------------------
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------------------------------------------------------------------------
+// User & roles
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String?
+  role          Role      @default(USER)
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts    Account[]
+  sessions    Session[]
+  bookshelves Bookshelf[]
+  userBooks   UserBook[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// ---------------------------------------------------------------------------
+// Bookshelf domain
+// ---------------------------------------------------------------------------
+
+model Bookshelf {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  location    String?
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shelves    Shelf[]
+  placements BookPlacement[]
+}
+
+/// A single horizontal shelf level within a Bookshelf.
+model Shelf {
+  id          String   @id @default(cuid())
+  bookshelfId String
+  order       Int      // 1-based display order, bottom-up convention
+  name        String?
+  widthCm     Float    // Required: shelf width in cm. 1 zone per 4cm
+  heightCm    Float?
+  depthCm     Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bookshelf  Bookshelf       @relation(fields: [bookshelfId], references: [id], onDelete: Cascade)
+  placements BookPlacement[]
+
+  @@unique([bookshelfId, order])
+}
+
+// ---------------------------------------------------------------------------
+// Book domain
+// ---------------------------------------------------------------------------
+
+/// Canonical book record – reusable across users.
+model Book {
+  id             String   @id @default(cuid())
+  isbn           String?  @unique
+  barcode        String?  @unique
+  title          String
+  subtitle       String?
+  authors        String[]
+  publisher      String?
+  publishedYear  Int?
+  coverImageUrl  String?
+  /// Dominant/representative hex color for spine rendering (e.g. "#1a2b3c").
+  spineColor     String?
+  pageCount      Int?
+  language       String?
+  widthCm        Float?
+  heightCm       Float?
+  thicknessCm    Float?
+  /// Which external API provided the metadata (e.g. "openlibrary", "google_books").
+  metadataSource String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  userBooks UserBook[]
+}
+
+/// Represents a user owning a specific book (their collection entry).
+model UserBook {
+  id        String           @id @default(cuid())
+  userId    String
+  bookId    String
+  status    CollectionStatus @default(OWNED)
+  notes     String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book      Book           @relation(fields: [bookId], references: [id])
+  placement BookPlacement?
+
+  @@unique([userId, bookId])
+}
+
+enum CollectionStatus {
+  OWNED
+  WISHLIST
+  READING
+  READ
+  LENT_OUT
+}
+
+/// Where a user's book is physically placed on a shelf.
+model BookPlacement {
+  id          String   @id @default(cuid())
+  userBookId  String   @unique
+  bookshelfId String
+  shelfId     String
+  /// 0-based horizontal position index on the shelf.
+  position    Int
+  isPlaced    Boolean  @default(true)
+  /// Optional visual span override (in cm or arbitrary units).
+  widthSpan   Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userBook  UserBook  @relation(fields: [userBookId], references: [id], onDelete: Cascade)
+  bookshelf Bookshelf @relation(fields: [bookshelfId], references: [id])
+  shelf     Shelf     @relation(fields: [shelfId], references: [id])
+
+  @@unique([shelfId, position])
+}
+
+// ---------------------------------------------------------------------------
+// Connection – registered ESP32 clients (read by Raspberry Pi server from DB)
+// Table name must stay "connection" to match the existing schema used by ESP32_Server.
+// ---------------------------------------------------------------------------
+
+/// Represents a registered ESP32 client that the Raspberry Pi server connects to.
+model Connection {
+  id   Int    @id @default(autoincrement())
+  name String
+  ip   String
+  port Int
+
+  tasks Task[]
+
+  @@map("connection")
+}
+
+// ---------------------------------------------------------------------------
+// Task / Job queue
+//
+// The web application writes rows here; the Raspberry Pi server (ESP32_Server/server.py)
+// reads them with  SELECT * FROM "tasks" ORDER BY "createdAt" ASC,
+// processes the first row and then DELETEs it.
+//
+// Column names and types must exactly match what the Python server expects:
+//   tasks[n][0] → id        (integer)
+//   tasks[n][1] → type      (text  – matches TASK_TYPES in utils/constants.py)
+//   tasks[n][2] → client_id (integer → connection.id)
+//   tasks[n][3] → data      (text   – payload interpreted by each task handler)
+// ---------------------------------------------------------------------------
+
+model Task {
+  id        Int      @id @default(autoincrement())
+  /// Raw task type string as consumed by ESP32_Server (e.g. "task_sleep").
+  type      String
+  /// References connection.id – which ESP32 client should handle this task.
+  clientId  Int      @map("client_id")
+  /// Free-form text payload. For structured tasks use JSON, e.g. {"duration":5000}.
+  data      String?
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  client Connection @relation(fields: [clientId], references: [id])
+
+  @@map("tasks")
+}
